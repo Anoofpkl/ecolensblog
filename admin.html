@@ -187,6 +187,133 @@
             min-height: 200px;
         }
 
+        /* Source textarea */
+        #source-editor {
+            display: none;
+            width: 100%;
+            min-height: 260px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            background: #fafafa;
+            resize: vertical;
+            outline: none;
+        }
+        #source-editor:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .editor-toolbar button {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition);
+            color: var(--text-secondary);
+        }
+        .editor-toolbar button:hover {
+            background: var(--bg-card);
+            border-color: var(--border-strong);
+        }
+        .editor-toolbar button.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        /* Preview modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            max-width: 780px;
+            width: 100%;
+            max-height: 90vh;
+            border-radius: var(--radius);
+            padding: 32px 36px;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .modal-content .close-btn {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            padding: 4px 8px;
+            line-height: 1;
+        }
+        .modal-content .close-btn:hover {
+            color: var(--text);
+        }
+        .modal-content .preview-body {
+            font-size: 18px;
+            line-height: 1.85;
+            color: var(--text);
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .modal-content .preview-body h1,
+        .modal-content .preview-body h2,
+        .modal-content .preview-body h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 1.5em 0 0.5em;
+        }
+        .modal-content .preview-body ul,
+        .modal-content .preview-body ol {
+            margin: 0 0 1.5em 1.5em;
+        }
+        .modal-content .preview-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 18px;
+            color: var(--text-secondary);
+            margin: 0 0 1.5em;
+        }
+        .modal-content .preview-body code {
+            background: #f0f0f3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .modal-content .preview-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
         .form-actions {
             display: flex;
             gap: 12px;
@@ -246,7 +373,6 @@
             margin-top: 8px;
         }
 
-        /* post list */
         .post-item {
             display: flex;
             justify-content: space-between;
@@ -398,7 +524,6 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { renderLogin(); return; }
 
-            // Build the admin UI with Quill editor
             app.innerHTML = `
             <div class="topbar">
               <span class="logo">ECOLENS<span class="dot">.</span></span>
@@ -446,8 +571,13 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Body (HTML / rich text)</label>
+                  <label>Body</label>
+                  <div class="editor-toolbar">
+                    <button type="button" id="toggle-source-btn">Source</button>
+                    <button type="button" id="preview-btn">Preview</button>
+                  </div>
                   <div id="editor-container"></div>
+                  <textarea id="source-editor" spellcheck="false"></textarea>
                 </div>
 
                 <div class="error-msg" id="form-error"></div>
@@ -464,9 +594,18 @@
               <h2>Published posts</h2>
               <div id="post-list"><div class="loading">loading…</div></div>
             </div>
+
+            <!-- Preview Modal -->
+            <div class="modal-overlay" id="preview-modal">
+              <div class="modal-content">
+                <button class="close-btn" id="close-preview">&times;</button>
+                <div id="preview-title" class="preview-title"></div>
+                <div id="preview-body" class="preview-body"></div>
+              </div>
+            </div>
           `;
 
-            // ── Quill editor ──
+            // ── Quill ──
             const quill = new Quill('#editor-container', {
                 theme: 'snow',
                 placeholder: 'Write your post here…',
@@ -478,6 +617,70 @@
                         ['link', 'blockquote', 'code-block'],
                         ['clean']
                     ]
+                }
+            });
+
+            const sourceEditor = document.getElementById('source-editor');
+            const toggleSourceBtn = document.getElementById('toggle-source-btn');
+            const previewBtn = document.getElementById('preview-btn');
+            const modal = document.getElementById('preview-modal');
+            const closePreview = document.getElementById('close-preview');
+            const previewTitle = document.getElementById('preview-title');
+            const previewBody = document.getElementById('preview-body');
+
+            let sourceMode = false;
+
+            function getCurrentContent() {
+                return sourceMode ? sourceEditor.value : quill.root.innerHTML;
+            }
+
+            function setContent(html) {
+                if (sourceMode) {
+                    sourceEditor.value = html;
+                } else {
+                    quill.root.innerHTML = html;
+                }
+            }
+
+            function syncEditor() {
+                const html = getCurrentContent();
+                // Toggle visibility
+                document.getElementById('editor-container').style.display = sourceMode ? 'none' : 'block';
+                sourceEditor.style.display = sourceMode ? 'block' : 'none';
+                toggleSourceBtn.textContent = sourceMode ? 'Rich Text' : 'Source';
+                toggleSourceBtn.classList.toggle('active', sourceMode);
+                // Move content
+                if (sourceMode) {
+                    sourceEditor.value = quill.root.innerHTML;
+                } else {
+                    quill.root.innerHTML = sourceEditor.value;
+                }
+            }
+
+            toggleSourceBtn.addEventListener('click', () => {
+                sourceMode = !sourceMode;
+                syncEditor();
+            });
+
+            // Preview
+            function showPreview() {
+                const title = document.getElementById('f-title').value.trim() || 'Untitled';
+                const content = getCurrentContent();
+                previewTitle.textContent = title;
+                previewBody.innerHTML = content || '<p><em>No content yet.</em></p>';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            previewBtn.addEventListener('click', showPreview);
+            closePreview.addEventListener('click', () => {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
                 }
             });
 
@@ -529,8 +732,7 @@
                     return;
                 }
 
-                // Get HTML content from Quill
-                const content = quill.root.innerHTML;
+                const content = getCurrentContent();
 
                 const payload = {
                     title,
@@ -579,8 +781,12 @@
                 slugManuallyEdited = false;
                 updateSlugPreview();
                 quill.root.innerHTML = '';
+                sourceEditor.value = '';
                 document.getElementById('form-error').textContent = '';
                 document.getElementById('form-status').textContent = '';
+                // Close preview if open
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
             }
 
             // ── Load post list ──
@@ -613,7 +819,6 @@
                 </div>
               `).join('');
 
-                // Edit
                 listEl.querySelectorAll('[data-action="edit"]').forEach(btn => {
                     btn.addEventListener('click', async () => {
                         const { data: post, error } = await supabase.from('posts').select('*').eq('id', btn
@@ -626,8 +831,15 @@
                         document.getElementById('f-emoji').value = post.image_emoji || '';
                         document.getElementById('f-excerpt').value = post.excerpt || '';
                         document.getElementById('f-readtime').value = post.read_time || 5;
-                        // Set Quill content
+                        // Set content in both editors
                         quill.root.innerHTML = post.content || '';
+                        sourceEditor.value = post.content || '';
+                        // If source mode is active, we need to sync the textarea
+                        if (sourceMode) {
+                            sourceEditor.value = post.content || '';
+                        } else {
+                            quill.root.innerHTML = post.content || '';
+                        }
                         slugManuallyEdited = true;
                         updateSlugPreview();
                         document.getElementById('editor-heading').innerHTML =
@@ -637,7 +849,6 @@
                     });
                 });
 
-                // Delete
                 listEl.querySelectorAll('[data-action="delete"]').forEach(btn => {
                     btn.addEventListener('click', async () => {
                         if (!confirm(`Delete "${btn.dataset.title}"? This can't be undone.`)) return;
