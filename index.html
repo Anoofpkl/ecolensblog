@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* ── reset & base ── */
+        /* ── same clean white theme as before ── */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -74,14 +74,12 @@
             color: inherit;
         }
 
-        /* ── main wrapper ── */
         .wrap {
             max-width: 1120px;
             margin: 0 auto;
             padding: 0 24px 60px;
         }
 
-        /* ── header / nav ── */
         .site-header {
             padding: 28px 0 20px;
             border-bottom: 1px solid var(--border);
@@ -157,7 +155,6 @@
             }
         }
 
-        /* ── featured hero ── */
         .hero-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -217,7 +214,6 @@
             flex-wrap: wrap;
         }
 
-        /* ── grid feed ── */
         .feed-header {
             display: flex;
             justify-content: space-between;
@@ -315,7 +311,6 @@
             }
         }
 
-        /* ── empty / loading ── */
         .empty-state {
             padding: 60px 0;
             text-align: center;
@@ -352,7 +347,6 @@
             }
         }
 
-        /* ── article page ── */
         .article-wrap {
             max-width: 780px;
             margin: 0 auto;
@@ -423,8 +417,29 @@
         .article-body p {
             margin-bottom: 26px;
         }
+        .article-body h1,
+        .article-body h2,
+        .article-body h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 1.5em 0 0.5em;
+        }
+        .article-body ul,
+        .article-body ol {
+            margin: 0 0 1.5em 1.5em;
+        }
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 18px;
+            color: var(--text-secondary);
+            margin: 0 0 1.5em;
+        }
+        .article-body code {
+            background: #f0f0f3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
 
-        /* ── share bar ── */
         .share-bar {
             border-top: 1px solid var(--border);
             padding-top: 28px;
@@ -510,7 +525,6 @@
             }
         }
 
-        /* ── footer ── */
         .footer {
             max-width: 1120px;
             margin: 0 auto;
@@ -537,7 +551,6 @@
             font-weight: 600;
         }
 
-        /* ── fade in ── */
         .fade-in {
             animation: fadeUp 0.35s ease;
         }
@@ -555,10 +568,8 @@
 </head>
 <body>
 
-    <!-- APP -->
     <div id="app"></div>
 
-    <!-- FOOTER -->
     <footer class="footer">
         <span>© <span id="year"></span> ECOLENS</span>
         <span class="dev-credit">Developed by <strong>Anoof</strong> <span class="heart">♥</span></span>
@@ -656,7 +667,6 @@
             } else {
                 countText = data.length + (data.length === 1 ? ' post' : ' posts');
 
-                // Hero: first post
                 const hero = data[0];
                 const rest = data.slice(1);
 
@@ -674,7 +684,6 @@
               </div>
             `;
 
-                // Grid: rest of posts
                 if (rest.length > 0) {
                     html += `<div class="grid-2col">`;
                     rest.forEach(post => {
@@ -695,7 +704,6 @@
                 }
             }
 
-            // Build full page with header/nav
             const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric',
                 year: 'numeric' });
 
@@ -703,7 +711,7 @@
             <div class="wrap fade-in">
               <header class="site-header">
                 <div class="logo-wrapper">
-                  <!-- REPLACE THE src URL WITH YOUR ACTUAL LOGO URL -->
+                  <!-- Replace with your actual logo URL -->
                   <img src="https://ecolensblog.vercel.app/Gemini_Generated_Image_gebp3jgebp3jgebp.png" alt="ECOLENS logo" class="logo-img" />
                   <span class="logo-text">ECOLENS<span class="dot">.</span></span>
                 </div>
@@ -727,7 +735,6 @@
             </div>
           `;
 
-            // Attach click handlers for SPA navigation
             document.querySelectorAll('.hero-card, .post-card').forEach(el => {
                 el.addEventListener('click', (e) => {
                     const slug = el.getAttribute('data-slug');
@@ -772,8 +779,8 @@
             // Increment views
             supabase.from('posts').update({ views: (post.views || 0) + 1 }).eq('slug', slug).then(() => {});
 
-            const paragraphs = (post.content || '').split(/\n\s*\n/).filter(Boolean)
-                .map(p => `<p>${escapeHtml(p)}</p>`).join('') || '<p>(this post is still cooking…)</p>';
+            // Render HTML content directly (trusted admin)
+            const bodyHtml = post.content || '<p>(this post is still cooking…)</p>';
 
             app.innerHTML = `
             <div class="wrap fade-in">
@@ -791,10 +798,9 @@
                 </div>
 
                 <div class="article-body">
-                  ${paragraphs}
+                  ${bodyHtml}
                 </div>
 
-                <!-- SOCIAL SHARE BAR -->
                 <div class="share-bar">
                   <span class="share-label">Share</span>
                   <div class="share-btn-group">
@@ -824,10 +830,8 @@
             </div>
           `;
 
-            // ── back ──
             document.getElementById('back-btn').addEventListener('click', goHome);
 
-            // ── share handlers ──
             document.querySelectorAll('.share-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const type = btn.dataset.share;
