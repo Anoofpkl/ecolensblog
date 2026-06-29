@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>admin · THE SPREAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ── reset & base ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a0a0e;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.12);
+            --text: #f0ede8;
+            --text-secondary: rgba(240, 237, 232, 0.65);
+            --text-tertiary: rgba(240, 237, 232, 0.35);
+            --accent: #7c5cff;
+            --accent-glow: rgba(124, 92, 255, 0.25);
+            --lime: #c9ff3d;
+            --lime-glow: rgba(201, 255, 61, 0.15);
+            --coral: #ff6b4a;
+            --coral-glow: rgba(255, 107, 74, 0.15);
+            --cyan: #5bd8ff;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-strong);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ── utilities ── */
+        .wrap {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 32px 24px 80px;
+        }
+
+        /* ── topbar ── */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: -0.02em;
+        }
+        .brand .dot {
+            color: var(--lime);
+        }
+
+        .brand-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: var(--accent);
+            color: #fff;
+            padding: 3px 12px;
+            border-radius: 999px;
+            opacity: 0.85;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color var(--transition);
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+        }
+        .back-link:hover {
+            color: var(--text);
+            border-color: var(--border);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .back-link svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ── login ── */
+        .login-container {
+            max-width: 400px;
+            margin: 60px auto 0;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 44px 36px 36px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--lime), var(--accent));
+            opacity: 0.6;
+        }
+
+        .login-card .icon-wrap {
+            width: 52px;
+            height: 52px;
+            background: rgba(124, 92, 255, 0.12);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .login-card h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .login-card .sub {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .login-card form label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .login-card form input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            padding: 13px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 18px;
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .login-card form input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .login-card form input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .error-msg {
+            color: var(--coral);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            min-height: 18px;
+            margin: -4px 0 14px;
+        }
+        .status-msg {
+            color: var(--lime);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            min-height: 18px;
+            margin: -4px 0 14px;
+        }
+
+        /* ── buttons ── */
+        button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 14px;
+            padding: 12px 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button:focus-visible {
+            outline: 2px solid var(--lime);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--lime);
+            color: #0a0a0e;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 20px var(--lime-glow);
+        }
+        .btn-primary:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 28px var(--lime-glow);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+
+        .btn-danger {
+            background: rgba(255, 107, 74, 0.08);
+            color: var(--coral);
+            border: 1px solid rgba(255, 107, 74, 0.2);
+        }
+        .btn-danger:hover {
+            background: rgba(255, 107, 74, 0.16);
+            border-color: var(--coral);
+            box-shadow: 0 0 20px var(--coral-glow);
+        }
+
+        .btn-small {
+            font-size: 12px;
+            padding: 7px 14px;
+            border-radius: 8px;
+        }
+
+        .btn-outline-accent {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        .btn-outline-accent:hover {
+            background: rgba(124, 92, 255, 0.1);
+        }
+
+        .btn-icon {
+            padding: 8px 10px;
+            font-size: 16px;
+            line-height: 1;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: 8px;
+        }
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        /* ── dashboard ── */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .dash-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        .dash-header h1 span {
+            color: var(--lime);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            padding: 6px 8px 6px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+        }
+        .user-badge .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        /* ── panel ── */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+            transition: border-color var(--transition);
+        }
+        .panel:hover {
+            border-color: var(--border-strong);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-header .pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: var(--accent);
+            color: #fff;
+            padding: 3px 12px;
+            border-radius: 999px;
+            opacity: 0.85;
+        }
+        .panel-header .pill.draft {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+        }
+        .panel-header .pill.editing {
+            background: var(--lime);
+            color: #0a0a0e;
+        }
+
+        /* ── form ── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 24px;
+        }
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-secondary);
+        }
+
+        .field input,
+        .field textarea,
+        .field select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14.5px;
+            padding: 12px 15px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            width: 100%;
+        }
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+        .field textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        .field input[type="number"] {
+            max-width: 140px;
+        }
+
+        .slug-preview {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--lime);
+            padding: 4px 0 2px;
+            word-break: break-all;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .form-actions .btn-primary {
+            width: auto;
+            min-width: 140px;
+        }
+        .form-actions .btn-ghost {
+            width: auto;
+        }
+
+        /* ── post list ── */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .post-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 18px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            transition: background var(--transition);
+            border: 1px solid transparent;
+        }
+        .post-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--border);
+        }
+
+        .post-item .info {
+            min-width: 0;
+            flex: 1;
+        }
+        .post-item .info .title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .post-item .info .title .emoji {
+            font-size: 18px;
+        }
+        .post-item .info .meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .post-item .info .meta .tag {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1px 10px;
+            border-radius: 999px;
+            color: var(--text-secondary);
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .post-item .info .meta .views {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-item .actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .empty-state {
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 28px 0 12px;
+            text-align: center;
+        }
+        .empty-state .big {
+            font-size: 38px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .loading-state {
+            color: var(--text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .loading-state .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 999px;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── responsive tweaks ── */
+        @media (max-width: 640px) {
+            .wrap {
+                padding: 20px 16px 60px;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .brand-group {
+                justify-content: space-between;
+            }
+            .topbar-actions {
+                justify-content: flex-start;
+            }
+            .dash-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .user-badge {
+                align-self: flex-start;
+            }
+            .panel {
+                padding: 20px 16px;
+            }
+            .login-card {
+                padding: 32px 20px 28px;
+            }
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-actions .btn-primary {
+                min-width: unset;
+            }
+            .post-item {
+                flex-wrap: wrap;
+                padding: 14px 12px;
+            }
+            .post-item .actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* ── anims ── */
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+        <header class="topbar">
+            <div class="brand-group">
+                <div class="brand">THE SPREAD<span class="dot">.</span></div>
+                <span class="brand-badge">admin</span>
+            </div>
+            <div class="topbar-actions">
+                <a class="back-link" href="index.html">
+                    <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                    view site
+                </a>
+            </div>
+        </header>
+
+        <div id="app"><div class="loading-state"><span class="spinner"></span> checking session…</div></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+        const SUPABASE_URL = 'https://ojlmwlqrkbctlpexrufs.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_2aMsITRDeO8MfFHiWIkNzQ_JENBP08R';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const app = document.getElementById('app');
+
+        function escapeHtml(str) {
+            return String(str ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+                "'": '&#39;' }[m]));
+        }
+
+        function slugify(str) {
+            return String(str || '')
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        function getInitials(email) {
+            if (!email) return '?';
+            const parts = email.split('@')[0].split(/[._-]/);
+            return parts.map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
+        }
+
+        // ─── LOGIN ──────────────────────────────────────────
+        function renderLogin() {
+            app.innerHTML = `
+            <div class="login-container fade-in">
+              <div class="login-card">
+                <div class="icon-wrap">✍️</div>
+                <h1>Welcome back</h1>
+                <p class="sub">Sign in to publish and manage your stories.</p>
+                <form id="login-form">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+
+                  <label for="password">Password</label>
+                  <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+
+                  <div class="error-msg" id="login-error"></div>
+
+                  <button type="submit" class="btn-primary" id="login-btn">
+                    <span>Sign in</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          `;
+
+            const form = document.getElementById('login-form');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('login-btn');
+                const errEl = document.getElementById('login-error');
+                errEl.textContent = '';
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> signing in…';
+
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+                if (error) {
+                    errEl.textContent = error.message;
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Sign in</span>';
+                    return;
+                }
+                await renderDashboard();
+            });
+        }
+
+        // ─── DASHBOARD ──────────────────────────────────────
+        async function renderDashboard() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { renderLogin(); return; }
+
+            const initials = getInitials(session.user.email);
+
+            app.innerHTML = `
+            <div class="fade-in">
+              <div class="dash-header">
+                <h1>Write <span>·</span> manage</h1>
+                <div class="user-badge">
+                  ${escapeHtml(session.user.email)}
+                  <span class="avatar">${escapeHtml(initials)}</span>
+                  <button class="btn-icon btn-small" id="logout-btn" title="Sign out" style="font-size:14px;">✕</button>
+                </div>
+              </div>
+
+              <!-- editor panel -->
+              <div class="panel" id="editor-panel">
+                <div class="panel-header">
+                  <h2 id="editor-heading">
+                    New post
+                    <span class="pill draft">draft</span>
+                  </h2>
+                </div>
+
+                <form id="post-form">
+                  <input type="hidden" id="edit-id" value="" />
+
+                  <div class="form-grid">
+                    <div class="field full">
+                      <label for="f-title">Title</label>
+                      <input id="f-title" placeholder="Write a headline that pulls people in" required />
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-slug">Slug <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(URL)</span></label>
+                      <input id="f-slug" placeholder="auto-generated from title" />
+                      <div class="slug-preview" id="slug-preview">index.html?post=…</div>
+                    </div>
+
+                    <div class="field">
+                      <label for="f-tag">Tag</label>
+                      <input id="f-tag" placeholder="e.g. inflation, jobs" />
+                    </div>
+
+                    <div class="field">
+                      <label for="f-emoji">Emoji</label>
+                      <input id="f-emoji" placeholder="📰" maxlength="4" />
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-excerpt">One-line take <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shows on feed)</span></label>
+                      <input id="f-excerpt" placeholder="The tl;dr that makes someone click" maxlength="160" />
+                    </div>
+
+                    <div class="field">
+                      <label for="f-readtime">Read time <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(min)</span></label>
+                      <input id="f-readtime" type="number" min="1" max="60" value="5" />
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-content">Body</label>
+                      <textarea id="f-content" placeholder="Write like you're explaining it to a smart friend. Separate paragraphs with a blank line."></textarea>
+                    </div>
+                  </div>
+
+                  <div class="error-msg" id="form-error"></div>
+                  <div class="status-msg" id="form-status"></div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="save-btn">Publish</button>
+                    <button type="button" class="btn-ghost" id="cancel-edit-btn" style="display:none;">Cancel edit</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- posts list -->
+              <div class="panel">
+                <div class="panel-header">
+                  <h2>Published posts</h2>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);" id="post-count"></span>
+                </div>
+                <div id="post-list"><div class="loading-state"><span class="spinner"></span> loading…</div></div>
+              </div>
+            </div>
+          `;
+
+            // ── logout ──
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                renderLogin();
+            });
+
+            // ── slug logic ──
+            const slugInput = document.getElementById('f-slug');
+            const titleInput = document.getElementById('f-title');
+            const slugPreview = document.getElementById('slug-preview');
+            let slugManuallyEdited = false;
+
+            function updateSlugPreview() {
+                const val = slugInput.value || slugify(titleInput.value) || '…';
+                slugPreview.textContent = 'index.html?post=' + val;
+            }
+
+            titleInput.addEventListener('input', () => {
+                if (!slugManuallyEdited) slugInput.value = slugify(titleInput.value);
+                updateSlugPreview();
+            });
+            slugInput.addEventListener('input', () => {
+                slugManuallyEdited = true;
+                slugInput.value = slugify(slugInput.value);
+                updateSlugPreview();
+            });
+            updateSlugPreview();
+
+            // ── cancel edit ──
+            document.getElementById('cancel-edit-btn').addEventListener('click', () => resetForm());
+
+            // ── submit ──
+            document.getElementById('post-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errEl = document.getElementById('form-error');
+                const statusEl = document.getElementById('form-status');
+                const saveBtn = document.getElementById('save-btn');
+                errEl.textContent = '';
+                statusEl.textContent = '';
+
+                const editId = document.getElementById('edit-id').value;
+                const title = titleInput.value.trim();
+                const slug = slugify(slugInput.value || titleInput.value);
+
+                if (!title || !slug) {
+                    errEl.textContent = 'Title and slug are required.';
+                    return;
+                }
+
+                const payload = {
+                    title,
+                    slug,
+                    tag: document.getElementById('f-tag').value.trim() || 'econ',
+                    image_emoji: document.getElementById('f-emoji').value.trim() || '📰',
+                    excerpt: document.getElementById('f-excerpt').value.trim(),
+                    read_time: parseInt(document.getElementById('f-readtime').value, 10) || 5,
+                    content: document.getElementById('f-content').value.trim(),
+                };
+
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> ' + (editId ?
+                    'Saving…' : 'Publishing…');
+
+                let result;
+                if (editId) {
+                    result = await supabase.from('posts').update(payload).eq('id', editId).select();
+                } else {
+                    result = await supabase.from('posts').insert(payload).select();
+                }
+
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Publish';
+
+                if (result.error) {
+                    if (result.error.code === '23505') {
+                        errEl.textContent = 'That slug is already taken — pick a different one.';
+                    } else {
+                        errEl.textContent = result.error.message;
+                    }
+                    return;
+                }
+
+                statusEl.textContent = editId ? '✓ Saved.' : '✓ Published.';
+                setTimeout(() => { statusEl.textContent = ''; }, 4000);
+                resetForm();
+                loadPostList();
+            });
+
+            // ── reset form ──
+            function resetForm() {
+                document.getElementById('post-form').reset();
+                document.getElementById('edit-id').value = '';
+                document.getElementById('f-readtime').value = 5;
+                document.getElementById('editor-heading').innerHTML = 'New post <span class="pill draft">draft</span>';
+                document.getElementById('cancel-edit-btn').style.display = 'none';
+                slugManuallyEdited = false;
+                updateSlugPreview();
+                document.getElementById('form-error').textContent = '';
+                document.getElementById('form-status').textContent = '';
+            }
+
+            // ── load posts ──
+            async function loadPostList() {
+                const listEl = document.getElementById('post-list');
+                const countEl = document.getElementById('post-count');
+
+                const { data, error } = await supabase
+                    .from('posts')
+                    .select('id, title, slug, tag, views, created_at, image_emoji')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    listEl.innerHTML =
+                        `<div class="empty-state">couldn't load posts: ${escapeHtml(error.message)}</div>`;
+                    return;
+                }
+                if (!data || data.length === 0) {
+                    listEl.innerHTML =
+                        `<div class="empty-state"><span class="big">📭</span>No posts yet. Write your first one above.</div>`;
+                    countEl.textContent = '';
+                    return;
+                }
+
+                countEl.textContent = data.length + ' post' + (data.length > 1 ? 's' : '');
+
+                listEl.innerHTML = data.map(p => `
+                <div class="post-item" data-id="${p.id}">
+                  <div class="info">
+                    <div class="title">
+                      <span class="emoji">${escapeHtml(p.image_emoji || '📄')}</span>
+                      ${escapeHtml(p.title)}
+                    </div>
+                    <div class="meta">
+                      <span>/${escapeHtml(p.slug)}</span>
+                      <span class="tag">${escapeHtml(p.tag || 'econ')}</span>
+                      <span class="views">👁 ${p.views || 0}</span>
+                    </div>
+                  </div>
+                  <div class="actions">
+                    <button class="btn-ghost btn-small" data-action="edit" data-id="${p.id}">Edit</button>
+                    <button class="btn-danger btn-small" data-action="delete" data-id="${p.id}" data-title="${escapeHtml(p.title)}">Delete</button>
+                  </div>
+                </div>
+              `).join('');
+
+                // edit
+                listEl.querySelectorAll('[data-action="edit"]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const { data: post, error } = await supabase.from('posts').select('*').eq('id',
+                            btn.dataset.id).single();
+                        if (error || !post) return;
+                        document.getElementById('edit-id').value = post.id;
+                        document.getElementById('f-title').value = post.title || '';
+                        document.getElementById('f-slug').value = post.slug || '';
+                        document.getElementById('f-tag').value = post.tag || '';
+                        document.getElementById('f-emoji').value = post.image_emoji || '';
+                        document.getElementById('f-excerpt').value = post.excerpt || '';
+                        document.getElementById('f-readtime').value = post.read_time || 5;
+                        document.getElementById('f-content').value = post.content || '';
+                        slugManuallyEdited = true;
+                        updateSlugPreview();
+                        document.getElementById('editor-heading').innerHTML =
+                            'Editing <span class="pill editing">' + escapeHtml(post.slug) + '</span>';
+                        document.getElementById('cancel-edit-btn').style.display = 'inline-block';
+                        document.getElementById('editor-panel').scrollIntoView({ behavior: 'smooth',
+                        block: 'start' });
+                    });
+                });
+
+                // delete
+                listEl.querySelectorAll('[data-action="delete"]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        if (!confirm(`Delete "${btn.dataset.title}"? This can't be undone.`)) return;
+                        const { error } = await supabase.from('posts').delete().eq('id', btn.dataset.id);
+                        if (error) { alert('Delete failed: ' + error.message); return; }
+                        loadPostList();
+                    });
+                });
+            }
+
+            loadPostList();
+        }
+
+        // ─── BOOT ──────────────────────────────────────────
+        (async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                renderDashboard();
+            } else {
+                renderLogin();
+            }
+        })();
+
+        supabase.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_OUT') renderLogin();
+        });
+    </script>
+</body>
+</html>
