@@ -8,14 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
     <style>
-        /* ── same clean white theme as before ── */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
         :root {
             --bg: #ffffff;
             --bg-card: #f8f8fa;
@@ -27,19 +27,16 @@
             --text-tertiary: #7a7a88;
             --accent: #6c3ce0;
             --accent-light: #8b6cf0;
-            --accent-glow: rgba(108, 60, 224, 0.08);
-            --cyan: #0077be;
-            --pink: #d63384;
             --radius: 14px;
             --radius-sm: 8px;
             --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --cyan: #0077be;
+            --pink: #d63384;
         }
-
         html {
             scroll-behavior: smooth;
         }
-
         body {
             background: var(--bg);
             color: var(--text);
@@ -48,12 +45,10 @@
             -webkit-font-smoothing: antialiased;
             line-height: 1.6;
         }
-
         ::selection {
             background: var(--accent);
             color: #fff;
         }
-
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -68,18 +63,15 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
         }
-
         a {
             text-decoration: none;
             color: inherit;
         }
-
         .wrap {
             max-width: 1120px;
             margin: 0 auto;
             padding: 0 24px 60px;
         }
-
         .site-header {
             padding: 28px 0 20px;
             border-bottom: 1px solid var(--border);
@@ -90,19 +82,16 @@
             justify-content: space-between;
             gap: 16px;
         }
-
         .logo-wrapper {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .logo-img {
             height: 44px;
             width: auto;
             display: block;
         }
-
         .logo-text {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -114,7 +103,6 @@
         .logo-text .dot {
             color: var(--accent);
         }
-
         .nav-links {
             display: flex;
             gap: 24px;
@@ -133,15 +121,13 @@
             color: var(--accent);
             border-bottom-color: var(--accent);
         }
-
         .header-date {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             color: var(--text-tertiary);
             margin-left: auto;
         }
-
-        @media (max-width: 700px) {
+        @media (max-width:700px) {
             .site-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -154,7 +140,6 @@
                 margin-left: 0;
             }
         }
-
         .hero-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -213,7 +198,6 @@
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .feed-header {
             display: flex;
             justify-content: space-between;
@@ -231,13 +215,11 @@
             color: var(--text-tertiary);
             font-weight: 400;
         }
-
         .grid-2col {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
         }
-
         .post-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -297,8 +279,7 @@
             display: flex;
             justify-content: space-between;
         }
-
-        @media (max-width: 760px) {
+        @media (max-width:760px) {
             .grid-2col {
                 grid-template-columns: 1fr;
                 gap: 16px;
@@ -310,7 +291,6 @@
                 font-size: 26px;
             }
         }
-
         .empty-state {
             padding: 60px 0;
             text-align: center;
@@ -346,13 +326,11 @@
                 transform: rotate(360deg);
             }
         }
-
         .article-wrap {
             max-width: 780px;
             margin: 0 auto;
             padding: 20px 0 60px;
         }
-
         .back-btn {
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
@@ -370,7 +348,6 @@
         .back-btn:hover {
             color: var(--accent);
         }
-
         .article-header {
             margin-bottom: 28px;
         }
@@ -407,7 +384,6 @@
         .article-header .article-meta .views {
             color: var(--text-tertiary);
         }
-
         .article-body {
             font-size: 18px;
             line-height: 1.85;
@@ -439,7 +415,21 @@
             border-radius: 4px;
             font-size: 0.9em;
         }
-
+        .article-body .chart-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .article-body .chart-container canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 300px;
+        }
         .share-bar {
             border-top: 1px solid var(--border);
             padding-top: 28px;
@@ -511,8 +501,7 @@
             border-color: var(--accent);
             color: var(--accent);
         }
-
-        @media (max-width: 500px) {
+        @media (max-width:500px) {
             .share-btn span {
                 display: none;
             }
@@ -524,7 +513,6 @@
                 height: 22px;
             }
         }
-
         .footer {
             max-width: 1120px;
             margin: 0 auto;
@@ -550,7 +538,6 @@
             color: var(--accent);
             font-weight: 600;
         }
-
         .fade-in {
             animation: fadeUp 0.35s ease;
         }
@@ -583,7 +570,6 @@
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         document.getElementById('year').textContent = new Date().getFullYear();
-
         const app = document.getElementById('app');
 
         function escapeHtml(str) {
@@ -606,7 +592,52 @@
             return params.get('post');
         }
 
-        // ─── SOCIAL SHARE HELPERS ───
+        // ─── CHART RENDERER ────────────────────────────────
+        function renderChartsInContainer(container) {
+            if (!container) return;
+            const chartElements = container.querySelectorAll('.chart-container');
+            chartElements.forEach(el => {
+                try {
+                    const config = JSON.parse(el.dataset.chart);
+                    const canvas = el.querySelector('canvas');
+                    if (!canvas) return;
+                    const ctx = canvas.getContext('2d');
+                    if (canvas._chart) { canvas._chart.destroy(); }
+                    const isPie = ['pie', 'doughnut', 'polarArea'].includes(config.type);
+                    const chart = new Chart(ctx, {
+                        type: config.type,
+                        data: {
+                            labels: config.labels,
+                            datasets: [{
+                                label: config.title || 'Data',
+                                data: config.data,
+                                backgroundColor: isPie ? config.colors : config.colors.map(c => c +
+                                    '80'),
+                                borderColor: isPie ? config.colors : config.colors,
+                                borderWidth: isPie ? 2 : 2,
+                                tension: config.type === 'line' ? 0.3 : 0,
+                                fill: config.type === 'line' ? true : false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+                                title: { display: !!config.title, text: config.title, font: { size: 14 } }
+                            },
+                            scales: isPie ? undefined : {
+                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                x: { grid: { display: false } }
+                            }
+                        }
+                    });
+                    canvas._chart = chart;
+                } catch (e) { console.warn('Chart render error:', e); }
+            });
+        }
+
+        // ─── SOCIAL SHARE HELPERS ──────────────────────────
         function getShareUrl(slug) {
             const base = window.location.origin + window.location.pathname;
             return base + '?post=' + encodeURIComponent(slug);
@@ -666,10 +697,8 @@
                     `<div class="empty-state"><span class="big">📭</span>no posts yet. check back soon for fresh takes.</div>`;
             } else {
                 countText = data.length + (data.length === 1 ? ' post' : ' posts');
-
                 const hero = data[0];
                 const rest = data.slice(1);
-
                 html += `
               <div class="hero-card" data-slug="${escapeHtml(hero.slug)}">
                 <span class="featured-badge">★ featured</span>
@@ -683,7 +712,6 @@
                 </div>
               </div>
             `;
-
                 if (rest.length > 0) {
                     html += `<div class="grid-2col">`;
                     rest.forEach(post => {
@@ -711,8 +739,7 @@
             <div class="wrap fade-in">
               <header class="site-header">
                 <div class="logo-wrapper">
-                  <!-- Replace with your actual logo URL -->
-                  <img src="https://ecolensblog.vercel.app/Gemini_Generated_Image_gebp3jgebp3jgebp.png" alt="ECOLENS logo" class="logo-img" />
+                  <img src="YOUR_LOGO_URL_HERE" alt="ECOLENS logo" class="logo-img" />
                   <span class="logo-text">ECOLENS<span class="dot">.</span></span>
                 </div>
                 <nav class="nav-links">
@@ -724,7 +751,6 @@
                 </nav>
                 <span class="header-date">${today}</span>
               </header>
-
               <div class="feed-header">
                 <span>Latest stories</span>
                 <span id="post-count">${countText}</span>
@@ -776,17 +802,14 @@
                 return;
             }
 
-            // Increment views
             supabase.from('posts').update({ views: (post.views || 0) + 1 }).eq('slug', slug).then(() => {});
 
-            // Render HTML content directly (trusted admin)
             const bodyHtml = post.content || '<p>(this post is still cooking…)</p>';
 
             app.innerHTML = `
             <div class="wrap fade-in">
               <div class="article-wrap">
                 <button class="back-btn" id="back-btn">← back to feed</button>
-
                 <div class="article-header">
                   <span class="article-tag">${escapeHtml(post.tag || 'econ')}</span>
                   <h1>${post.image_emoji ? post.image_emoji + ' ' : ''}${escapeHtml(post.title)}</h1>
@@ -796,11 +819,9 @@
                     <span class="views">👁 ${escapeHtml(String(post.views || 0))}</span>
                   </div>
                 </div>
-
-                <div class="article-body">
+                <div class="article-body" id="article-body">
                   ${bodyHtml}
                 </div>
-
                 <div class="share-bar">
                   <span class="share-label">Share</span>
                   <div class="share-btn-group">
@@ -832,6 +853,11 @@
 
             document.getElementById('back-btn').addEventListener('click', goHome);
 
+            // ── Render charts after content is inserted ──
+            const bodyEl = document.getElementById('article-body');
+            renderChartsInContainer(bodyEl);
+
+            // ── Share handlers ──
             document.querySelectorAll('.share-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const type = btn.dataset.share;
