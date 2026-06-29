@@ -7,16 +7,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Quill editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
     <style>
-        /* ── reset & base ── */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
         :root {
             --bg: #f5f5f7;
             --bg-card: #ffffff;
@@ -32,7 +31,6 @@
             --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-
         body {
             background: var(--bg);
             color: var(--text);
@@ -40,12 +38,10 @@
             padding: 32px 24px 60px;
             min-height: 100vh;
         }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
         }
-
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -56,7 +52,6 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-
         .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -67,7 +62,6 @@
         .logo .dot {
             color: var(--accent);
         }
-
         .user-info {
             display: flex;
             align-items: center;
@@ -89,7 +83,6 @@
             background: var(--bg-card);
             border-color: var(--border-strong);
         }
-
         .panel {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -98,7 +91,6 @@
             margin-bottom: 28px;
             box-shadow: var(--shadow);
         }
-
         .panel h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 600;
@@ -119,7 +111,6 @@
             border-radius: 999px;
             opacity: 0.8;
         }
-
         .form-group {
             margin-bottom: 18px;
         }
@@ -150,23 +141,16 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
         }
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
         .row2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 18px;
         }
-        @media (max-width: 600px) {
+        @media (max-width:600px) {
             .row2 {
                 grid-template-columns: 1fr;
             }
         }
-
-        /* Quill editor */
         #editor-container {
             min-height: 260px;
             background: #fff;
@@ -186,8 +170,6 @@
         .ql-editor {
             min-height: 200px;
         }
-
-        /* Source textarea */
         #source-editor {
             display: none;
             width: 100%;
@@ -205,7 +187,6 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
         }
-
         .editor-toolbar {
             display: flex;
             gap: 10px;
@@ -231,8 +212,6 @@
             color: #fff;
             border-color: var(--accent);
         }
-
-        /* Preview modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -252,7 +231,7 @@
         }
         .modal-content {
             background: #fff;
-            max-width: 780px;
+            max-width: 600px;
             width: 100%;
             max-height: 90vh;
             border-radius: var(--radius);
@@ -276,44 +255,59 @@
         .modal-content .close-btn:hover {
             color: var(--text);
         }
-        .modal-content .preview-body {
-            font-size: 18px;
-            line-height: 1.85;
-            color: var(--text);
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        .modal-content .preview-body h1,
-        .modal-content .preview-body h2,
-        .modal-content .preview-body h3 {
+        .modal-content .modal-title {
             font-family: 'Space Grotesk', sans-serif;
-            margin: 1.5em 0 0.5em;
+            font-size: 22px;
+            margin-bottom: 20px;
         }
-        .modal-content .preview-body ul,
-        .modal-content .preview-body ol {
-            margin: 0 0 1.5em 1.5em;
+        .modal-content .chart-config-row {
+            margin-bottom: 14px;
         }
-        .modal-content .preview-body blockquote {
-            border-left: 4px solid var(--accent);
-            padding-left: 18px;
+        .modal-content .chart-config-row label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
             color: var(--text-secondary);
-            margin: 0 0 1.5em;
+            margin-bottom: 4px;
         }
-        .modal-content .preview-body code {
-            background: #f0f0f3;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
+        .modal-content .chart-config-row input,
+        .modal-content .chart-config-row select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
         }
-        .modal-content .preview-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 28px;
-            line-height: 1.2;
-            margin-bottom: 8px;
+        .modal-content .chart-config-row input:focus,
+        .modal-content .chart-config-row select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
         }
-
+        .modal-content .chart-config-row .hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+        .modal-content .preview-chart-wrap {
+            margin: 16px 0;
+            padding: 12px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content .preview-chart-wrap canvas {
+            max-width: 100%;
+            max-height: 200px;
+        }
         .form-actions {
             display: flex;
             gap: 12px;
@@ -355,11 +349,17 @@
         .btn-danger:hover {
             background: #fcd0d0;
         }
+        .btn-success {
+            background: #27ae60;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #219a52;
+        }
         .btn-small {
             padding: 6px 14px;
             font-size: 12px;
         }
-
         .error-msg {
             color: #c0392b;
             font-family: 'JetBrains Mono', monospace;
@@ -372,7 +372,6 @@
             font-size: 13px;
             margin-top: 8px;
         }
-
         .post-item {
             display: flex;
             justify-content: space-between;
@@ -405,19 +404,16 @@
             gap: 6px;
             flex-shrink: 0;
         }
-
         .empty-state {
             padding: 30px 0;
             text-align: center;
             color: var(--text-tertiary);
         }
-
         .loading {
             color: var(--text-tertiary);
             padding: 20px 0;
             text-align: center;
         }
-
         .footer {
             margin-top: 40px;
             padding-top: 20px;
@@ -436,20 +432,41 @@
         .footer .dev-credit strong {
             color: var(--accent);
         }
+        /* chart color presets */
+        .color-presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .color-presets .cp {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: border-color var(--transition);
+        }
+        .color-presets .cp:hover {
+            border-color: var(--accent);
+        }
+        .color-presets .cp.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(108, 60, 224, 0.3);
+        }
     </style>
 </head>
 <body>
 
-    <div class="container" id="app">
-        <!-- will be rendered by JS -->
-    </div>
+    <div class="container" id="app"></div>
 
     <footer class="footer">
         <span>© <span id="year"></span> ECOLENS</span>
         <span class="dev-credit">Developed by <strong>Anoof</strong> <span class="heart">♥</span></span>
     </footer>
 
-    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js">
+    </script>
     <script type="module">
         import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -458,7 +475,6 @@
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         document.getElementById('year').textContent = new Date().getFullYear();
-
         const app = document.getElementById('app');
 
         function escapeHtml(str) {
@@ -467,13 +483,8 @@
         }
 
         function slugify(str) {
-            return String(str || '')
-                .toLowerCase()
-                .trim()
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
+            return String(str || '').toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g,
+                '-').replace(/^-|-$/g, '');
         }
 
         // ─── LOGIN ──────────────────────────────────────────
@@ -496,7 +507,6 @@
               </form>
             </div>
           `;
-
             const form = document.getElementById('login-form');
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -505,7 +515,6 @@
                 const btn = form.querySelector('button');
                 btn.disabled = true;
                 btn.textContent = 'Signing in…';
-
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -537,18 +546,15 @@
               <h2 id="editor-heading">New post <span class="pill">draft</span></h2>
               <form id="post-form">
                 <input type="hidden" id="edit-id" value="" />
-
                 <div class="form-group">
                   <label for="f-title">Title</label>
                   <input id="f-title" placeholder="Write a headline" required />
                 </div>
-
                 <div class="form-group">
                   <label for="f-slug">Slug (URL)</label>
                   <input id="f-slug" placeholder="auto-generated from title" />
                   <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);margin-top:4px;" id="slug-preview">index.html?post=…</div>
                 </div>
-
                 <div class="row2">
                   <div class="form-group">
                     <label for="f-tag">Tag</label>
@@ -559,30 +565,26 @@
                     <input id="f-emoji" placeholder="📰" maxlength="4" />
                   </div>
                 </div>
-
                 <div class="form-group">
                   <label for="f-excerpt">One‑line take (shows on feed)</label>
                   <input id="f-excerpt" placeholder="The tl;dr" maxlength="160" />
                 </div>
-
                 <div class="form-group">
                   <label for="f-readtime">Read time (minutes)</label>
                   <input id="f-readtime" type="number" min="1" max="60" value="5" style="max-width:120px;" />
                 </div>
-
                 <div class="form-group">
                   <label>Body</label>
                   <div class="editor-toolbar">
                     <button type="button" id="toggle-source-btn">Source</button>
                     <button type="button" id="preview-btn">Preview</button>
+                    <button type="button" id="chart-btn" class="btn btn-primary btn-small" style="background:var(--accent);color:#fff;">📊 Chart</button>
                   </div>
                   <div id="editor-container"></div>
                   <textarea id="source-editor" spellcheck="false"></textarea>
                 </div>
-
                 <div class="error-msg" id="form-error"></div>
                 <div class="status-msg" id="form-status"></div>
-
                 <div class="form-actions">
                   <button type="submit" class="btn btn-primary" id="save-btn">Publish</button>
                   <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display:none;">Cancel edit</button>
@@ -599,8 +601,62 @@
             <div class="modal-overlay" id="preview-modal">
               <div class="modal-content">
                 <button class="close-btn" id="close-preview">&times;</button>
-                <div id="preview-title" class="preview-title"></div>
-                <div id="preview-body" class="preview-body"></div>
+                <div id="preview-title" class="preview-title" style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:28px;line-height:1.2;margin-bottom:8px;"></div>
+                <div id="preview-body" class="preview-body" style="font-size:18px;line-height:1.85;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);"></div>
+              </div>
+            </div>
+
+            <!-- Chart Builder Modal -->
+            <div class="modal-overlay" id="chart-modal">
+              <div class="modal-content">
+                <button class="close-btn" id="close-chart-modal">&times;</button>
+                <div class="modal-title">📊 Insert Chart</div>
+                <div class="chart-config-row">
+                  <label for="chart-type">Chart Type</label>
+                  <select id="chart-type">
+                    <option value="bar">Bar</option>
+                    <option value="line">Line</option>
+                    <option value="pie">Pie</option>
+                    <option value="doughnut">Doughnut</option>
+                    <option value="polarArea">Polar Area</option>
+                    <option value="radar">Radar</option>
+                  </select>
+                </div>
+                <div class="chart-config-row">
+                  <label for="chart-title">Chart Title</label>
+                  <input id="chart-title" placeholder="e.g. Inflation Trends 2024" />
+                </div>
+                <div class="chart-config-row">
+                  <label for="chart-labels">Labels <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(comma separated)</span></label>
+                  <input id="chart-labels" placeholder="Jan, Feb, Mar, Apr" />
+                  <div class="hint">e.g. Q1, Q2, Q3, Q4</div>
+                </div>
+                <div class="chart-config-row">
+                  <label for="chart-data">Data values <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(comma separated)</span></label>
+                  <input id="chart-data" placeholder="10, 20, 15, 30" />
+                  <div class="hint">e.g. 10.5, 22.3, 18.7</div>
+                </div>
+                <div class="chart-config-row">
+                  <label>Color Scheme</label>
+                  <div class="color-presets" id="color-presets">
+                    <span class="cp active" style="background:#6c3ce0;" data-colors='["#6c3ce0","#8b6cf0","#a855f7","#c084fc","#d8b4fe"]'></span>
+                    <span class="cp" style="background:#e74c3c;" data-colors='["#e74c3c","#f39c12","#2ecc71","#3498db","#9b59b6"]'></span>
+                    <span class="cp" style="background:#2ecc71;" data-colors='["#2ecc71","#27ae60","#1abc9c","#16a085","#0e6655"]'></span>
+                    <span class="cp" style="background:#3498db;" data-colors='["#3498db","#2980b9","#5dade2","#85c1e9","#aed6f1"]'></span>
+                    <span class="cp" style="background:#f39c12;" data-colors='["#f39c12","#e67e22","#d35400","#f5b041","#f7dc6f"]'></span>
+                    <span class="cp" style="background:#e91e63;" data-colors='["#e91e63","#f06292","#ec407a","#f48fb1","#f8bbd0"]'></span>
+                  </div>
+                </div>
+                <div class="chart-config-row">
+                  <label>Preview</label>
+                  <div class="preview-chart-wrap">
+                    <canvas id="chart-preview-canvas"></canvas>
+                  </div>
+                </div>
+                <div class="form-actions" style="margin-top:12px;">
+                  <button type="button" class="btn btn-success" id="insert-chart-btn">Insert Chart</button>
+                  <button type="button" class="btn btn-secondary" id="cancel-chart-btn">Cancel</button>
+                </div>
               </div>
             </div>
           `;
@@ -623,11 +679,155 @@
             const sourceEditor = document.getElementById('source-editor');
             const toggleSourceBtn = document.getElementById('toggle-source-btn');
             const previewBtn = document.getElementById('preview-btn');
-            const modal = document.getElementById('preview-modal');
+            const previewModal = document.getElementById('preview-modal');
             const closePreview = document.getElementById('close-preview');
             const previewTitle = document.getElementById('preview-title');
             const previewBody = document.getElementById('preview-body');
 
+            // ── Chart modal elements ──
+            const chartModal = document.getElementById('chart-modal');
+            const closeChart = document.getElementById('close-chart-modal');
+            const cancelChart = document.getElementById('cancel-chart-btn');
+            const insertChartBtn = document.getElementById('insert-chart-btn');
+            const chartType = document.getElementById('chart-type');
+            const chartTitle = document.getElementById('chart-title');
+            const chartLabels = document.getElementById('chart-labels');
+            const chartData = document.getElementById('chart-data');
+            const chartPreviewCanvas = document.getElementById('chart-preview-canvas');
+            const colorPresets = document.getElementById('color-presets');
+
+            let selectedColors = ['#6c3ce0', '#8b6cf0', '#a855f7', '#c084fc', '#d8b4fe'];
+            let previewChart = null;
+
+            // ── Color presets ──
+            colorPresets.querySelectorAll('.cp').forEach(el => {
+                el.addEventListener('click', () => {
+                    colorPresets.querySelectorAll('.cp').forEach(c => c.classList.remove('active'));
+                    el.classList.add('active');
+                    selectedColors = JSON.parse(el.dataset.colors);
+                    updateChartPreview();
+                });
+            });
+
+            // ── Chart preview ──
+            function updateChartPreview() {
+                const type = chartType.value;
+                const labels = chartLabels.value.split(',').map(s => s.trim()).filter(Boolean);
+                const data = chartData.value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+                const title = chartTitle.value.trim();
+
+                if (labels.length === 0 || data.length === 0) {
+                    const ctx = chartPreviewCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, chartPreviewCanvas.width, chartPreviewCanvas.height);
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '14px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Enter labels & data to preview', chartPreviewCanvas.width / 2, chartPreviewCanvas.height /
+                        2);
+                    return;
+                }
+
+                if (previewChart) { previewChart.destroy(); }
+
+                const isPie = ['pie', 'doughnut', 'polarArea'].includes(type);
+                const datasets = [{
+                    label: title || 'Data',
+                    data: data,
+                    backgroundColor: isPie ? selectedColors.slice(0, data.length) : selectedColors.slice(0, data
+                    .length).map(c => c + '80'),
+                    borderColor: isPie ? selectedColors.slice(0, data.length) : selectedColors.slice(0, data.length),
+                    borderWidth: isPie ? 2 : 2,
+                    tension: type === 'line' ? 0.3 : 0,
+                    fill: type === 'line' ? true : false,
+                }];
+
+                const ctx = chartPreviewCanvas.getContext('2d');
+                previewChart = new Chart(ctx, {
+                    type: type,
+                    data: { labels: labels, datasets: datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+                            title: { display: !!title, text: title, font: { size: 14 } }
+                        },
+                        scales: isPie ? undefined : {
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            chartType.addEventListener('change', updateChartPreview);
+            chartLabels.addEventListener('input', updateChartPreview);
+            chartData.addEventListener('input', updateChartPreview);
+            chartTitle.addEventListener('input', updateChartPreview);
+
+            // ── Open chart modal ──
+            document.getElementById('chart-btn').addEventListener('click', () => {
+                chartModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(updateChartPreview, 100);
+            });
+
+            function closeChartModal() {
+                chartModal.classList.remove('active');
+                document.body.style.overflow = '';
+                if (previewChart) { previewChart.destroy();
+                    previewChart = null; }
+            }
+            closeChart.addEventListener('click', closeChartModal);
+            cancelChart.addEventListener('click', closeChartModal);
+            chartModal.addEventListener('click', (e) => { if (e.target === chartModal) closeChartModal(); });
+
+            // ── Insert chart ──
+            insertChartBtn.addEventListener('click', () => {
+                const type = chartType.value;
+                const title = chartTitle.value.trim();
+                const labels = chartLabels.value.split(',').map(s => s.trim()).filter(Boolean);
+                const data = chartData.value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+
+                if (labels.length === 0 || data.length === 0) {
+                    alert('Please enter both labels and data values.');
+                    return;
+                }
+
+                const chartId = 'chart-' + Date.now();
+                const chartHtml = `
+              <div class="chart-container" data-chart='${JSON.stringify({
+                type: type,
+                title: title,
+                labels: labels,
+                data: data,
+                colors: selectedColors.slice(0, data.length)
+              })}' id="${chartId}">
+                <canvas id="${chartId}-canvas"></canvas>
+              </div>
+              <p style="font-size:13px;color:#7a7a88;text-align:center;margin-top:4px;">${title || 'Chart'}</p>
+            `;
+
+                // Insert into editor
+                const range = quill.getSelection();
+                const index = range ? range.index : quill.getLength();
+                quill.clipboard.dangerouslyPasteHTML(index, chartHtml);
+
+                closeChartModal();
+
+                // Reset chart config
+                chartTitle.value = '';
+                chartLabels.value = '';
+                chartData.value = '';
+                // Reset to first color preset
+                colorPresets.querySelectorAll('.cp').forEach(c => c.classList.remove('active'));
+                colorPresets.querySelector('.cp').classList.add('active');
+                selectedColors = ['#6c3ce0', '#8b6cf0', '#a855f7', '#c084fc', '#d8b4fe'];
+                if (previewChart) { previewChart.destroy();
+                    previewChart = null; }
+            });
+
+            // ── Source toggle ──
             let sourceMode = false;
 
             function getCurrentContent() {
@@ -644,12 +844,10 @@
 
             function syncEditor() {
                 const html = getCurrentContent();
-                // Toggle visibility
                 document.getElementById('editor-container').style.display = sourceMode ? 'none' : 'block';
                 sourceEditor.style.display = sourceMode ? 'block' : 'none';
                 toggleSourceBtn.textContent = sourceMode ? 'Rich Text' : 'Source';
                 toggleSourceBtn.classList.toggle('active', sourceMode);
-                // Move content
                 if (sourceMode) {
                     sourceEditor.value = quill.root.innerHTML;
                 } else {
@@ -662,27 +860,73 @@
                 syncEditor();
             });
 
-            // Preview
+            // ── Preview ──
             function showPreview() {
                 const title = document.getElementById('f-title').value.trim() || 'Untitled';
                 const content = getCurrentContent();
                 previewTitle.textContent = title;
                 previewBody.innerHTML = content || '<p><em>No content yet.</em></p>';
-                modal.classList.add('active');
+                // Render any charts in preview
+                previewBody.querySelectorAll('.chart-container').forEach(el => {
+                    renderChartInElement(el);
+                });
+                previewModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
 
             previewBtn.addEventListener('click', showPreview);
             closePreview.addEventListener('click', () => {
-                modal.classList.remove('active');
+                previewModal.classList.remove('active');
                 document.body.style.overflow = '';
             });
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal) {
+                    previewModal.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             });
+
+            // ── Chart renderer for preview ──
+            function renderChartInElement(el) {
+                try {
+                    const config = JSON.parse(el.dataset.chart);
+                    const canvas = el.querySelector('canvas');
+                    if (!canvas) return;
+                    const ctx = canvas.getContext('2d');
+                    // Clear any existing chart
+                    if (canvas._chart) { canvas._chart.destroy(); }
+                    const isPie = ['pie', 'doughnut', 'polarArea'].includes(config.type);
+                    const chart = new Chart(ctx, {
+                        type: config.type,
+                        data: {
+                            labels: config.labels,
+                            datasets: [{
+                                label: config.title || 'Data',
+                                data: config.data,
+                                backgroundColor: isPie ? config.colors : config.colors.map(c => c +
+                                    '80'),
+                                borderColor: isPie ? config.colors : config.colors,
+                                borderWidth: isPie ? 2 : 2,
+                                tension: config.type === 'line' ? 0.3 : 0,
+                                fill: config.type === 'line' ? true : false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+                                title: { display: !!config.title, text: config.title, font: { size: 14 } }
+                            },
+                            scales: isPie ? undefined : {
+                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                                x: { grid: { display: false } }
+                            }
+                        }
+                    });
+                    canvas._chart = chart;
+                } catch (e) { console.warn('Chart render error:', e); }
+            }
 
             // ── Logout ──
             document.getElementById('logout-btn').addEventListener('click', async () => {
@@ -784,8 +1028,7 @@
                 sourceEditor.value = '';
                 document.getElementById('form-error').textContent = '';
                 document.getElementById('form-status').textContent = '';
-                // Close preview if open
-                modal.classList.remove('active');
+                previewModal.classList.remove('active');
                 document.body.style.overflow = '';
             }
 
@@ -798,7 +1041,8 @@
                     .order('created_at', { ascending: false });
 
                 if (error) {
-                    listEl.innerHTML = `<div class="empty-state">couldn't load posts: ${escapeHtml(error.message)}</div>`;
+                    listEl.innerHTML =
+                    `<div class="empty-state">couldn't load posts: ${escapeHtml(error.message)}</div>`;
                     return;
                 }
                 if (!data || data.length === 0) {
@@ -831,10 +1075,8 @@
                         document.getElementById('f-emoji').value = post.image_emoji || '';
                         document.getElementById('f-excerpt').value = post.excerpt || '';
                         document.getElementById('f-readtime').value = post.read_time || 5;
-                        // Set content in both editors
                         quill.root.innerHTML = post.content || '';
                         sourceEditor.value = post.content || '';
-                        // If source mode is active, we need to sync the textarea
                         if (sourceMode) {
                             sourceEditor.value = post.content || '';
                         } else {
