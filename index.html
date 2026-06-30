@@ -447,6 +447,14 @@
         .article-body p {
             margin-bottom: 26px;
         }
+        .article-body .article-inline-image {
+            width: 100%;
+            max-height: 460px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            display: block;
+            margin: 32px 0;
+        }
 
         /* ── share bar ── */
         .share-bar {
@@ -626,6 +634,18 @@
                 }
             } catch (e) { /* fall back to defaults if settings table isn't set up yet */ }
             document.getElementById('site-name-footer').textContent = siteSettings.site_name;
+
+            try {
+                const { data: cats } = await supabase.from('categories').select('slug, name');
+                (cats || []).forEach(c => { categoryNames[c.slug] = c.name; });
+            } catch (e) { /* categories table may not exist yet */ }
+        }
+
+        // slug -> display name for category badges
+        const categoryNames = {};
+        function categoryLabel(slug) {
+            if (!slug) return 'econ';
+            return categoryNames[slug] || slug;
         }
 
         function escapeHtml(str) {
@@ -646,6 +666,23 @@
         function getSlugFromUrl() {
             const params = new URLSearchParams(window.location.search);
             return params.get('post');
+        }
+
+        function getCategoryFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('category');
+        }
+
+        function parseInlineContent(content) {
+            // Splits a post body into paragraphs, recognizing [image:URL] lines as standalone images
+            return (content || '').split(/\n\s*\n/).filter(Boolean).map(block => {
+                const trimmed = block.trim();
+                const imgMatch = trimmed.match(/^\[image:(.+)\]$/);
+                if (imgMatch) {
+                    return `<img class="article-inline-image" src="${escapeHtml(imgMatch[1].trim())}" alt="" />`;
+                }
+                return `<p>${escapeHtml(trimmed)}</p>`;
+            }).join('') || '<p>(this post is still cooking…)</p>';
         }
 
         // ─── SOCIAL SHARE HELPERS ───
@@ -714,10 +751,13 @@
 
         // ─── RENDER FEED ──────────────────────────────────
         async function renderFeed() {
-            const { data, error } = await supabase
+            const category = getCategoryFromUrl();
+            let query = supabase
                 .from('posts')
                 .select('slug, title, excerpt, tag, image_emoji, image_url, read_time, views, created_at')
                 .order('created_at', { ascending: false });
+            if (category) query = query.eq('tag', category);
+            const { data, error } = await query;
 
             let html = '';
             let countText = '';
@@ -726,8 +766,9 @@
                 html =
                     `<div class="empty-state"><span class="big">⚠️</span>couldn't load feed — ${escapeHtml(error.message)}</div>`;
             } else if (!data || data.length === 0) {
-                html =
-                    `<div class="empty-state"><span class="big">📭</span>no posts yet. check back soon for fresh takes.</div>`;
+                html = category
+                    ? `<div class="empty-state"><span class="big">📭</span>no posts in ${escapeHtml(categoryLabel(category))} yet.</div>`
+                    : `<div class="empty-state"><span class="big">📭</span>no posts yet. check back soon for fresh takes.</div>`;
             } else {
                 countText = data.length + (data.length === 1 ? ' post' : ' posts');
 
@@ -743,7 +784,7 @@
                 <div class="hero-title">${escapeHtml(hero.title)}</div>
                 <div class="hero-excerpt">${escapeHtml(hero.excerpt || '')}</div>
                 <div class="hero-meta">
-                  <span>${escapeHtml(hero.tag || 'econ')}</span>
+                  <span>${escapeHtml(categoryLabel(hero.tag))}</span>
                   <span>${escapeHtml(String(hero.read_time || 5))} min read</span>
                   <span>${timeAgo(hero.created_at)}</span>
                 </div>
@@ -758,7 +799,7 @@
                   <div class="post-card" data-slug="${escapeHtml(post.slug)}">
                     ${post.image_url ? `<img class="card-image" src="${escapeHtml(post.image_url)}" alt="" />` :
                         (post.image_emoji ? `<div class="card-emoji">${escapeHtml(post.image_emoji)}</div>` : '')}
-                    <span class="card-tag">${escapeHtml(post.tag || 'econ')}</span>
+                    <span class="card-tag">${escapeHtml(categoryLabel(post.tag))}</span>
                     <div class="card-title">${escapeHtml(post.title)}</div>
                     <div class="card-excerpt">${escapeHtml(post.excerpt || '')}</div>
                     <div class="card-meta">
@@ -781,7 +822,8 @@
               ${renderHeader(`<span class="header-date">${today}</span>`)}
 
               <div class="feed-header">
-                <span>Latest stories</span>
+                <span>${category ? escapeHtml(categoryLabel(category)) + ' · <a href="' +
+                    window.location.pathname + '" id="clear-category-link">all stories</a>' : 'Latest stories'}</span>
                 <span id="post-count">${countText}</span>
               </div>
               <div id="feed-list">
@@ -789,6 +831,15 @@
               </div>
             </div>
           `;
+
+            const clearLink = document.getElementById('clear-category-link');
+            if (clearLink) {
+                clearLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    history.pushState({}, '', window.location.pathname);
+                    route();
+                });
+            }
 
             // Attach click handlers for SPA navigation
             document.querySelectorAll('.hero-card, .post-card').forEach(el => {
@@ -835,8 +886,7 @@
             // Increment views
             supabase.from('posts').update({ views: (post.views || 0) + 1 }).eq('slug', slug).then(() => {});
 
-            const paragraphs = (post.content || '').split(/\n\s*\n/).filter(Boolean)
-                .map(p => `<p>${escapeHtml(p)}</p>`).join('') || '<p>(this post is still cooking…)</p>';
+            const paragraphs = parseInlineContent(post.content);
 
             app.innerHTML = `
             <div class="wrap fade-in">
@@ -845,7 +895,7 @@
 
                 <div class="article-header">
                   ${post.image_url ? `<img class="article-cover" src="${escapeHtml(post.image_url)}" alt="" />` : ''}
-                  <span class="article-tag">${escapeHtml(post.tag || 'econ')}</span>
+                  <span class="article-tag">${escapeHtml(categoryLabel(post.tag))}</span>
                   <h1>${(!post.image_url && post.image_emoji) ? post.image_emoji + ' ' : ''}${escapeHtml(post.title)}</h1>
                   <div class="article-meta">
                     <span>${timeAgo(post.created_at)}</span>
