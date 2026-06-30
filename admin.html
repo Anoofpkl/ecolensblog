@@ -1152,6 +1152,91 @@
         .add-new-btn {
             margin-bottom: 18px;
         }
+
+        .comment-row {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .comment-row:last-child {
+            border-bottom: none;
+        }
+        .comment-row .c-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .comment-row .c-name {
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+        .comment-row .c-post {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        .comment-row .c-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 2px 9px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+        }
+        .comment-row .c-status.approved {
+            background: var(--lime-glow);
+            color: var(--lime);
+        }
+        .comment-row .c-body {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .comment-row .c-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .admin-row:last-child {
+            border-bottom: none;
+        }
+        .admin-row .a-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        .admin-row .a-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .admin-row .a-name {
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+        .admin-row .a-email {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: var(--text-tertiary);
+        }
     </style>
 </head>
 <body>
@@ -1250,8 +1335,16 @@
             if (selectedSlug) tagSelect.value = selectedSlug;
         }
 
+        // ─── ADMIN CHECK ────────────────────────────────────
+        async function isCurrentUserAdmin(email) {
+            if (!email) return false;
+            const { data, error } = await supabase.from('admins').select('email').eq('email', email).maybeSingle();
+            if (error) return false;
+            return !!data;
+        }
+
         // ─── LOGIN ──────────────────────────────────────────
-        function renderLogin() {
+        function renderLogin(message) {
             document.body.classList.remove('is-dashboard');
             app.innerHTML = `
             <div class="login-container fade-in">
@@ -1266,15 +1359,33 @@
                   <label for="password">Password</label>
                   <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
 
-                  <div class="error-msg" id="login-error"></div>
+                  <div class="error-msg" id="login-error">${escapeHtml(message || '')}</div>
 
                   <button type="submit" class="btn-primary" id="login-btn">
                     <span>Sign in</span>
                   </button>
                 </form>
+                <p style="margin-top:16px;font-size:12.5px;color:var(--text-tertiary);">No account yet? <a href="#" id="show-signup" style="color:var(--accent);text-decoration:underline;">Request access</a></p>
+                <form id="signup-form" style="display:none;margin-top:12px;">
+                  <label for="su-name">Your name</label>
+                  <input id="su-name" placeholder="Jane Doe" required />
+                  <label for="su-email">Email</label>
+                  <input id="su-email" type="email" placeholder="you@example.com" required />
+                  <label for="su-password">Password</label>
+                  <input id="su-password" type="password" placeholder="••••••••" required />
+                  <div class="error-msg" id="signup-error"></div>
+                  <div class="status-msg" id="signup-status"></div>
+                  <button type="submit" class="btn-ghost" id="signup-btn" style="width:100%;">Create account</button>
+                  <p style="margin-top:10px;font-size:11.5px;color:var(--text-tertiary);">Creating an account doesn't grant admin access by itself — an existing admin still needs to approve you on the Admins screen.</p>
+                </form>
               </div>
             </div>
           `;
+
+            document.getElementById('show-signup').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('signup-form').style.display = 'block';
+            });
 
             const form = document.getElementById('login-form');
             form.addEventListener('submit', async (e) => {
@@ -1296,7 +1407,45 @@
                     btn.innerHTML = '<span>Sign in</span>';
                     return;
                 }
+
+                const admin = await isCurrentUserAdmin(email);
+                if (!admin) {
+                    await supabase.auth.signOut();
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Sign in</span>';
+                    errEl.textContent = "Your account exists but hasn't been approved as an admin yet. Ask an existing admin to add your email on the Admins screen.";
+                    return;
+                }
+
                 await renderDashboard();
+            });
+
+            document.getElementById('signup-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('signup-btn');
+                const errEl = document.getElementById('signup-error');
+                const statusEl = document.getElementById('signup-status');
+                errEl.textContent = '';
+                statusEl.textContent = '';
+                btn.disabled = true;
+                btn.textContent = 'Creating…';
+
+                const name = document.getElementById('su-name').value.trim();
+                const email = document.getElementById('su-email').value.trim();
+                const password = document.getElementById('su-password').value;
+
+                const { error } = await supabase.auth.signUp({
+                    email, password, options: { data: { name } }
+                });
+
+                btn.disabled = false;
+                btn.textContent = 'Create account';
+
+                if (error) {
+                    errEl.textContent = error.message;
+                    return;
+                }
+                statusEl.textContent = '✓ Account created. Ask an existing admin to approve your email on the Admins screen, then sign in above.';
             });
         }
 
@@ -1305,8 +1454,16 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { renderLogin(); return; }
 
+            const admin = await isCurrentUserAdmin(session.user.email);
+            if (!admin) {
+                await supabase.auth.signOut();
+                renderLogin("Your account hasn't been approved as an admin yet.");
+                return;
+            }
+
             document.body.classList.add('is-dashboard');
             const initials = getInitials(session.user.email);
+            const sessionName = session.user.user_metadata?.name || session.user.email.split('@')[0];
 
             app.innerHTML = `
             <div class="wp-shell fade-in">
@@ -1314,7 +1471,9 @@
                 <div class="wp-sidebar-brand">ECOLENS<span class="dot">.</span></div>
                 <nav class="wp-nav">
                   <button class="wp-nav-item active" data-screen="posts" type="button">📝 <span class="label">Posts</span></button>
+                  <button class="wp-nav-item" data-screen="comments" type="button">💬 <span class="label">Comments</span></button>
                   <button class="wp-nav-item" data-screen="categories" type="button">🏷️ <span class="label">Categories</span></button>
+                  <button class="wp-nav-item" data-screen="admins" type="button">👤 <span class="label">Admins</span></button>
                   <button class="wp-nav-item" data-screen="settings" type="button">⚙️ <span class="label">Settings</span></button>
                 </nav>
                 <div class="wp-sidebar-footer">
@@ -1335,7 +1494,9 @@
 
                 <div class="wp-content">
                   <div class="wp-screen active" id="screen-posts"></div>
+                  <div class="wp-screen" id="screen-comments"></div>
                   <div class="wp-screen" id="screen-categories"></div>
+                  <div class="wp-screen" id="screen-admins"></div>
                   <div class="wp-screen" id="screen-settings"></div>
                 </div>
               </div>
@@ -1343,7 +1504,7 @@
           `;
 
             // ── sidebar navigation ──
-            const screenTitles = { posts: 'Posts', categories: 'Categories', settings: 'Settings' };
+            const screenTitles = { posts: 'Posts', comments: 'Comments', categories: 'Categories', admins: 'Admins', settings: 'Settings' };
             document.querySelectorAll('.wp-nav-item[data-screen]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.wp-nav-item[data-screen]').forEach(b => b.classList.remove('active'));
@@ -1351,6 +1512,8 @@
                     document.querySelectorAll('.wp-screen').forEach(s => s.classList.remove('active'));
                     document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
                     document.getElementById('wp-screen-title').textContent = screenTitles[btn.dataset.screen];
+                    if (btn.dataset.screen === 'comments') loadComments();
+                    if (btn.dataset.screen === 'admins') loadAdmins();
                 });
             });
 
@@ -1394,6 +1557,11 @@
                     <div class="field">
                       <label for="f-emoji">Emoji <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(fallback if no image)</span></label>
                       <input id="f-emoji" placeholder="📰" maxlength="4" />
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-author">Author name <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown on the post)</span></label>
+                      <input id="f-author" placeholder="Defaults to your name" />
                     </div>
 
                     <div class="field full">
@@ -1455,6 +1623,17 @@
             </div>
           `;
 
+            document.getElementById('screen-comments').innerHTML = `
+            <div class="fade-in panel">
+              <div class="panel-header">
+                <h2>Comments</h2>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);" id="comment-count"></span>
+              </div>
+              <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">New comments arrive unapproved. Approve to publish them on the live post, or delete to remove them.</p>
+              <div id="comments-list"><div class="loading-state"><span class="spinner"></span> loading…</div></div>
+            </div>
+          `;
+
             document.getElementById('screen-categories').innerHTML = `
             <div class="fade-in panel">
               <div class="panel-header">
@@ -1466,6 +1645,29 @@
                 <input id="new-category-name" placeholder="New category name" style="flex:1;background:var(--bg-secondary);border:1px solid var(--border-strong);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;" />
                 <button type="button" class="add-nav-link-btn" id="add-category-btn">+ Add</button>
               </div>
+            </div>
+          `;
+
+            document.getElementById('screen-admins').innerHTML = `
+            <div class="fade-in panel">
+              <div class="panel-header">
+                <h2>Admins</h2>
+              </div>
+              <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Anyone listed here can sign in to this dashboard, as long as they've also created an account on the login screen with the same email. Removing someone here revokes their admin access immediately.</p>
+              <div id="admins-list"></div>
+              <div class="form-grid" style="margin-top:14px;">
+                <div class="field">
+                  <label for="new-admin-name">Name</label>
+                  <input id="new-admin-name" placeholder="Jane Doe" />
+                </div>
+                <div class="field">
+                  <label for="new-admin-email">Email</label>
+                  <input id="new-admin-email" type="email" placeholder="jane@example.com" />
+                </div>
+              </div>
+              <div class="error-msg" id="admin-error"></div>
+              <div class="status-msg" id="admin-status"></div>
+              <button type="button" class="add-nav-link-btn" id="add-admin-btn" style="margin-top:6px;">+ Add admin</button>
             </div>
           `;
 
@@ -1533,6 +1735,8 @@
                 updateSlugPreview();
             });
             updateSlugPreview();
+
+            document.getElementById('f-author').placeholder = sessionName;
 
             // ── cover image upload ──
             let currentImageUrl = '';
@@ -1648,6 +1852,7 @@
                     tag: document.getElementById('f-tag').value.trim() || 'econ',
                     image_emoji: document.getElementById('f-emoji').value.trim() || '📰',
                     image_url: currentImageUrl || null,
+                    author_name: document.getElementById('f-author').value.trim() || sessionName,
                     excerpt: document.getElementById('f-excerpt').value.trim(),
                     read_time: parseInt(document.getElementById('f-readtime').value, 10) || 5,
                     content: document.getElementById('f-content').value.trim(),
@@ -1703,7 +1908,7 @@
 
                 const { data, error } = await supabase
                     .from('posts')
-                    .select('id, title, slug, tag, views, created_at, image_emoji')
+                    .select('id, title, slug, tag, views, created_at, image_emoji, author_name')
                     .order('created_at', { ascending: false });
 
                 if (error) {
@@ -1726,6 +1931,7 @@
                     <thead>
                       <tr>
                         <th>Title</th>
+                        <th>Author</th>
                         <th>Category</th>
                         <th>Views</th>
                         <th>Date</th>
@@ -1746,6 +1952,7 @@
                               <a href="index.html?post=${encodeURIComponent(p.slug)}" target="_blank" rel="noopener" style="color:var(--text-tertiary);">View</a>
                             </div>
                           </td>
+                          <td class="date-cell">${escapeHtml(p.author_name || '—')}</td>
                           <td><span class="cat-pill">${escapeHtml(p.tag || 'econ')}</span></td>
                           <td class="views-cell">👁 ${p.views || 0}</td>
                           <td class="date-cell">${new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
@@ -1767,6 +1974,7 @@
                         document.getElementById('f-slug').value = post.slug || '';
                         loadCategoryOptions(post.tag || '');
                         document.getElementById('f-emoji').value = post.image_emoji || '';
+                        document.getElementById('f-author').value = post.author_name || '';
                         document.getElementById('f-excerpt').value = post.excerpt || '';
                         document.getElementById('f-readtime').value = post.read_time || 5;
                         document.getElementById('f-content').value = post.content || '';
@@ -1797,6 +2005,139 @@
 
             loadPostList();
             initSettingsPanel();
+        }
+
+        // ─── COMMENTS ───────────────────────────────────────
+        async function loadComments() {
+            const listEl = document.getElementById('comments-list');
+            const countEl = document.getElementById('comment-count');
+            if (!listEl) return;
+
+            const { data, error } = await supabase
+                .from('comments')
+                .select('id, name, body, approved, created_at, post_id, posts(title, slug)')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<div class="empty-state">couldn't load comments: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+            if (!data || data.length === 0) {
+                listEl.innerHTML = `<div class="empty-state"><span class="big">💬</span>No comments yet.</div>`;
+                countEl.textContent = '';
+                return;
+            }
+
+            countEl.textContent = data.length + ' comment' + (data.length > 1 ? 's' : '');
+
+            listEl.innerHTML = data.map(c => `
+              <div class="comment-row" data-id="${c.id}">
+                <div class="c-head">
+                  <span class="c-name">${escapeHtml(c.name)}</span>
+                  <span class="c-post">on ${escapeHtml(c.posts?.title || 'a post')}</span>
+                  <span class="c-status ${c.approved ? 'approved' : ''}">${c.approved ? 'approved' : 'pending'}</span>
+                </div>
+                <div class="c-body">${escapeHtml(c.body)}</div>
+                <div class="c-actions">
+                  ${c.approved
+                    ? `<button type="button" class="btn-ghost btn-small" data-action="unapprove" data-id="${c.id}">Unapprove</button>`
+                    : `<button type="button" class="btn-outline-accent btn-small" data-action="approve" data-id="${c.id}">Approve</button>`}
+                  <button type="button" class="btn-danger btn-small" data-action="delete-comment" data-id="${c.id}">Delete</button>
+                </div>
+              </div>
+            `).join('');
+
+            listEl.querySelectorAll('[data-action="approve"]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    await supabase.from('comments').update({ approved: true }).eq('id', btn.dataset.id);
+                    loadComments();
+                });
+            });
+            listEl.querySelectorAll('[data-action="unapprove"]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    await supabase.from('comments').update({ approved: false }).eq('id', btn.dataset.id);
+                    loadComments();
+                });
+            });
+            listEl.querySelectorAll('[data-action="delete-comment"]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('Delete this comment?')) return;
+                    await supabase.from('comments').delete().eq('id', btn.dataset.id);
+                    loadComments();
+                });
+            });
+        }
+
+        // ─── ADMINS ─────────────────────────────────────────
+        async function loadAdmins() {
+            const listEl = document.getElementById('admins-list');
+            if (!listEl) return;
+
+            const { data, error } = await supabase.from('admins').select('email, name, added_at').order('added_at',
+                { ascending: true });
+
+            if (error) {
+                listEl.innerHTML = `<div class="empty-state">couldn't load admins: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+
+            const { data: { session } } = await supabase.auth.getSession();
+            const currentEmail = session?.user?.email;
+
+            listEl.innerHTML = (data || []).map(a => `
+              <div class="admin-row" data-email="${escapeHtml(a.email)}">
+                <div class="a-avatar">${escapeHtml((a.name || a.email).slice(0, 2))}</div>
+                <div class="a-info">
+                  <div class="a-name">${escapeHtml(a.name || a.email)}</div>
+                  <div class="a-email">${escapeHtml(a.email)}</div>
+                </div>
+                ${a.email === currentEmail
+                    ? `<span class="upload-status">you</span>`
+                    : `<button type="button" class="btn-danger btn-small" data-remove-admin="${escapeHtml(a.email)}">Remove</button>`}
+              </div>
+            `).join('') || '<div class="empty-state">No admins yet.</div>';
+
+            listEl.querySelectorAll('[data-remove-admin]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm(`Remove admin access for ${btn.dataset.removeAdmin}?`)) return;
+                    await supabase.from('admins').delete().eq('email', btn.dataset.removeAdmin);
+                    loadAdmins();
+                });
+            });
+
+            const addBtn = document.getElementById('add-admin-btn');
+            if (addBtn && !addBtn.dataset.bound) {
+                addBtn.dataset.bound = '1';
+                addBtn.addEventListener('click', async () => {
+                    const nameInput = document.getElementById('new-admin-name');
+                    const emailInput = document.getElementById('new-admin-email');
+                    const errEl = document.getElementById('admin-error');
+                    const statusEl = document.getElementById('admin-status');
+                    errEl.textContent = '';
+                    statusEl.textContent = '';
+
+                    const name = nameInput.value.trim();
+                    const email = emailInput.value.trim().toLowerCase();
+                    if (!name || !email) {
+                        errEl.textContent = 'Name and email are required.';
+                        return;
+                    }
+
+                    const { error } = await supabase.from('admins').insert({ email, name });
+                    if (error) {
+                        errEl.textContent = error.code === '23505'
+                            ? 'That email is already an admin.'
+                            : error.message;
+                        return;
+                    }
+
+                    statusEl.textContent = `✓ Added. They can sign in once they've created an account with ${email} on the login screen.`;
+                    setTimeout(() => { statusEl.textContent = ''; }, 5000);
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    loadAdmins();
+                });
+            }
         }
 
         // ─── SITE SETTINGS ──────────────────────────────────
