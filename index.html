@@ -505,6 +505,10 @@
         .article-header .article-meta .views {
             color: var(--text-tertiary);
         }
+        .article-header .article-meta .author {
+            color: var(--text);
+            font-weight: 500;
+        }
 
         .article-body {
             font-size: 18px;
@@ -608,6 +612,124 @@
                 width: 22px;
                 height: 22px;
             }
+        }
+
+        /* ── comments ── */
+        .comments-section {
+            border-top: 1px solid var(--border);
+            padding-top: 32px;
+            margin-top: 32px;
+        }
+        .comments-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .comments-section h2 .count {
+            color: var(--text-tertiary);
+            font-weight: 400;
+            font-size: 15px;
+        }
+        .comment-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            margin-bottom: 28px;
+        }
+        .comment-form .cf-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .comment-form input,
+        .comment-form textarea {
+            background: var(--bg);
+            border: 1px solid var(--border-strong);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            flex: 1;
+            min-width: 160px;
+            transition: border-color var(--transition);
+        }
+        .comment-form input:focus,
+        .comment-form textarea:focus {
+            border-color: var(--accent);
+        }
+        .comment-form textarea {
+            width: 100%;
+            min-height: 90px;
+            resize: vertical;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .comment-form button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: opacity var(--transition);
+        }
+        .comment-form button:hover {
+            opacity: 0.9;
+        }
+        .comment-form button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .comment-form .cf-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            margin-top: 10px;
+        }
+        .comment-form .cf-status.error {
+            color: var(--pink);
+        }
+        .comment-form .cf-status.ok {
+            color: var(--lime);
+        }
+        .comment-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+        .comment-item .c-head {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .comment-item .c-name {
+            font-weight: 600;
+            font-size: 14.5px;
+        }
+        .comment-item .c-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: var(--text-tertiary);
+        }
+        .comment-item .c-body {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .comments-empty {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            padding: 8px 0 4px;
         }
 
         /* ── footer ── */
@@ -954,6 +1076,103 @@
             });
         }
 
+        // ─── COMMENTS ─────────────────────────────────────
+        async function loadComments(postId) {
+            const listEl = document.getElementById('comments-list');
+            const countEl = document.getElementById('comments-count');
+            if (!listEl) return;
+
+            const { data, error } = await supabase
+                .from('comments')
+                .select('name, body, created_at')
+                .eq('post_id', postId)
+                .eq('approved', true)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<div class="comments-empty">couldn't load comments.</div>`;
+                return;
+            }
+            if (!data || data.length === 0) {
+                listEl.innerHTML = `<div class="comments-empty">No comments yet — be the first to weigh in.</div>`;
+                if (countEl) countEl.textContent = '';
+                return;
+            }
+
+            if (countEl) countEl.textContent = '(' + data.length + ')';
+            listEl.innerHTML = data.map(c => `
+              <div class="comment-item">
+                <div class="c-head">
+                  <span class="c-name">${escapeHtml(c.name)}</span>
+                  <span class="c-time">${timeAgo(c.created_at)}</span>
+                </div>
+                <div class="c-body">${escapeHtml(c.body)}</div>
+              </div>
+            `).join('');
+        }
+
+        function renderCommentsSection(postId) {
+            return `
+            <div class="comments-section">
+              <h2>Comments <span class="count" id="comments-count"></span></h2>
+
+              <form class="comment-form" id="comment-form">
+                <div class="cf-row">
+                  <input id="cf-name" placeholder="Your name" required />
+                  <input id="cf-email" type="email" placeholder="Email (optional, not shown)" />
+                </div>
+                <textarea id="cf-body" placeholder="Share your take…" required></textarea>
+                <button type="submit" id="cf-submit">Post comment</button>
+                <div class="cf-status" id="cf-status"></div>
+              </form>
+
+              <div id="comments-list"><div class="comments-empty">loading…</div></div>
+            </div>
+          `;
+        }
+
+        function bindCommentForm(postId) {
+            const form = document.getElementById('comment-form');
+            if (!form) return;
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('cf-submit');
+                const statusEl = document.getElementById('cf-status');
+                const name = document.getElementById('cf-name').value.trim();
+                const email = document.getElementById('cf-email').value.trim();
+                const body = document.getElementById('cf-body').value.trim();
+
+                statusEl.textContent = '';
+                statusEl.className = 'cf-status';
+
+                if (!name || !body) {
+                    statusEl.textContent = 'Name and comment are required.';
+                    statusEl.classList.add('error');
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.textContent = 'Posting…';
+
+                const { error } = await supabase.from('comments').insert({
+                    post_id: postId, name, email: email || null, body, approved: false,
+                });
+
+                btn.disabled = false;
+                btn.textContent = 'Post comment';
+
+                if (error) {
+                    statusEl.textContent = 'Could not post comment: ' + error.message;
+                    statusEl.classList.add('error');
+                    return;
+                }
+
+                statusEl.textContent = '✓ Thanks! Your comment is awaiting approval and will appear once reviewed.';
+                statusEl.classList.add('ok');
+                form.reset();
+            });
+        }
+
         // ─── RENDER ARTICLE ──────────────────────────────
         async function renderArticle(slug) {
             app.innerHTML = `
@@ -999,6 +1218,7 @@
                   <span class="article-tag">${escapeHtml(categoryLabel(post.tag))}</span>
                   <h1>${(!post.image_url && post.image_emoji) ? post.image_emoji + ' ' : ''}${escapeHtml(post.title)}</h1>
                   <div class="article-meta">
+                    ${post.author_name ? `<span class="author">${escapeHtml(post.author_name)}</span>` : ''}
                     <span>${timeAgo(post.created_at)}</span>
                     <span>· ${escapeHtml(String(post.read_time || 5))} min read</span>
                     <span class="views">👁 ${escapeHtml(String(post.views || 0))}</span>
@@ -1035,6 +1255,8 @@
                     </button>
                   </div>
                 </div>
+
+                ${renderCommentsSection(post.id)}
               </div>
             </div>
           `;
@@ -1065,6 +1287,10 @@
                     }
                 });
             });
+
+            // ── comments ──
+            bindCommentForm(post.id);
+            loadComments(post.id);
 
             document.title = post.title + ' — ' + siteSettings.site_name;
             window.scrollTo(0, 0);
