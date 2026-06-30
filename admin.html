@@ -3,470 +3,862 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ECOLENS — admin</title>
+    <title>admin · THE SPREAD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * {
+        /* ── reset & base ── */
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+
         :root {
-            --bg: #f5f5f7;
-            --bg-card: #ffffff;
-            --border: #d0d0d8;
-            --border-strong: #b0b0b8;
-            --text: #111116;
-            --text-secondary: #3a3a44;
-            --text-tertiary: #7a7a88;
-            --accent: #6c3ce0;
-            --accent-light: #8b6cf0;
-            --radius: 14px;
-            --radius-sm: 8px;
-            --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            --bg: #0a0a0e;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.12);
+            --text: #f0ede8;
+            --text-secondary: rgba(240, 237, 232, 0.65);
+            --text-tertiary: rgba(240, 237, 232, 0.35);
+            --accent: #7c5cff;
+            --accent-glow: rgba(124, 92, 255, 0.25);
+            --lime: #c9ff3d;
+            --lime-glow: rgba(201, 255, 61, 0.15);
+            --coral: #ff6b4a;
+            --coral-glow: rgba(255, 107, 74, 0.15);
+            --cyan: #5bd8ff;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Inter', -apple-system, sans-serif;
-            padding: 32px 24px 60px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
         }
-        .container {
-            max-width: 900px;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-strong);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ── utilities ── */
+        .wrap {
+            max-width: 920px;
             margin: 0 auto;
+            padding: 32px 24px 80px;
         }
+
+        /* ── topbar ── */
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
+            padding-bottom: 28px;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 32px;
+            margin-bottom: 36px;
             flex-wrap: wrap;
             gap: 12px;
         }
-        .logo {
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: 28px;
-            letter-spacing: -0.03em;
-            color: var(--text);
+            font-size: 22px;
+            letter-spacing: -0.02em;
         }
-        .logo .dot {
-            color: var(--accent);
+        .brand .dot {
+            color: var(--lime);
         }
-        .user-info {
+
+        .brand-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: var(--accent);
+            color: #fff;
+            padding: 3px 12px;
+            border-radius: 999px;
+            opacity: 0.85;
+        }
+
+        .topbar-actions {
             display: flex;
             align-items: center;
             gap: 16px;
-            font-size: 14px;
-            color: var(--text-secondary);
         }
-        .user-info button {
-            background: none;
-            border: 1px solid var(--border);
+
+        .back-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color var(--transition);
+            padding: 6px 12px;
             border-radius: 8px;
-            padding: 6px 14px;
-            font-size: 13px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all var(--transition);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
         }
-        .user-info button:hover {
+        .back-link:hover {
+            color: var(--text);
+            border-color: var(--border);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .back-link svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ── login ── */
+        .login-container {
+            max-width: 400px;
+            margin: 60px auto 0;
+        }
+
+        .login-card {
             background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 44px 36px 36px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--lime), var(--accent));
+            opacity: 0.6;
+        }
+
+        .login-card .icon-wrap {
+            width: 52px;
+            height: 52px;
+            background: rgba(124, 92, 255, 0.12);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .login-card h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .login-card .sub {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .login-card form label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .login-card form input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            padding: 13px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 18px;
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .login-card form input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .login-card form input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .error-msg {
+            color: var(--coral);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            min-height: 18px;
+            margin: -4px 0 14px;
+        }
+        .status-msg {
+            color: var(--lime);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            min-height: 18px;
+            margin: -4px 0 14px;
+        }
+
+        /* ── buttons ── */
+        button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 14px;
+            padding: 12px 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button:focus-visible {
+            outline: 2px solid var(--lime);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--lime);
+            color: #0a0a0e;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 20px var(--lime-glow);
+        }
+        .btn-primary:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 28px var(--lime-glow);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
             border-color: var(--border-strong);
         }
+
+        .btn-danger {
+            background: rgba(255, 107, 74, 0.08);
+            color: var(--coral);
+            border: 1px solid rgba(255, 107, 74, 0.2);
+        }
+        .btn-danger:hover {
+            background: rgba(255, 107, 74, 0.16);
+            border-color: var(--coral);
+            box-shadow: 0 0 20px var(--coral-glow);
+        }
+
+        .btn-small {
+            font-size: 12px;
+            padding: 7px 14px;
+            border-radius: 8px;
+        }
+
+        .btn-outline-accent {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        .btn-outline-accent:hover {
+            background: rgba(124, 92, 255, 0.1);
+        }
+
+        .btn-icon {
+            padding: 8px 10px;
+            font-size: 16px;
+            line-height: 1;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: 8px;
+        }
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        /* ── dashboard ── */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .dash-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        .dash-header h1 span {
+            color: var(--lime);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            padding: 6px 8px 6px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+        }
+        .user-badge .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        /* ── panel ── */
         .panel {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 28px 32px;
-            margin-bottom: 28px;
+            padding: 32px;
+            margin-bottom: 32px;
             box-shadow: var(--shadow);
+            transition: border-color var(--transition);
         }
-        .panel h2 {
+        .panel:hover {
+            border-color: var(--border-strong);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-header h2 {
             font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
             font-weight: 600;
-            font-size: 20px;
-            margin-bottom: 22px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        .panel h2 .pill {
+
+        .panel-header .pill {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             text-transform: uppercase;
+            letter-spacing: 0.08em;
             background: var(--accent);
             color: #fff;
-            padding: 2px 14px;
+            padding: 3px 12px;
             border-radius: 999px;
-            opacity: 0.8;
+            opacity: 0.85;
         }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group label {
-            display: block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+        .panel-header .pill.draft {
+            background: rgba(255, 255, 255, 0.08);
             color: var(--text-secondary);
-            margin-bottom: 5px;
         }
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            background: #fff;
-            transition: border-color var(--transition);
-            outline: none;
+        .panel-header .pill.editing {
+            background: var(--lime);
+            color: #0a0a0e;
         }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
-        }
-        .row2 {
+
+        /* ── form ── */
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            gap: 16px 24px;
         }
-        @media (max-width:600px) {
-            .row2 {
+        @media (max-width: 600px) {
+            .form-grid {
                 grid-template-columns: 1fr;
             }
         }
-        #editor-container {
-            min-height: 260px;
-            background: #fff;
-            border-radius: var(--radius-sm);
-        }
-        .ql-toolbar.ql-snow {
-            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-            border-color: var(--border);
-            background: #fafafa;
-        }
-        .ql-container.ql-snow {
-            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-            border-color: var(--border);
-            font-size: 15px;
-            font-family: 'Inter', sans-serif;
-        }
-        .ql-editor {
-            min-height: 200px;
-        }
-        #source-editor {
-            display: none;
-            width: 100%;
-            min-height: 260px;
-            padding: 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            background: #fafafa;
-            resize: vertical;
-            outline: none;
-        }
-        #source-editor:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
-        }
-        .editor-toolbar {
+
+        .field {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 5px;
         }
-        .editor-toolbar button {
-            padding: 6px 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: #fff;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all var(--transition);
-            color: var(--text-secondary);
+        .field.full {
+            grid-column: 1 / -1;
         }
-        .editor-toolbar button:hover {
-            background: var(--bg-card);
-            border-color: var(--border-strong);
-        }
-        .editor-toolbar button.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-content {
-            background: #fff;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            border-radius: var(--radius);
-            padding: 32px 36px;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-        .modal-content .close-btn {
-            position: sticky;
-            top: 0;
-            float: right;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-tertiary);
-            padding: 4px 8px;
-            line-height: 1;
-        }
-        .modal-content .close-btn:hover {
-            color: var(--text);
-        }
-        .modal-content .modal-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
-        .modal-content .chart-config-row {
-            margin-bottom: 14px;
-        }
-        .modal-content .chart-config-row label {
-            display: block;
+
+        .field label {
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.07em;
             color: var(--text-secondary);
-            margin-bottom: 4px;
         }
-        .modal-content .chart-config-row input,
-        .modal-content .chart-config-row select {
-            width: 100%;
-            padding: 8px 12px;
+
+        .field input,
+        .field textarea,
+        .field select {
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            outline: none;
-        }
-        .modal-content .chart-config-row input:focus,
-        .modal-content .chart-config-row select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(108, 60, 224, 0.08);
-        }
-        .modal-content .chart-config-row .hint {
-            font-size: 12px;
-            color: var(--text-tertiary);
-            margin-top: 2px;
-        }
-        .modal-content .preview-chart-wrap {
-            margin: 16px 0;
-            padding: 12px;
-            background: #fafafa;
+            font-size: 14.5px;
+            padding: 12px 15px;
             border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            width: 100%;
         }
-        .modal-content .preview-chart-wrap canvas {
-            max-width: 100%;
-            max-height: 200px;
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+        .field textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        .field input[type="number"] {
+            max-width: 140px;
+        }
+
+        .slug-preview {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--lime);
+            padding: 4px 0 2px;
+            word-break: break-all;
+        }
+
         .form-actions {
             display: flex;
             gap: 12px;
-            margin-top: 18px;
+            align-items: center;
             flex-wrap: wrap;
-        }
-        .btn {
-            padding: 10px 24px;
-            border-radius: var(--radius-sm);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-        .btn:active {
-            transform: scale(0.97);
-        }
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: var(--accent-light);
-            box-shadow: 0 4px 12px rgba(108, 60, 224, 0.25);
-        }
-        .btn-secondary {
-            background: #e8e8f0;
-            color: var(--text-secondary);
-        }
-        .btn-secondary:hover {
-            background: #d8d8e0;
-        }
-        .btn-danger {
-            background: #fce4e4;
-            color: #c0392b;
-        }
-        .btn-danger:hover {
-            background: #fcd0d0;
-        }
-        .btn-success {
-            background: #27ae60;
-            color: #fff;
-        }
-        .btn-success:hover {
-            background: #219a52;
-        }
-        .btn-small {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-        .error-msg {
-            color: #c0392b;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
             margin-top: 8px;
         }
-        .status-msg {
-            color: #27ae60;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            margin-top: 8px;
+        .form-actions .btn-primary {
+            width: auto;
+            min-width: 140px;
         }
+        .form-actions .btn-ghost {
+            width: auto;
+        }
+
+        /* ── post list ── */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .post-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
-            gap: 12px;
+            gap: 16px;
+            padding: 16px 18px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            transition: background var(--transition);
+            border: 1px solid transparent;
         }
-        .post-item:last-child {
-            border-bottom: none;
+        .post-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--border);
         }
+
         .post-item .info {
-            flex: 1;
             min-width: 0;
+            flex: 1;
         }
         .post-item .info .title {
+            font-family: 'Space Grotesk', sans-serif;
             font-weight: 600;
             font-size: 15px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .post-item .info .title .emoji {
+            font-size: 18px;
         }
         .post-item .info .meta {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: var(--text-tertiary);
+            font-size: 11.5px;
+            color: var(--text-secondary);
             display: flex;
+            align-items: center;
             gap: 12px;
             flex-wrap: wrap;
         }
+        .post-item .info .meta .tag {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1px 10px;
+            border-radius: 999px;
+            color: var(--text-secondary);
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .post-item .info .meta .views {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .post-item .actions {
             display: flex;
             gap: 6px;
             flex-shrink: 0;
         }
+
         .empty-state {
-            padding: 30px 0;
-            text-align: center;
-            color: var(--text-tertiary);
-        }
-        .loading {
-            color: var(--text-tertiary);
-            padding: 20px 0;
-            text-align: center;
-        }
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 13px;
+            padding: 28px 0 12px;
+            text-align: center;
+        }
+        .empty-state .big {
+            font-size: 38px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .loading-state {
             color: var(--text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 20px 0;
             display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 12px;
         }
-        .footer .heart {
-            color: #d63384;
+        .loading-state .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 999px;
+            animation: spin 0.7s linear infinite;
         }
-        .footer .dev-credit strong {
-            color: var(--accent);
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
-        /* chart color presets */
-        .color-presets {
+
+        /* ── responsive tweaks ── */
+        @media (max-width: 640px) {
+            .wrap {
+                padding: 20px 16px 60px;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .brand-group {
+                justify-content: space-between;
+            }
+            .topbar-actions {
+                justify-content: flex-start;
+            }
+            .dash-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .user-badge {
+                align-self: flex-start;
+            }
+            .panel {
+                padding: 20px 16px;
+            }
+            .login-card {
+                padding: 32px 20px 28px;
+            }
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-actions .btn-primary {
+                min-width: unset;
+            }
+            .post-item {
+                flex-wrap: wrap;
+                padding: 14px 12px;
+            }
+            .post-item .actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* ── image upload ── */
+        .image-upload {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .image-preview {
+            width: 84px;
+            height: 84px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-strong);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            font-size: 26px;
+            color: var(--text-tertiary);
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .image-upload-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .file-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all var(--transition);
+            width: fit-content;
+        }
+        .file-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+            background: rgba(124, 92, 255, 0.08);
+        }
+        .file-btn input[type="file"] {
+            display: none;
+        }
+        .remove-image-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--coral);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            width: fit-content;
+            opacity: 0.85;
+        }
+        .remove-image-btn:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        .upload-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        /* ── site settings panel ── */
+        .nav-link-row {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .nav-link-row input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+        }
+        .nav-link-row input.nl-label {
+            flex: 1;
+            min-width: 0;
+        }
+        .nav-link-row input.nl-href {
+            flex: 1.4;
+            min-width: 0;
+        }
+        .nav-link-row button {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-strong);
+            background: rgba(255, 107, 74, 0.08);
+            color: var(--coral);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-link-row button:hover {
+            background: rgba(255, 107, 74, 0.16);
+        }
+        .add-nav-link-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            background: rgba(124, 92, 255, 0.08);
+            border: 1px solid rgba(124, 92, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
             margin-top: 4px;
         }
-        .color-presets .cp {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            cursor: pointer;
-            transition: border-color var(--transition);
+        .add-nav-link-btn:hover {
+            background: rgba(124, 92, 255, 0.16);
         }
-        .color-presets .cp:hover {
-            border-color: var(--accent);
+
+        /* ── anims ── */
+        .fade-in {
+            animation: fadeIn 0.3s ease;
         }
-        .color-presets .cp.active {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(108, 60, 224, 0.3);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="app"></div>
+    <div class="wrap">
+        <header class="topbar">
+            <div class="brand-group">
+                <div class="brand">THE SPREAD<span class="dot">.</span></div>
+                <span class="brand-badge">admin</span>
+            </div>
+            <div class="topbar-actions">
+                <a class="back-link" href="index.html">
+                    <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                    view site
+                </a>
+            </div>
+        </header>
 
-    <footer class="footer">
-        <span>© <span id="year"></span> ECOLENS</span>
-        <span class="dev-credit">Developed by <strong>Anoof</strong> <span class="heart">♥</span></span>
-    </footer>
+        <div id="app"><div class="loading-state"><span class="spinner"></span> checking session…</div></div>
+    </div>
 
-    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js">
-    </script>
     <script type="module">
         import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -474,7 +866,6 @@
         const SUPABASE_KEY = 'sb_publishable_2aMsITRDeO8MfFHiWIkNzQ_JENBP08R';
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        document.getElementById('year').textContent = new Date().getFullYear();
         const app = document.getElementById('app');
 
         function escapeHtml(str) {
@@ -483,48 +874,82 @@
         }
 
         function slugify(str) {
-            return String(str || '').toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g,
-                '-').replace(/^-|-$/g, '');
+            return String(str || '')
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        function getInitials(email) {
+            if (!email) return '?';
+            const parts = email.split('@')[0].split(/[._-]/);
+            return parts.map(p => p[0]).join('').slice(0, 2).toUpperCase() || '?';
+        }
+
+        // ─── STORAGE UPLOAD ─────────────────────────────────
+        const STORAGE_BUCKET = 'post-images';
+
+        async function uploadToStorage(file, folder) {
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+            const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(path, file, {
+                cacheControl: '3600',
+                upsert: false,
+            });
+            if (error) throw error;
+            const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+            return data.publicUrl;
         }
 
         // ─── LOGIN ──────────────────────────────────────────
         function renderLogin() {
             app.innerHTML = `
-            <div style="max-width:400px;margin:60px auto;background:var(--bg-card);padding:36px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);">
-              <h1 style="font-family:'Space Grotesk',sans-serif;font-size:26px;">Sign in</h1>
-              <p style="color:var(--text-secondary);margin-bottom:24px;">Authenticate to manage posts.</p>
-              <form id="login-form">
-                <div class="form-group">
+            <div class="login-container fade-in">
+              <div class="login-card">
+                <div class="icon-wrap">✍️</div>
+                <h1>Welcome back</h1>
+                <p class="sub">Sign in to publish and manage your stories.</p>
+                <form id="login-form">
                   <label for="email">Email</label>
-                  <input id="email" type="email" placeholder="you@example.com" required />
-                </div>
-                <div class="form-group">
+                  <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+
                   <label for="password">Password</label>
-                  <input id="password" type="password" placeholder="••••••••" required />
-                </div>
-                <div class="error-msg" id="login-error"></div>
-                <button type="submit" class="btn btn-primary" style="width:100%;">Sign in</button>
-              </form>
+                  <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+
+                  <div class="error-msg" id="login-error"></div>
+
+                  <button type="submit" class="btn-primary" id="login-btn">
+                    <span>Sign in</span>
+                  </button>
+                </form>
+              </div>
             </div>
           `;
+
             const form = document.getElementById('login-form');
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const err = document.getElementById('login-error');
-                err.textContent = '';
-                const btn = form.querySelector('button');
+                const btn = document.getElementById('login-btn');
+                const errEl = document.getElementById('login-error');
+                errEl.textContent = '';
                 btn.disabled = true;
-                btn.textContent = 'Signing in…';
+                btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> signing in…';
+
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value;
+
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
+
                 if (error) {
-                    err.textContent = error.message;
+                    errEl.textContent = error.message;
                     btn.disabled = false;
-                    btn.textContent = 'Sign in';
+                    btn.innerHTML = '<span>Sign in</span>';
                     return;
                 }
-                renderDashboard();
+                await renderDashboard();
             });
         }
 
@@ -533,408 +958,155 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { renderLogin(); return; }
 
+            const initials = getInitials(session.user.email);
+
             app.innerHTML = `
-            <div class="topbar">
-              <span class="logo">ECOLENS<span class="dot">.</span></span>
-              <div class="user-info">
-                ${escapeHtml(session.user.email)}
-                <button id="logout-btn">Sign out</button>
+            <div class="fade-in">
+              <div class="dash-header">
+                <h1>Write <span>·</span> manage</h1>
+                <div class="user-badge">
+                  ${escapeHtml(session.user.email)}
+                  <span class="avatar">${escapeHtml(initials)}</span>
+                  <button class="btn-icon btn-small" id="logout-btn" title="Sign out" style="font-size:14px;">✕</button>
+                </div>
               </div>
-            </div>
 
-            <div class="panel">
-              <h2 id="editor-heading">New post <span class="pill">draft</span></h2>
-              <form id="post-form">
-                <input type="hidden" id="edit-id" value="" />
-                <div class="form-group">
-                  <label for="f-title">Title</label>
-                  <input id="f-title" placeholder="Write a headline" required />
+              <!-- editor panel -->
+              <div class="panel" id="editor-panel">
+                <div class="panel-header">
+                  <h2 id="editor-heading">
+                    New post
+                    <span class="pill draft">draft</span>
+                  </h2>
                 </div>
-                <div class="form-group">
-                  <label for="f-slug">Slug (URL)</label>
-                  <input id="f-slug" placeholder="auto-generated from title" />
-                  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);margin-top:4px;" id="slug-preview">index.html?post=…</div>
-                </div>
-                <div class="row2">
-                  <div class="form-group">
-                    <label for="f-tag">Tag</label>
-                    <input id="f-tag" placeholder="e.g. inflation" />
-                  </div>
-                  <div class="form-group">
-                    <label for="f-emoji">Emoji</label>
-                    <input id="f-emoji" placeholder="📰" maxlength="4" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="f-excerpt">One‑line take (shows on feed)</label>
-                  <input id="f-excerpt" placeholder="The tl;dr" maxlength="160" />
-                </div>
-                <div class="form-group">
-                  <label for="f-readtime">Read time (minutes)</label>
-                  <input id="f-readtime" type="number" min="1" max="60" value="5" style="max-width:120px;" />
-                </div>
-                <div class="form-group">
-                  <label>Body</label>
-                  <div class="editor-toolbar">
-                    <button type="button" id="toggle-source-btn">Source</button>
-                    <button type="button" id="preview-btn">Preview</button>
-                    <button type="button" id="chart-btn" class="btn btn-primary btn-small" style="background:var(--accent);color:#fff;">📊 Chart</button>
-                  </div>
-                  <div id="editor-container"></div>
-                  <textarea id="source-editor" spellcheck="false"></textarea>
-                </div>
-                <div class="error-msg" id="form-error"></div>
-                <div class="status-msg" id="form-status"></div>
-                <div class="form-actions">
-                  <button type="submit" class="btn btn-primary" id="save-btn">Publish</button>
-                  <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display:none;">Cancel edit</button>
-                </div>
-              </form>
-            </div>
 
-            <div class="panel">
-              <h2>Published posts</h2>
-              <div id="post-list"><div class="loading">loading…</div></div>
-            </div>
+                <form id="post-form">
+                  <input type="hidden" id="edit-id" value="" />
 
-            <!-- Preview Modal -->
-            <div class="modal-overlay" id="preview-modal">
-              <div class="modal-content">
-                <button class="close-btn" id="close-preview">&times;</button>
-                <div id="preview-title" class="preview-title" style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:28px;line-height:1.2;margin-bottom:8px;"></div>
-                <div id="preview-body" class="preview-body" style="font-size:18px;line-height:1.85;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);"></div>
+                  <div class="form-grid">
+                    <div class="field full">
+                      <label for="f-title">Title</label>
+                      <input id="f-title" placeholder="Write a headline that pulls people in" required />
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-slug">Slug <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(URL)</span></label>
+                      <input id="f-slug" placeholder="auto-generated from title" />
+                      <div class="slug-preview" id="slug-preview">index.html?post=…</div>
+                    </div>
+
+                    <div class="field">
+                      <label for="f-tag">Tag</label>
+                      <input id="f-tag" placeholder="e.g. inflation, jobs" />
+                    </div>
+
+                    <div class="field">
+                      <label for="f-emoji">Emoji <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(fallback if no image)</span></label>
+                      <input id="f-emoji" placeholder="📰" maxlength="4" />
+                    </div>
+
+                    <div class="field full">
+                      <label>Cover image</label>
+                      <div class="image-upload">
+                        <div class="image-preview" id="image-preview">🖼</div>
+                        <div class="image-upload-actions">
+                          <label class="file-btn">
+                            📤 <span id="upload-btn-label">Upload image</span>
+                            <input type="file" id="f-image" accept="image/*" />
+                          </label>
+                          <button type="button" class="remove-image-btn" id="remove-image-btn" style="display:none;">Remove image</button>
+                          <span class="upload-status" id="upload-status"></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-excerpt">One-line take <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shows on feed)</span></label>
+                      <input id="f-excerpt" placeholder="The tl;dr that makes someone click" maxlength="160" />
+                    </div>
+
+                    <div class="field">
+                      <label for="f-readtime">Read time <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(min)</span></label>
+                      <input id="f-readtime" type="number" min="1" max="60" value="5" />
+                    </div>
+
+                    <div class="field full">
+                      <label for="f-content">Body</label>
+                      <textarea id="f-content" placeholder="Write like you're explaining it to a smart friend. Separate paragraphs with a blank line."></textarea>
+                    </div>
+                  </div>
+
+                  <div class="error-msg" id="form-error"></div>
+                  <div class="status-msg" id="form-status"></div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="save-btn">Publish</button>
+                    <button type="button" class="btn-ghost" id="cancel-edit-btn" style="display:none;">Cancel edit</button>
+                  </div>
+                </form>
               </div>
-            </div>
 
-            <!-- Chart Builder Modal -->
-            <div class="modal-overlay" id="chart-modal">
-              <div class="modal-content">
-                <button class="close-btn" id="close-chart-modal">&times;</button>
-                <div class="modal-title">📊 Insert Chart</div>
-                <div class="chart-config-row">
-                  <label for="chart-type">Chart Type</label>
-                  <select id="chart-type">
-                    <option value="bar">Bar</option>
-                    <option value="line">Line</option>
-                    <option value="pie">Pie</option>
-                    <option value="doughnut">Doughnut</option>
-                    <option value="polarArea">Polar Area</option>
-                    <option value="radar">Radar</option>
-                  </select>
+              <!-- site settings -->
+              <div class="panel" id="settings-panel">
+                <div class="panel-header">
+                  <h2>Site settings</h2>
                 </div>
-                <div class="chart-config-row">
-                  <label for="chart-title">Chart Title</label>
-                  <input id="chart-title" placeholder="e.g. Inflation Trends 2024" />
-                </div>
-                <div class="chart-config-row">
-                  <label for="chart-labels">Labels <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(comma separated)</span></label>
-                  <input id="chart-labels" placeholder="Jan, Feb, Mar, Apr" />
-                  <div class="hint">e.g. Q1, Q2, Q3, Q4</div>
-                </div>
-                <div class="chart-config-row">
-                  <label for="chart-data">Data values <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(comma separated)</span></label>
-                  <input id="chart-data" placeholder="10, 20, 15, 30" />
-                  <div class="hint">e.g. 10.5, 22.3, 18.7</div>
-                </div>
-                <div class="chart-config-row">
-                  <label>Color Scheme</label>
-                  <div class="color-presets" id="color-presets">
-                    <span class="cp active" style="background:#6c3ce0;" data-colors='["#6c3ce0","#8b6cf0","#a855f7","#c084fc","#d8b4fe"]'></span>
-                    <span class="cp" style="background:#e74c3c;" data-colors='["#e74c3c","#f39c12","#2ecc71","#3498db","#9b59b6"]'></span>
-                    <span class="cp" style="background:#2ecc71;" data-colors='["#2ecc71","#27ae60","#1abc9c","#16a085","#0e6655"]'></span>
-                    <span class="cp" style="background:#3498db;" data-colors='["#3498db","#2980b9","#5dade2","#85c1e9","#aed6f1"]'></span>
-                    <span class="cp" style="background:#f39c12;" data-colors='["#f39c12","#e67e22","#d35400","#f5b041","#f7dc6f"]'></span>
-                    <span class="cp" style="background:#e91e63;" data-colors='["#e91e63","#f06292","#ec407a","#f48fb1","#f8bbd0"]'></span>
+                <form id="settings-form">
+                  <div class="form-grid">
+                    <div class="field full">
+                      <label for="s-sitename">Site name</label>
+                      <input id="s-sitename" placeholder="ECOLENS" />
+                    </div>
+
+                    <div class="field full">
+                      <label>Logo</label>
+                      <div class="image-upload">
+                        <div class="image-preview" id="logo-preview">🅰</div>
+                        <div class="image-upload-actions">
+                          <label class="file-btn">
+                            📤 <span id="logo-upload-btn-label">Upload logo</span>
+                            <input type="file" id="s-logo" accept="image/*" />
+                          </label>
+                          <button type="button" class="remove-image-btn" id="remove-logo-btn" style="display:none;">Remove logo</button>
+                          <span class="upload-status" id="logo-upload-status"></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field full">
+                      <label>Nav links <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown in the header)</span></label>
+                      <div id="nav-links-list"></div>
+                      <button type="button" class="add-nav-link-btn" id="add-nav-link-btn">+ Add link</button>
+                    </div>
                   </div>
-                </div>
-                <div class="chart-config-row">
-                  <label>Preview</label>
-                  <div class="preview-chart-wrap">
-                    <canvas id="chart-preview-canvas"></canvas>
+
+                  <div class="error-msg" id="settings-error"></div>
+                  <div class="status-msg" id="settings-status"></div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="settings-save-btn">Save settings</button>
                   </div>
+                </form>
+              </div>
+
+              <!-- posts list -->
+              <div class="panel">
+                <div class="panel-header">
+                  <h2>Published posts</h2>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);" id="post-count"></span>
                 </div>
-                <div class="form-actions" style="margin-top:12px;">
-                  <button type="button" class="btn btn-success" id="insert-chart-btn">Insert Chart</button>
-                  <button type="button" class="btn btn-secondary" id="cancel-chart-btn">Cancel</button>
-                </div>
+                <div id="post-list"><div class="loading-state"><span class="spinner"></span> loading…</div></div>
               </div>
             </div>
           `;
 
-            // ── Quill ──
-            const quill = new Quill('#editor-container', {
-                theme: 'snow',
-                placeholder: 'Write your post here…',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        ['link', 'blockquote', 'code-block'],
-                        ['clean']
-                    ]
-                }
-            });
-
-            const sourceEditor = document.getElementById('source-editor');
-            const toggleSourceBtn = document.getElementById('toggle-source-btn');
-            const previewBtn = document.getElementById('preview-btn');
-            const previewModal = document.getElementById('preview-modal');
-            const closePreview = document.getElementById('close-preview');
-            const previewTitle = document.getElementById('preview-title');
-            const previewBody = document.getElementById('preview-body');
-
-            // ── Chart modal elements ──
-            const chartModal = document.getElementById('chart-modal');
-            const closeChart = document.getElementById('close-chart-modal');
-            const cancelChart = document.getElementById('cancel-chart-btn');
-            const insertChartBtn = document.getElementById('insert-chart-btn');
-            const chartType = document.getElementById('chart-type');
-            const chartTitle = document.getElementById('chart-title');
-            const chartLabels = document.getElementById('chart-labels');
-            const chartData = document.getElementById('chart-data');
-            const chartPreviewCanvas = document.getElementById('chart-preview-canvas');
-            const colorPresets = document.getElementById('color-presets');
-
-            let selectedColors = ['#6c3ce0', '#8b6cf0', '#a855f7', '#c084fc', '#d8b4fe'];
-            let previewChart = null;
-
-            // ── Color presets ──
-            colorPresets.querySelectorAll('.cp').forEach(el => {
-                el.addEventListener('click', () => {
-                    colorPresets.querySelectorAll('.cp').forEach(c => c.classList.remove('active'));
-                    el.classList.add('active');
-                    selectedColors = JSON.parse(el.dataset.colors);
-                    updateChartPreview();
-                });
-            });
-
-            // ── Chart preview ──
-            function updateChartPreview() {
-                const type = chartType.value;
-                const labels = chartLabels.value.split(',').map(s => s.trim()).filter(Boolean);
-                const data = chartData.value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
-                const title = chartTitle.value.trim();
-
-                if (labels.length === 0 || data.length === 0) {
-                    const ctx = chartPreviewCanvas.getContext('2d');
-                    ctx.clearRect(0, 0, chartPreviewCanvas.width, chartPreviewCanvas.height);
-                    ctx.fillStyle = '#aaa';
-                    ctx.font = '14px Inter';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('Enter labels & data to preview', chartPreviewCanvas.width / 2, chartPreviewCanvas.height /
-                        2);
-                    return;
-                }
-
-                if (previewChart) { previewChart.destroy(); }
-
-                const isPie = ['pie', 'doughnut', 'polarArea'].includes(type);
-                const datasets = [{
-                    label: title || 'Data',
-                    data: data,
-                    backgroundColor: isPie ? selectedColors.slice(0, data.length) : selectedColors.slice(0, data
-                    .length).map(c => c + '80'),
-                    borderColor: isPie ? selectedColors.slice(0, data.length) : selectedColors.slice(0, data.length),
-                    borderWidth: isPie ? 2 : 2,
-                    tension: type === 'line' ? 0.3 : 0,
-                    fill: type === 'line' ? true : false,
-                }];
-
-                const ctx = chartPreviewCanvas.getContext('2d');
-                previewChart = new Chart(ctx, {
-                    type: type,
-                    data: { labels: labels, datasets: datasets },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
-                            title: { display: !!title, text: title, font: { size: 14 } }
-                        },
-                        scales: isPie ? undefined : {
-                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
-            }
-
-            chartType.addEventListener('change', updateChartPreview);
-            chartLabels.addEventListener('input', updateChartPreview);
-            chartData.addEventListener('input', updateChartPreview);
-            chartTitle.addEventListener('input', updateChartPreview);
-
-            // ── Open chart modal ──
-            document.getElementById('chart-btn').addEventListener('click', () => {
-                chartModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                setTimeout(updateChartPreview, 100);
-            });
-
-            function closeChartModal() {
-                chartModal.classList.remove('active');
-                document.body.style.overflow = '';
-                if (previewChart) { previewChart.destroy();
-                    previewChart = null; }
-            }
-            closeChart.addEventListener('click', closeChartModal);
-            cancelChart.addEventListener('click', closeChartModal);
-            chartModal.addEventListener('click', (e) => { if (e.target === chartModal) closeChartModal(); });
-
-            // ── Insert chart ──
-            insertChartBtn.addEventListener('click', () => {
-                const type = chartType.value;
-                const title = chartTitle.value.trim();
-                const labels = chartLabels.value.split(',').map(s => s.trim()).filter(Boolean);
-                const data = chartData.value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
-
-                if (labels.length === 0 || data.length === 0) {
-                    alert('Please enter both labels and data values.');
-                    return;
-                }
-
-                const chartId = 'chart-' + Date.now();
-                const chartHtml = `
-              <div class="chart-container" data-chart='${JSON.stringify({
-                type: type,
-                title: title,
-                labels: labels,
-                data: data,
-                colors: selectedColors.slice(0, data.length)
-              })}' id="${chartId}">
-                <canvas id="${chartId}-canvas"></canvas>
-              </div>
-              <p style="font-size:13px;color:#7a7a88;text-align:center;margin-top:4px;">${title || 'Chart'}</p>
-            `;
-
-                // Insert into editor
-                const range = quill.getSelection();
-                const index = range ? range.index : quill.getLength();
-                quill.clipboard.dangerouslyPasteHTML(index, chartHtml);
-
-                closeChartModal();
-
-                // Reset chart config
-                chartTitle.value = '';
-                chartLabels.value = '';
-                chartData.value = '';
-                // Reset to first color preset
-                colorPresets.querySelectorAll('.cp').forEach(c => c.classList.remove('active'));
-                colorPresets.querySelector('.cp').classList.add('active');
-                selectedColors = ['#6c3ce0', '#8b6cf0', '#a855f7', '#c084fc', '#d8b4fe'];
-                if (previewChart) { previewChart.destroy();
-                    previewChart = null; }
-            });
-
-            // ── Source toggle ──
-            let sourceMode = false;
-
-            function getCurrentContent() {
-                return sourceMode ? sourceEditor.value : quill.root.innerHTML;
-            }
-
-            function setContent(html) {
-                if (sourceMode) {
-                    sourceEditor.value = html;
-                } else {
-                    quill.root.innerHTML = html;
-                }
-            }
-
-            function syncEditor() {
-                const html = getCurrentContent();
-                document.getElementById('editor-container').style.display = sourceMode ? 'none' : 'block';
-                sourceEditor.style.display = sourceMode ? 'block' : 'none';
-                toggleSourceBtn.textContent = sourceMode ? 'Rich Text' : 'Source';
-                toggleSourceBtn.classList.toggle('active', sourceMode);
-                if (sourceMode) {
-                    sourceEditor.value = quill.root.innerHTML;
-                } else {
-                    quill.root.innerHTML = sourceEditor.value;
-                }
-            }
-
-            toggleSourceBtn.addEventListener('click', () => {
-                sourceMode = !sourceMode;
-                syncEditor();
-            });
-
-            // ── Preview ──
-            function showPreview() {
-                const title = document.getElementById('f-title').value.trim() || 'Untitled';
-                const content = getCurrentContent();
-                previewTitle.textContent = title;
-                previewBody.innerHTML = content || '<p><em>No content yet.</em></p>';
-                // Render any charts in preview
-                previewBody.querySelectorAll('.chart-container').forEach(el => {
-                    renderChartInElement(el);
-                });
-                previewModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            previewBtn.addEventListener('click', showPreview);
-            closePreview.addEventListener('click', () => {
-                previewModal.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-            previewModal.addEventListener('click', (e) => {
-                if (e.target === previewModal) {
-                    previewModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-
-            // ── Chart renderer for preview ──
-            function renderChartInElement(el) {
-                try {
-                    const config = JSON.parse(el.dataset.chart);
-                    const canvas = el.querySelector('canvas');
-                    if (!canvas) return;
-                    const ctx = canvas.getContext('2d');
-                    // Clear any existing chart
-                    if (canvas._chart) { canvas._chart.destroy(); }
-                    const isPie = ['pie', 'doughnut', 'polarArea'].includes(config.type);
-                    const chart = new Chart(ctx, {
-                        type: config.type,
-                        data: {
-                            labels: config.labels,
-                            datasets: [{
-                                label: config.title || 'Data',
-                                data: config.data,
-                                backgroundColor: isPie ? config.colors : config.colors.map(c => c +
-                                    '80'),
-                                borderColor: isPie ? config.colors : config.colors,
-                                borderWidth: isPie ? 2 : 2,
-                                tension: config.type === 'line' ? 0.3 : 0,
-                                fill: config.type === 'line' ? true : false,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            plugins: {
-                                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
-                                title: { display: !!config.title, text: config.title, font: { size: 14 } }
-                            },
-                            scales: isPie ? undefined : {
-                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                                x: { grid: { display: false } }
-                            }
-                        }
-                    });
-                    canvas._chart = chart;
-                } catch (e) { console.warn('Chart render error:', e); }
-            }
-
-            // ── Logout ──
+            // ── logout ──
             document.getElementById('logout-btn').addEventListener('click', async () => {
                 await supabase.auth.signOut();
                 renderLogin();
             });
 
-            // ── Slug logic ──
+            // ── slug logic ──
             const slugInput = document.getElementById('f-slug');
             const titleInput = document.getElementById('f-title');
             const slugPreview = document.getElementById('slug-preview');
@@ -944,6 +1116,7 @@
                 const val = slugInput.value || slugify(titleInput.value) || '…';
                 slugPreview.textContent = 'index.html?post=' + val;
             }
+
             titleInput.addEventListener('input', () => {
                 if (!slugManuallyEdited) slugInput.value = slugify(titleInput.value);
                 updateSlugPreview();
@@ -955,10 +1128,46 @@
             });
             updateSlugPreview();
 
-            // ── Cancel edit ──
-            document.getElementById('cancel-edit-btn').addEventListener('click', resetForm);
+            // ── cover image upload ──
+            let currentImageUrl = '';
+            let pendingImageFile = null;
+            const imagePreview = document.getElementById('image-preview');
+            const removeImageBtn = document.getElementById('remove-image-btn');
+            const uploadStatus = document.getElementById('upload-status');
 
-            // ── Submit ──
+            function renderImagePreview() {
+                if (pendingImageFile) {
+                    imagePreview.innerHTML = `<img src="${URL.createObjectURL(pendingImageFile)}" />`;
+                    removeImageBtn.style.display = 'block';
+                } else if (currentImageUrl) {
+                    imagePreview.innerHTML = `<img src="${currentImageUrl}" />`;
+                    removeImageBtn.style.display = 'block';
+                } else {
+                    imagePreview.innerHTML = '🖼';
+                    removeImageBtn.style.display = 'none';
+                }
+            }
+
+            document.getElementById('f-image').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                pendingImageFile = file;
+                uploadStatus.textContent = '';
+                renderImagePreview();
+            });
+
+            removeImageBtn.addEventListener('click', () => {
+                pendingImageFile = null;
+                currentImageUrl = '';
+                document.getElementById('f-image').value = '';
+                uploadStatus.textContent = '';
+                renderImagePreview();
+            });
+
+            // ── cancel edit ──
+            document.getElementById('cancel-edit-btn').addEventListener('click', () => resetForm());
+
+            // ── submit ──
             document.getElementById('post-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const errEl = document.getElementById('form-error');
@@ -976,20 +1185,36 @@
                     return;
                 }
 
-                const content = getCurrentContent();
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> ' + (editId ?
+                    'Saving…' : 'Publishing…');
+
+                // upload cover image if a new file was chosen
+                if (pendingImageFile) {
+                    uploadStatus.textContent = 'uploading image…';
+                    try {
+                        currentImageUrl = await uploadToStorage(pendingImageFile, 'posts');
+                        pendingImageFile = null;
+                        uploadStatus.textContent = '';
+                    } catch (uploadErr) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = 'Publish';
+                        uploadStatus.textContent = '';
+                        errEl.textContent = 'Image upload failed: ' + uploadErr.message;
+                        return;
+                    }
+                }
 
                 const payload = {
                     title,
                     slug,
                     tag: document.getElementById('f-tag').value.trim() || 'econ',
                     image_emoji: document.getElementById('f-emoji').value.trim() || '📰',
+                    image_url: currentImageUrl || null,
                     excerpt: document.getElementById('f-excerpt').value.trim(),
                     read_time: parseInt(document.getElementById('f-readtime').value, 10) || 5,
-                    content: content,
+                    content: document.getElementById('f-content').value.trim(),
                 };
-
-                saveBtn.disabled = true;
-                saveBtn.textContent = editId ? 'Saving…' : 'Publishing…';
 
                 let result;
                 if (editId) {
@@ -999,7 +1224,7 @@
                 }
 
                 saveBtn.disabled = false;
-                saveBtn.textContent = 'Publish';
+                saveBtn.innerHTML = 'Publish';
 
                 if (result.error) {
                     if (result.error.code === '23505') {
@@ -1016,57 +1241,72 @@
                 loadPostList();
             });
 
+            // ── reset form ──
             function resetForm() {
                 document.getElementById('post-form').reset();
                 document.getElementById('edit-id').value = '';
                 document.getElementById('f-readtime').value = 5;
-                document.getElementById('editor-heading').innerHTML = 'New post <span class="pill">draft</span>';
+                document.getElementById('editor-heading').innerHTML = 'New post <span class="pill draft">draft</span>';
                 document.getElementById('cancel-edit-btn').style.display = 'none';
                 slugManuallyEdited = false;
                 updateSlugPreview();
-                quill.root.innerHTML = '';
-                sourceEditor.value = '';
                 document.getElementById('form-error').textContent = '';
                 document.getElementById('form-status').textContent = '';
-                previewModal.classList.remove('active');
-                document.body.style.overflow = '';
+                currentImageUrl = '';
+                pendingImageFile = null;
+                uploadStatus.textContent = '';
+                renderImagePreview();
             }
 
-            // ── Load post list ──
+            // ── load posts ──
             async function loadPostList() {
                 const listEl = document.getElementById('post-list');
+                const countEl = document.getElementById('post-count');
+
                 const { data, error } = await supabase
                     .from('posts')
-                    .select('id, title, slug, tag, views, created_at')
+                    .select('id, title, slug, tag, views, created_at, image_emoji')
                     .order('created_at', { ascending: false });
 
                 if (error) {
                     listEl.innerHTML =
-                    `<div class="empty-state">couldn't load posts: ${escapeHtml(error.message)}</div>`;
+                        `<div class="empty-state">couldn't load posts: ${escapeHtml(error.message)}</div>`;
                     return;
                 }
                 if (!data || data.length === 0) {
-                    listEl.innerHTML = `<div class="empty-state">No posts yet. Write your first one above.</div>`;
+                    listEl.innerHTML =
+                        `<div class="empty-state"><span class="big">📭</span>No posts yet. Write your first one above.</div>`;
+                    countEl.textContent = '';
                     return;
                 }
+
+                countEl.textContent = data.length + ' post' + (data.length > 1 ? 's' : '');
 
                 listEl.innerHTML = data.map(p => `
                 <div class="post-item" data-id="${p.id}">
                   <div class="info">
-                    <div class="title">${escapeHtml(p.title)}</div>
-                    <div class="meta">/${escapeHtml(p.slug)} · ${escapeHtml(p.tag || 'econ')} · ${p.views || 0} views</div>
+                    <div class="title">
+                      <span class="emoji">${escapeHtml(p.image_emoji || '📄')}</span>
+                      ${escapeHtml(p.title)}
+                    </div>
+                    <div class="meta">
+                      <span>/${escapeHtml(p.slug)}</span>
+                      <span class="tag">${escapeHtml(p.tag || 'econ')}</span>
+                      <span class="views">👁 ${p.views || 0}</span>
+                    </div>
                   </div>
                   <div class="actions">
-                    <button class="btn btn-secondary btn-small" data-action="edit" data-id="${p.id}">Edit</button>
-                    <button class="btn btn-danger btn-small" data-action="delete" data-id="${p.id}" data-title="${escapeHtml(p.title)}">Delete</button>
+                    <button class="btn-ghost btn-small" data-action="edit" data-id="${p.id}">Edit</button>
+                    <button class="btn-danger btn-small" data-action="delete" data-id="${p.id}" data-title="${escapeHtml(p.title)}">Delete</button>
                   </div>
                 </div>
               `).join('');
 
+                // edit
                 listEl.querySelectorAll('[data-action="edit"]').forEach(btn => {
                     btn.addEventListener('click', async () => {
-                        const { data: post, error } = await supabase.from('posts').select('*').eq('id', btn
-                            .dataset.id).single();
+                        const { data: post, error } = await supabase.from('posts').select('*').eq('id',
+                            btn.dataset.id).single();
                         if (error || !post) return;
                         document.getElementById('edit-id').value = post.id;
                         document.getElementById('f-title').value = post.title || '';
@@ -1075,22 +1315,22 @@
                         document.getElementById('f-emoji').value = post.image_emoji || '';
                         document.getElementById('f-excerpt').value = post.excerpt || '';
                         document.getElementById('f-readtime').value = post.read_time || 5;
-                        quill.root.innerHTML = post.content || '';
-                        sourceEditor.value = post.content || '';
-                        if (sourceMode) {
-                            sourceEditor.value = post.content || '';
-                        } else {
-                            quill.root.innerHTML = post.content || '';
-                        }
+                        document.getElementById('f-content').value = post.content || '';
+                        currentImageUrl = post.image_url || '';
+                        pendingImageFile = null;
+                        document.getElementById('f-image').value = '';
+                        renderImagePreview();
                         slugManuallyEdited = true;
                         updateSlugPreview();
                         document.getElementById('editor-heading').innerHTML =
-                            'Editing <span class="pill">' + escapeHtml(post.slug) + '</span>';
+                            'Editing <span class="pill editing">' + escapeHtml(post.slug) + '</span>';
                         document.getElementById('cancel-edit-btn').style.display = 'inline-block';
-                        document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
+                        document.getElementById('editor-panel').scrollIntoView({ behavior: 'smooth',
+                        block: 'start' });
                     });
                 });
 
+                // delete
                 listEl.querySelectorAll('[data-action="delete"]').forEach(btn => {
                     btn.addEventListener('click', async () => {
                         if (!confirm(`Delete "${btn.dataset.title}"? This can't be undone.`)) return;
@@ -1102,13 +1342,159 @@
             }
 
             loadPostList();
+            initSettingsPanel();
+        }
+
+        // ─── SITE SETTINGS ──────────────────────────────────
+        const DEFAULT_SETTINGS = {
+            site_name: 'ECOLENS',
+            logo_url: '',
+            nav_links: [
+                { label: 'Markets', href: '#' },
+                { label: 'Policy', href: '#' },
+                { label: 'Tech', href: '#' },
+                { label: 'Culture', href: '#' },
+                { label: 'Money', href: '#' },
+            ],
+        };
+
+        async function initSettingsPanel() {
+            const nameInput = document.getElementById('s-sitename');
+            const logoPreview = document.getElementById('logo-preview');
+            const removeLogoBtn = document.getElementById('remove-logo-btn');
+            const logoStatus = document.getElementById('logo-upload-status');
+            const navLinksList = document.getElementById('nav-links-list');
+            const errEl = document.getElementById('settings-error');
+            const statusEl = document.getElementById('settings-status');
+
+            let settings = { ...DEFAULT_SETTINGS };
+            let pendingLogoFile = null;
+
+            const { data, error } = await supabase.from('settings').select('value').eq('id', 'site').single();
+            if (!error && data && data.value) {
+                settings = {
+                    site_name: data.value.site_name || DEFAULT_SETTINGS.site_name,
+                    logo_url: data.value.logo_url || '',
+                    nav_links: Array.isArray(data.value.nav_links) && data.value.nav_links.length
+                        ? data.value.nav_links : DEFAULT_SETTINGS.nav_links,
+                };
+            }
+
+            nameInput.value = settings.site_name;
+
+            function renderLogoPreview() {
+                if (pendingLogoFile) {
+                    logoPreview.innerHTML = `<img src="${URL.createObjectURL(pendingLogoFile)}" />`;
+                    removeLogoBtn.style.display = 'block';
+                } else if (settings.logo_url) {
+                    logoPreview.innerHTML = `<img src="${settings.logo_url}" />`;
+                    removeLogoBtn.style.display = 'block';
+                } else {
+                    logoPreview.innerHTML = '🅰';
+                    removeLogoBtn.style.display = 'none';
+                }
+            }
+            renderLogoPreview();
+
+            document.getElementById('s-logo').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                pendingLogoFile = file;
+                logoStatus.textContent = '';
+                renderLogoPreview();
+            });
+
+            removeLogoBtn.addEventListener('click', () => {
+                pendingLogoFile = null;
+                settings.logo_url = '';
+                document.getElementById('s-logo').value = '';
+                renderLogoPreview();
+            });
+
+            function renderNavLinks() {
+                navLinksList.innerHTML = settings.nav_links.map((link, i) => `
+                <div class="nav-link-row" data-index="${i}">
+                  <input class="nl-label" placeholder="Label" value="${escapeHtml(link.label || '')}" />
+                  <input class="nl-href" placeholder="https://… or #" value="${escapeHtml(link.href || '')}" />
+                  <button type="button" data-remove="${i}" title="Remove">✕</button>
+                </div>
+              `).join('');
+
+                navLinksList.querySelectorAll('.nav-link-row').forEach(row => {
+                    const i = parseInt(row.dataset.index, 10);
+                    row.querySelector('.nl-label').addEventListener('input', (e) => {
+                        settings.nav_links[i].label = e.target.value;
+                    });
+                    row.querySelector('.nl-href').addEventListener('input', (e) => {
+                        settings.nav_links[i].href = e.target.value;
+                    });
+                });
+                navLinksList.querySelectorAll('[data-remove]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        settings.nav_links.splice(parseInt(btn.dataset.remove, 10), 1);
+                        renderNavLinks();
+                    });
+                });
+            }
+            renderNavLinks();
+
+            document.getElementById('add-nav-link-btn').addEventListener('click', () => {
+                settings.nav_links.push({ label: '', href: '#' });
+                renderNavLinks();
+            });
+
+            document.getElementById('settings-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errEl.textContent = '';
+                statusEl.textContent = '';
+                const saveBtn = document.getElementById('settings-save-btn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> Saving…';
+
+                if (pendingLogoFile) {
+                    logoStatus.textContent = 'uploading logo…';
+                    try {
+                        settings.logo_url = await uploadToStorage(pendingLogoFile, 'branding');
+                        pendingLogoFile = null;
+                        logoStatus.textContent = '';
+                    } catch (uploadErr) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = 'Save settings';
+                        logoStatus.textContent = '';
+                        errEl.textContent = 'Logo upload failed: ' + uploadErr.message;
+                        return;
+                    }
+                }
+
+                settings.site_name = nameInput.value.trim() || DEFAULT_SETTINGS.site_name;
+                settings.nav_links = settings.nav_links.filter(l => (l.label || '').trim());
+
+                const { error: saveError } = await supabase.from('settings')
+                    .upsert({ id: 'site', value: settings });
+
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Save settings';
+
+                if (saveError) {
+                    errEl.textContent = saveError.message;
+                    return;
+                }
+
+                renderLogoPreview();
+                renderNavLinks();
+                statusEl.textContent = '✓ Saved. Changes will show on the live site.';
+                setTimeout(() => { statusEl.textContent = ''; }, 4000);
+            });
         }
 
         // ─── BOOT ──────────────────────────────────────────
         (async function init() {
             const { data: { session } } = await supabase.auth.getSession();
-            if (session) renderDashboard();
-            else renderLogin();
+            if (session) {
+                renderDashboard();
+            } else {
+                renderLogin();
+            }
         })();
 
         supabase.auth.onAuthStateChange((event) => {
