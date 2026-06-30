@@ -936,6 +936,222 @@
                 transform: translateY(0);
             }
         }
+
+        /* ── wordpress-style admin shell ── */
+        body.is-dashboard .wrap {
+            max-width: none;
+            padding: 0;
+        }
+        body.is-dashboard .topbar {
+            display: none;
+        }
+
+        .wp-shell {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .wp-sidebar {
+            width: 210px;
+            flex-shrink: 0;
+            background: #1d2327;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .wp-sidebar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #fff;
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .wp-sidebar-brand .dot {
+            color: var(--lime);
+        }
+        .wp-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            flex: 1;
+        }
+        .wp-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Inter', sans-serif;
+            font-size: 13.5px;
+            font-weight: 500;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            transition: background var(--transition), color var(--transition);
+        }
+        .wp-nav-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+        .wp-nav-item.active {
+            background: var(--accent);
+            color: #fff;
+        }
+        .wp-sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wp-main {
+            flex: 1;
+            min-width: 0;
+            background: var(--bg);
+        }
+        .wp-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 32px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            flex-wrap: wrap;
+        }
+        .wp-topbar h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        .wp-content {
+            padding: 28px 32px 64px;
+            max-width: 980px;
+        }
+        .wp-screen {
+            display: none;
+        }
+        .wp-screen.active {
+            display: block;
+        }
+
+        @media (max-width: 860px) {
+            .wp-sidebar {
+                width: 64px;
+            }
+            .wp-sidebar-brand,
+            .wp-nav-item span.label {
+                display: none;
+            }
+            .wp-nav-item {
+                justify-content: center;
+                padding: 13px 0;
+            }
+            .wp-topbar {
+                padding: 16px 18px;
+            }
+            .wp-content {
+                padding: 20px 16px 48px;
+            }
+        }
+
+        /* ── posts table (wp list table style) ── */
+        .wp-table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        .wp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .wp-table thead th {
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+        .wp-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background var(--transition);
+        }
+        .wp-table tbody tr:last-child {
+            border-bottom: none;
+        }
+        .wp-table tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+        .wp-table td {
+            padding: 13px 16px;
+            vertical-align: middle;
+        }
+        .wp-table .post-title-cell {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .wp-table .post-title-cell .emoji {
+            margin-right: 6px;
+        }
+        .wp-table .row-actions {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 3px;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .wp-table tbody tr:hover .row-actions {
+            opacity: 1;
+        }
+        .wp-table .row-actions button {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+            padding: 0;
+        }
+        .wp-table .row-actions button.danger {
+            color: var(--coral);
+        }
+        .wp-table .row-actions .sep {
+            color: var(--text-tertiary);
+            margin: 0 6px;
+        }
+        .wp-table .cat-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: var(--accent-glow);
+            padding: 2px 10px;
+            border-radius: 999px;
+        }
+        .wp-table .views-cell,
+        .wp-table .date-cell {
+            color: var(--text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .add-new-btn {
+            margin-bottom: 18px;
+        }
     </style>
 </head>
 <body>
@@ -976,12 +1192,13 @@
         function applyTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem(ADMIN_THEME_KEY, theme);
-            const btn = document.getElementById('theme-toggle');
-            if (btn) btn.textContent = getThemeIcon();
+            document.querySelectorAll('.theme-toggle').forEach(btn => { btn.textContent = getThemeIcon(); });
         }
-        document.getElementById('theme-toggle').addEventListener('click', () => {
-            const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            applyTheme(next);
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.theme-toggle')) {
+                const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                applyTheme(next);
+            }
         });
         applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 
@@ -1035,6 +1252,7 @@
 
         // ─── LOGIN ──────────────────────────────────────────
         function renderLogin() {
+            document.body.classList.remove('is-dashboard');
             app.innerHTML = `
             <div class="login-container fade-in">
               <div class="login-card">
@@ -1087,19 +1305,63 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { renderLogin(); return; }
 
+            document.body.classList.add('is-dashboard');
             const initials = getInitials(session.user.email);
 
             app.innerHTML = `
-            <div class="fade-in">
-              <div class="dash-header">
-                <h1>Write <span>·</span> manage</h1>
-                <div class="user-badge">
-                  ${escapeHtml(session.user.email)}
-                  <span class="avatar">${escapeHtml(initials)}</span>
-                  <button class="btn-icon btn-small" id="logout-btn" title="Sign out" style="font-size:14px;">✕</button>
+            <div class="wp-shell fade-in">
+              <aside class="wp-sidebar">
+                <div class="wp-sidebar-brand">ECOLENS<span class="dot">.</span></div>
+                <nav class="wp-nav">
+                  <button class="wp-nav-item active" data-screen="posts" type="button">📝 <span class="label">Posts</span></button>
+                  <button class="wp-nav-item" data-screen="categories" type="button">🏷️ <span class="label">Categories</span></button>
+                  <button class="wp-nav-item" data-screen="settings" type="button">⚙️ <span class="label">Settings</span></button>
+                </nav>
+                <div class="wp-sidebar-footer">
+                  <a class="wp-nav-item" href="index.html" target="_blank" rel="noopener">↗ <span class="label">View site</span></a>
+                  <button class="wp-nav-item theme-toggle" type="button">🌙 <span class="label">Theme</span></button>
+                  <button class="wp-nav-item" id="logout-btn" type="button">⏻ <span class="label">Sign out</span></button>
+                </div>
+              </aside>
+
+              <div class="wp-main">
+                <header class="wp-topbar">
+                  <h1 id="wp-screen-title">Posts</h1>
+                  <div class="user-badge">
+                    ${escapeHtml(session.user.email)}
+                    <span class="avatar">${escapeHtml(initials)}</span>
+                  </div>
+                </header>
+
+                <div class="wp-content">
+                  <div class="wp-screen active" id="screen-posts"></div>
+                  <div class="wp-screen" id="screen-categories"></div>
+                  <div class="wp-screen" id="screen-settings"></div>
                 </div>
               </div>
+            </div>
+          `;
 
+            // ── sidebar navigation ──
+            const screenTitles = { posts: 'Posts', categories: 'Categories', settings: 'Settings' };
+            document.querySelectorAll('.wp-nav-item[data-screen]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.wp-nav-item[data-screen]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.wp-screen').forEach(s => s.classList.remove('active'));
+                    document.getElementById('screen-' + btn.dataset.screen).classList.add('active');
+                    document.getElementById('wp-screen-title').textContent = screenTitles[btn.dataset.screen];
+                });
+            });
+
+            // ── logout ──
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                renderLogin();
+            });
+
+            document.getElementById('screen-posts').innerHTML = `
+            <div class="fade-in">
               <!-- editor panel -->
               <div class="panel" id="editor-panel">
                 <div class="panel-header">
@@ -1182,58 +1444,6 @@
                 </form>
               </div>
 
-              <!-- site settings -->
-              <div class="panel" id="settings-panel">
-                <div class="panel-header">
-                  <h2>Site settings</h2>
-                </div>
-                <form id="settings-form">
-                  <div class="form-grid">
-                    <div class="field full">
-                      <label for="s-sitename">Site name</label>
-                      <input id="s-sitename" placeholder="ECOLENS" />
-                    </div>
-
-                    <div class="field full">
-                      <label>Logo</label>
-                      <div class="image-upload">
-                        <div class="image-preview" id="logo-preview">🅰</div>
-                        <div class="image-upload-actions">
-                          <label class="file-btn">
-                            📤 <span id="logo-upload-btn-label">Upload logo</span>
-                            <input type="file" id="s-logo" accept="image/*" />
-                          </label>
-                          <button type="button" class="remove-image-btn" id="remove-logo-btn" style="display:none;">Remove logo</button>
-                          <span class="upload-status" id="logo-upload-status"></span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="field full">
-                      <label>Categories <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(slug-based — used for post tagging &amp; ?category= filtering)</span></label>
-                      <div id="categories-list"></div>
-                      <div style="display:flex;gap:8px;margin-top:6px;">
-                        <input id="new-category-name" placeholder="New category name" style="flex:1;background:var(--bg-secondary);border:1px solid var(--border-strong);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;" />
-                        <button type="button" class="add-nav-link-btn" id="add-category-btn">+ Add</button>
-                      </div>
-                    </div>
-
-                    <div class="field full">
-                      <label>Nav links <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown in the header)</span></label>
-                      <div id="nav-links-list"></div>
-                      <button type="button" class="add-nav-link-btn" id="add-nav-link-btn">+ Add link</button>
-                    </div>
-                  </div>
-
-                  <div class="error-msg" id="settings-error"></div>
-                  <div class="status-msg" id="settings-status"></div>
-
-                  <div class="form-actions">
-                    <button type="submit" class="btn-primary" id="settings-save-btn">Save settings</button>
-                  </div>
-                </form>
-              </div>
-
               <!-- posts list -->
               <div class="panel">
                 <div class="panel-header">
@@ -1245,13 +1455,64 @@
             </div>
           `;
 
-            // ── logout ──
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                await supabase.auth.signOut();
-                renderLogin();
-            });
+            document.getElementById('screen-categories').innerHTML = `
+            <div class="fade-in panel">
+              <div class="panel-header">
+                <h2>Categories</h2>
+              </div>
+              <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Slug-based categories used for post tagging and <code>?category=</code> filtering on the live site.</p>
+              <div id="categories-list"></div>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <input id="new-category-name" placeholder="New category name" style="flex:1;background:var(--bg-secondary);border:1px solid var(--border-strong);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;" />
+                <button type="button" class="add-nav-link-btn" id="add-category-btn">+ Add</button>
+              </div>
+            </div>
+          `;
 
-            // ── slug logic ──
+            document.getElementById('screen-settings').innerHTML = `
+            <div class="fade-in panel" id="settings-panel">
+              <div class="panel-header">
+                <h2>Site settings</h2>
+              </div>
+              <form id="settings-form">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="s-sitename">Site name</label>
+                    <input id="s-sitename" placeholder="ECOLENS" />
+                  </div>
+
+                  <div class="field full">
+                    <label>Logo</label>
+                    <div class="image-upload">
+                      <div class="image-preview" id="logo-preview">🅰</div>
+                      <div class="image-upload-actions">
+                        <label class="file-btn">
+                          📤 <span id="logo-upload-btn-label">Upload logo</span>
+                          <input type="file" id="s-logo" accept="image/*" />
+                        </label>
+                        <button type="button" class="remove-image-btn" id="remove-logo-btn" style="display:none;">Remove logo</button>
+                        <span class="upload-status" id="logo-upload-status"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field full">
+                    <label>Nav links <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown in the header)</span></label>
+                    <div id="nav-links-list"></div>
+                    <button type="button" class="add-nav-link-btn" id="add-nav-link-btn">+ Add link</button>
+                  </div>
+                </div>
+
+                <div class="error-msg" id="settings-error"></div>
+                <div class="status-msg" id="settings-status"></div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary" id="settings-save-btn">Save settings</button>
+                </div>
+              </form>
+            </div>
+          `;
+
             const slugInput = document.getElementById('f-slug');
             const titleInput = document.getElementById('f-title');
             const slugPreview = document.getElementById('slug-preview');
@@ -1459,25 +1720,41 @@
 
                 countEl.textContent = data.length + ' post' + (data.length > 1 ? 's' : '');
 
-                listEl.innerHTML = data.map(p => `
-                <div class="post-item" data-id="${p.id}">
-                  <div class="info">
-                    <div class="title">
-                      <span class="emoji">${escapeHtml(p.image_emoji || '📄')}</span>
-                      ${escapeHtml(p.title)}
-                    </div>
-                    <div class="meta">
-                      <span>/${escapeHtml(p.slug)}</span>
-                      <span class="tag">${escapeHtml(p.tag || 'econ')}</span>
-                      <span class="views">👁 ${p.views || 0}</span>
-                    </div>
-                  </div>
-                  <div class="actions">
-                    <button class="btn-ghost btn-small" data-action="edit" data-id="${p.id}">Edit</button>
-                    <button class="btn-danger btn-small" data-action="delete" data-id="${p.id}" data-title="${escapeHtml(p.title)}">Delete</button>
-                  </div>
+                listEl.innerHTML = `
+                <div class="wp-table-wrap">
+                  <table class="wp-table">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Views</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${data.map(p => `
+                        <tr data-id="${p.id}">
+                          <td>
+                            <div class="post-title-cell">
+                              <span class="emoji">${escapeHtml(p.image_emoji || '📄')}</span>${escapeHtml(p.title)}
+                            </div>
+                            <div class="row-actions">
+                              <button data-action="edit" data-id="${p.id}">Edit</button>
+                              <span class="sep">|</span>
+                              <button class="danger" data-action="delete" data-id="${p.id}" data-title="${escapeHtml(p.title)}">Delete</button>
+                              <span class="sep">|</span>
+                              <a href="index.html?post=${encodeURIComponent(p.slug)}" target="_blank" rel="noopener" style="color:var(--text-tertiary);">View</a>
+                            </div>
+                          </td>
+                          <td><span class="cat-pill">${escapeHtml(p.tag || 'econ')}</span></td>
+                          <td class="views-cell">👁 ${p.views || 0}</td>
+                          <td class="date-cell">${new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
                 </div>
-              `).join('');
+              `;
 
                 // edit
                 listEl.querySelectorAll('[data-action="edit"]').forEach(btn => {
