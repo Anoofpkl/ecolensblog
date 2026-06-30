@@ -8,14 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-    </script>
     <style>
+        /* ── reset & base ── */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+
         :root {
             --bg: #ffffff;
             --bg-card: #f8f8fa;
@@ -27,16 +27,19 @@
             --text-tertiary: #7a7a88;
             --accent: #6c3ce0;
             --accent-light: #8b6cf0;
+            --accent-glow: rgba(108, 60, 224, 0.08);
+            --cyan: #0077be;
+            --pink: #d63384;
             --radius: 14px;
             --radius-sm: 8px;
             --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            --cyan: #0077be;
-            --pink: #d63384;
         }
+
         html {
             scroll-behavior: smooth;
         }
+
         body {
             background: var(--bg);
             color: var(--text);
@@ -45,10 +48,12 @@
             -webkit-font-smoothing: antialiased;
             line-height: 1.6;
         }
+
         ::selection {
             background: var(--accent);
             color: #fff;
         }
+
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -63,15 +68,20 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
         }
+
         a {
             text-decoration: none;
             color: inherit;
         }
+
+        /* ── main wrapper ── */
         .wrap {
             max-width: 1120px;
             margin: 0 auto;
             padding: 0 24px 60px;
         }
+
+        /* ── header / nav ── */
         .site-header {
             padding: 28px 0 20px;
             border-bottom: 1px solid var(--border);
@@ -82,16 +92,19 @@
             justify-content: space-between;
             gap: 16px;
         }
+
         .logo-wrapper {
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         .logo-img {
             height: 44px;
             width: auto;
             display: block;
         }
+
         .logo-text {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -103,6 +116,7 @@
         .logo-text .dot {
             color: var(--accent);
         }
+
         .nav-links {
             display: flex;
             gap: 24px;
@@ -121,13 +135,15 @@
             color: var(--accent);
             border-bottom-color: var(--accent);
         }
+
         .header-date {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             color: var(--text-tertiary);
             margin-left: auto;
         }
-        @media (max-width:700px) {
+
+        @media (max-width: 700px) {
             .site-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -140,6 +156,8 @@
                 margin-left: 0;
             }
         }
+
+        /* ── featured hero ── */
         .hero-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -174,6 +192,14 @@
             display: block;
             margin-bottom: 10px;
         }
+        .hero-card .hero-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            display: block;
+            margin-bottom: 16px;
+        }
         .hero-card .hero-title {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -198,6 +224,8 @@
             gap: 20px;
             flex-wrap: wrap;
         }
+
+        /* ── grid feed ── */
         .feed-header {
             display: flex;
             justify-content: space-between;
@@ -215,11 +243,13 @@
             color: var(--text-tertiary);
             font-weight: 400;
         }
+
         .grid-2col {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
         }
+
         .post-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -240,6 +270,14 @@
         .post-card .card-emoji {
             font-size: 28px;
             margin-bottom: 6px;
+        }
+        .post-card .card-image {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            display: block;
+            margin-bottom: 12px;
         }
         .post-card .card-tag {
             font-family: 'JetBrains Mono', monospace;
@@ -279,7 +317,8 @@
             display: flex;
             justify-content: space-between;
         }
-        @media (max-width:760px) {
+
+        @media (max-width: 760px) {
             .grid-2col {
                 grid-template-columns: 1fr;
                 gap: 16px;
@@ -291,6 +330,8 @@
                 font-size: 26px;
             }
         }
+
+        /* ── empty / loading ── */
         .empty-state {
             padding: 60px 0;
             text-align: center;
@@ -326,11 +367,14 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ── article page ── */
         .article-wrap {
             max-width: 780px;
             margin: 0 auto;
             padding: 20px 0 60px;
         }
+
         .back-btn {
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
@@ -348,8 +392,17 @@
         .back-btn:hover {
             color: var(--accent);
         }
+
         .article-header {
             margin-bottom: 28px;
+        }
+        .article-cover {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            display: block;
+            margin-bottom: 24px;
         }
         .article-header .article-tag {
             font-family: 'JetBrains Mono', monospace;
@@ -384,6 +437,7 @@
         .article-header .article-meta .views {
             color: var(--text-tertiary);
         }
+
         .article-body {
             font-size: 18px;
             line-height: 1.85;
@@ -393,43 +447,8 @@
         .article-body p {
             margin-bottom: 26px;
         }
-        .article-body h1,
-        .article-body h2,
-        .article-body h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            margin: 1.5em 0 0.5em;
-        }
-        .article-body ul,
-        .article-body ol {
-            margin: 0 0 1.5em 1.5em;
-        }
-        .article-body blockquote {
-            border-left: 4px solid var(--accent);
-            padding-left: 18px;
-            color: var(--text-secondary);
-            margin: 0 0 1.5em;
-        }
-        .article-body code {
-            background: #f0f0f3;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        .article-body .chart-container {
-            margin: 30px 0;
-            padding: 20px;
-            background: #fafafa;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .article-body .chart-container canvas {
-            width: 100% !important;
-            height: auto !important;
-            max-height: 300px;
-        }
+
+        /* ── share bar ── */
         .share-bar {
             border-top: 1px solid var(--border);
             padding-top: 28px;
@@ -501,7 +520,8 @@
             border-color: var(--accent);
             color: var(--accent);
         }
-        @media (max-width:500px) {
+
+        @media (max-width: 500px) {
             .share-btn span {
                 display: none;
             }
@@ -513,6 +533,8 @@
                 height: 22px;
             }
         }
+
+        /* ── footer ── */
         .footer {
             max-width: 1120px;
             margin: 0 auto;
@@ -538,6 +560,8 @@
             color: var(--accent);
             font-weight: 600;
         }
+
+        /* ── fade in ── */
         .fade-in {
             animation: fadeUp 0.35s ease;
         }
@@ -555,10 +579,12 @@
 </head>
 <body>
 
+    <!-- APP -->
     <div id="app"></div>
 
+    <!-- FOOTER -->
     <footer class="footer">
-        <span>© <span id="year"></span> ECOLENS</span>
+        <span>© <span id="year"></span> <span id="site-name-footer">ECOLENS</span></span>
         <span class="dev-credit">Developed by <strong>Anoof</strong> <span class="heart">♥</span></span>
     </footer>
 
@@ -570,7 +596,37 @@
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         document.getElementById('year').textContent = new Date().getFullYear();
+
         const app = document.getElementById('app');
+
+        // ─── SITE SETTINGS ──────────────────────────────────
+        const DEFAULT_SETTINGS = {
+            site_name: 'ECOLENS',
+            logo_url: '',
+            nav_links: [
+                { label: 'Markets', href: '#' },
+                { label: 'Policy', href: '#' },
+                { label: 'Tech', href: '#' },
+                { label: 'Culture', href: '#' },
+                { label: 'Money', href: '#' },
+            ],
+        };
+        let siteSettings = { ...DEFAULT_SETTINGS };
+
+        async function loadSiteSettings() {
+            try {
+                const { data, error } = await supabase.from('settings').select('value').eq('id', 'site').single();
+                if (!error && data && data.value) {
+                    siteSettings = {
+                        site_name: data.value.site_name || DEFAULT_SETTINGS.site_name,
+                        logo_url: data.value.logo_url || '',
+                        nav_links: Array.isArray(data.value.nav_links) && data.value.nav_links.length
+                            ? data.value.nav_links : DEFAULT_SETTINGS.nav_links,
+                    };
+                }
+            } catch (e) { /* fall back to defaults if settings table isn't set up yet */ }
+            document.getElementById('site-name-footer').textContent = siteSettings.site_name;
+        }
 
         function escapeHtml(str) {
             return String(str ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
@@ -592,52 +648,7 @@
             return params.get('post');
         }
 
-        // ─── CHART RENDERER ────────────────────────────────
-        function renderChartsInContainer(container) {
-            if (!container) return;
-            const chartElements = container.querySelectorAll('.chart-container');
-            chartElements.forEach(el => {
-                try {
-                    const config = JSON.parse(el.dataset.chart);
-                    const canvas = el.querySelector('canvas');
-                    if (!canvas) return;
-                    const ctx = canvas.getContext('2d');
-                    if (canvas._chart) { canvas._chart.destroy(); }
-                    const isPie = ['pie', 'doughnut', 'polarArea'].includes(config.type);
-                    const chart = new Chart(ctx, {
-                        type: config.type,
-                        data: {
-                            labels: config.labels,
-                            datasets: [{
-                                label: config.title || 'Data',
-                                data: config.data,
-                                backgroundColor: isPie ? config.colors : config.colors.map(c => c +
-                                    '80'),
-                                borderColor: isPie ? config.colors : config.colors,
-                                borderWidth: isPie ? 2 : 2,
-                                tension: config.type === 'line' ? 0.3 : 0,
-                                fill: config.type === 'line' ? true : false,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            plugins: {
-                                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
-                                title: { display: !!config.title, text: config.title, font: { size: 14 } }
-                            },
-                            scales: isPie ? undefined : {
-                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                                x: { grid: { display: false } }
-                            }
-                        }
-                    });
-                    canvas._chart = chart;
-                } catch (e) { console.warn('Chart render error:', e); }
-            });
-        }
-
-        // ─── SOCIAL SHARE HELPERS ──────────────────────────
+        // ─── SOCIAL SHARE HELPERS ───
         function getShareUrl(slug) {
             const base = window.location.origin + window.location.pathname;
             return base + '?post=' + encodeURIComponent(slug);
@@ -645,7 +656,7 @@
 
         function shareOnTwitter(slug, title) {
             const url = getShareUrl(slug);
-            const text = encodeURIComponent(title + ' — ECOLENS');
+            const text = encodeURIComponent(title + ' — ' + siteSettings.site_name);
             window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(url), '_blank');
         }
 
@@ -661,7 +672,7 @@
 
         function shareOnWhatsApp(slug, title) {
             const url = getShareUrl(slug);
-            const text = encodeURIComponent(title + ' — ECOLENS\n' + url);
+            const text = encodeURIComponent(title + ' — ' + siteSettings.site_name + '\n' + url);
             window.open('https://api.whatsapp.com/send?text=' + text, '_blank');
         }
 
@@ -679,11 +690,33 @@
             });
         }
 
+        // ─── HEADER ─────────────────────────────────────────
+        function renderHeader(extra) {
+            const navHtml = (siteSettings.nav_links || []).map(link =>
+                `<a href="${escapeHtml(link.href || '#')}">${escapeHtml(link.label || '')}</a>`
+            ).join('');
+            const logoHtml = siteSettings.logo_url
+                ? `<img src="${escapeHtml(siteSettings.logo_url)}" alt="${escapeHtml(siteSettings.site_name)} logo" class="logo-img" />`
+                : '';
+            return `
+            <header class="site-header">
+              <div class="logo-wrapper">
+                ${logoHtml}
+                <span class="logo-text">${escapeHtml(siteSettings.site_name)}<span class="dot">.</span></span>
+              </div>
+              <nav class="nav-links">
+                ${navHtml}
+              </nav>
+              ${extra || ''}
+            </header>
+          `;
+        }
+
         // ─── RENDER FEED ──────────────────────────────────
         async function renderFeed() {
             const { data, error } = await supabase
                 .from('posts')
-                .select('slug, title, excerpt, tag, image_emoji, read_time, views, created_at')
+                .select('slug, title, excerpt, tag, image_emoji, image_url, read_time, views, created_at')
                 .order('created_at', { ascending: false });
 
             let html = '';
@@ -697,12 +730,16 @@
                     `<div class="empty-state"><span class="big">📭</span>no posts yet. check back soon for fresh takes.</div>`;
             } else {
                 countText = data.length + (data.length === 1 ? ' post' : ' posts');
+
+                // Hero: first post
                 const hero = data[0];
                 const rest = data.slice(1);
+
                 html += `
               <div class="hero-card" data-slug="${escapeHtml(hero.slug)}">
                 <span class="featured-badge">★ featured</span>
-                ${hero.image_emoji ? `<span class="hero-emoji">${escapeHtml(hero.image_emoji)}</span>` : ''}
+                ${hero.image_url ? `<img class="hero-image" src="${escapeHtml(hero.image_url)}" alt="" />` :
+                    (hero.image_emoji ? `<span class="hero-emoji">${escapeHtml(hero.image_emoji)}</span>` : '')}
                 <div class="hero-title">${escapeHtml(hero.title)}</div>
                 <div class="hero-excerpt">${escapeHtml(hero.excerpt || '')}</div>
                 <div class="hero-meta">
@@ -712,12 +749,15 @@
                 </div>
               </div>
             `;
+
+                // Grid: rest of posts
                 if (rest.length > 0) {
                     html += `<div class="grid-2col">`;
                     rest.forEach(post => {
                         html += `
                   <div class="post-card" data-slug="${escapeHtml(post.slug)}">
-                    ${post.image_emoji ? `<div class="card-emoji">${escapeHtml(post.image_emoji)}</div>` : ''}
+                    ${post.image_url ? `<img class="card-image" src="${escapeHtml(post.image_url)}" alt="" />` :
+                        (post.image_emoji ? `<div class="card-emoji">${escapeHtml(post.image_emoji)}</div>` : '')}
                     <span class="card-tag">${escapeHtml(post.tag || 'econ')}</span>
                     <div class="card-title">${escapeHtml(post.title)}</div>
                     <div class="card-excerpt">${escapeHtml(post.excerpt || '')}</div>
@@ -732,25 +772,14 @@
                 }
             }
 
+            // Build full page with header/nav
             const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric',
                 year: 'numeric' });
 
             app.innerHTML = `
             <div class="wrap fade-in">
-              <header class="site-header">
-                <div class="logo-wrapper">
-                  <img src="https://ecolensblog.vercel.app/Gemini_Generated_Image_gebp3jgebp3jgebp.png" class="logo-img" />
-                  <span class="logo-text">ECOLENS<span class="dot">.</span></span>
-                </div>
-                <nav class="nav-links">
-                  <a href="#">Markets</a>
-                  <a href="#">Policy</a>
-                  <a href="#">Tech</a>
-                  <a href="#">Culture</a>
-                  <a href="#">Money</a>
-                </nav>
-                <span class="header-date">${today}</span>
-              </header>
+              ${renderHeader(`<span class="header-date">${today}</span>`)}
+
               <div class="feed-header">
                 <span>Latest stories</span>
                 <span id="post-count">${countText}</span>
@@ -761,6 +790,7 @@
             </div>
           `;
 
+            // Attach click handlers for SPA navigation
             document.querySelectorAll('.hero-card, .post-card').forEach(el => {
                 el.addEventListener('click', (e) => {
                     const slug = el.getAttribute('data-slug');
@@ -802,26 +832,33 @@
                 return;
             }
 
+            // Increment views
             supabase.from('posts').update({ views: (post.views || 0) + 1 }).eq('slug', slug).then(() => {});
 
-            const bodyHtml = post.content || '<p>(this post is still cooking…)</p>';
+            const paragraphs = (post.content || '').split(/\n\s*\n/).filter(Boolean)
+                .map(p => `<p>${escapeHtml(p)}</p>`).join('') || '<p>(this post is still cooking…)</p>';
 
             app.innerHTML = `
             <div class="wrap fade-in">
               <div class="article-wrap">
                 <button class="back-btn" id="back-btn">← back to feed</button>
+
                 <div class="article-header">
+                  ${post.image_url ? `<img class="article-cover" src="${escapeHtml(post.image_url)}" alt="" />` : ''}
                   <span class="article-tag">${escapeHtml(post.tag || 'econ')}</span>
-                  <h1>${post.image_emoji ? post.image_emoji + ' ' : ''}${escapeHtml(post.title)}</h1>
+                  <h1>${(!post.image_url && post.image_emoji) ? post.image_emoji + ' ' : ''}${escapeHtml(post.title)}</h1>
                   <div class="article-meta">
                     <span>${timeAgo(post.created_at)}</span>
                     <span>· ${escapeHtml(String(post.read_time || 5))} min read</span>
                     <span class="views">👁 ${escapeHtml(String(post.views || 0))}</span>
                   </div>
                 </div>
-                <div class="article-body" id="article-body">
-                  ${bodyHtml}
+
+                <div class="article-body">
+                  ${paragraphs}
                 </div>
+
+                <!-- SOCIAL SHARE BAR -->
                 <div class="share-bar">
                   <span class="share-label">Share</span>
                   <div class="share-btn-group">
@@ -851,13 +888,10 @@
             </div>
           `;
 
+            // ── back ──
             document.getElementById('back-btn').addEventListener('click', goHome);
 
-            // ── Render charts after content is inserted ──
-            const bodyEl = document.getElementById('article-body');
-            renderChartsInContainer(bodyEl);
-
-            // ── Share handlers ──
+            // ── share handlers ──
             document.querySelectorAll('.share-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const type = btn.dataset.share;
@@ -881,7 +915,7 @@
                 });
             });
 
-            document.title = post.title + ' — ECOLENS';
+            document.title = post.title + ' — ' + siteSettings.site_name;
             window.scrollTo(0, 0);
         }
 
@@ -897,13 +931,13 @@
             if (slug) {
                 renderArticle(slug);
             } else {
-                document.title = 'ECOLENS — economics through the GenZ lens';
+                document.title = siteSettings.site_name + ' — economics through the GenZ lens';
                 renderFeed();
             }
         }
 
         window.addEventListener('popstate', route);
-        route();
+        loadSiteSettings().then(route);
     </script>
 </body>
 </html>
