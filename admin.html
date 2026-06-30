@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>admin · THE SPREAD</title>
+    <title>admin · ECOLENS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -691,6 +691,13 @@
             }
         }
 
+        .body-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
         /* ── image upload ── */
         .image-upload {
             display: flex;
@@ -766,6 +773,41 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             color: var(--text-tertiary);
+        }
+
+        .category-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .category-row .cat-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+        }
+        .category-row .cat-slug {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            flex: 1;
+        }
+        .category-row button {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-strong);
+            background: rgba(255, 107, 74, 0.08);
+            color: var(--coral);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .category-row button:hover {
+            background: rgba(255, 107, 74, 0.16);
         }
 
         /* ── site settings panel ── */
@@ -845,7 +887,7 @@
     <div class="wrap">
         <header class="topbar">
             <div class="brand-group">
-                <div class="brand">THE SPREAD<span class="dot">.</span></div>
+                <div class="brand">ECOLENS<span class="dot">.</span></div>
                 <span class="brand-badge">admin</span>
             </div>
             <div class="topbar-actions">
@@ -904,12 +946,24 @@
             return data.publicUrl;
         }
 
+        async function loadCategoryOptions(selectedSlug) {
+            const tagSelect = document.getElementById('f-tag');
+            if (!tagSelect) return;
+            const { data: cats } = await supabase.from('categories').select('slug, name').order('sort_order',
+                { ascending: true });
+            const list = (cats && cats.length) ? cats : [{ slug: 'econ', name: 'Econ' }];
+            tagSelect.innerHTML = list.map(c =>
+                `<option value="${escapeHtml(c.slug)}">${escapeHtml(c.name)}</option>`
+            ).join('');
+            if (selectedSlug) tagSelect.value = selectedSlug;
+        }
+
         // ─── LOGIN ──────────────────────────────────────────
         function renderLogin() {
             app.innerHTML = `
             <div class="login-container fade-in">
               <div class="login-card">
-                <div class="icon-wrap">✍️</div>
+                <div class="icon-wrap">🌱</div>
                 <h1>Welcome back</h1>
                 <p class="sub">Sign in to publish and manage your stories.</p>
                 <form id="login-form">
@@ -996,8 +1050,8 @@
                     </div>
 
                     <div class="field">
-                      <label for="f-tag">Tag</label>
-                      <input id="f-tag" placeholder="e.g. inflation, jobs" />
+                      <label for="f-tag">Category</label>
+                      <select id="f-tag"></select>
                     </div>
 
                     <div class="field">
@@ -1031,7 +1085,14 @@
                     </div>
 
                     <div class="field full">
-                      <label for="f-content">Body</label>
+                      <label for="f-content">Body <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(separate paragraphs with a blank line)</span></label>
+                      <div class="body-toolbar">
+                        <label class="file-btn">
+                          🖼 <span id="inline-image-btn-label">Insert image into post</span>
+                          <input type="file" id="f-inline-image" accept="image/*" />
+                        </label>
+                        <span class="upload-status" id="inline-image-status"></span>
+                      </div>
                       <textarea id="f-content" placeholder="Write like you're explaining it to a smart friend. Separate paragraphs with a blank line."></textarea>
                     </div>
                   </div>
@@ -1070,6 +1131,15 @@
                           <button type="button" class="remove-image-btn" id="remove-logo-btn" style="display:none;">Remove logo</button>
                           <span class="upload-status" id="logo-upload-status"></span>
                         </div>
+                      </div>
+                    </div>
+
+                    <div class="field full">
+                      <label>Categories <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(slug-based — used for post tagging &amp; ?category= filtering)</span></label>
+                      <div id="categories-list"></div>
+                      <div style="display:flex;gap:8px;margin-top:6px;">
+                        <input id="new-category-name" placeholder="New category name" style="flex:1;background:var(--bg-secondary);border:1px solid var(--border-strong);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;" />
+                        <button type="button" class="add-nav-link-btn" id="add-category-btn">+ Add</button>
                       </div>
                     </div>
 
@@ -1164,6 +1234,37 @@
                 renderImagePreview();
             });
 
+            // ── category select ──
+            loadCategoryOptions();
+
+            // ── insert image into post body ──
+            const contentArea = document.getElementById('f-content');
+            const inlineImageStatus = document.getElementById('inline-image-status');
+
+            document.getElementById('f-inline-image').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                inlineImageStatus.textContent = 'uploading…';
+                try {
+                    const url = await uploadToStorage(file, 'inline');
+                    const cursorPos = contentArea.selectionStart ?? contentArea.value.length;
+                    const before = contentArea.value.slice(0, cursorPos);
+                    const after = contentArea.value.slice(cursorPos);
+                    const needsLeadingBreak = before && !before.endsWith('\n\n') ? (before.endsWith('\n') ? '\n' :
+                        '\n\n') : '';
+                    const insertText = `${needsLeadingBreak}[image:${url}]\n\n`;
+                    contentArea.value = before + insertText + after;
+                    const newPos = (before + insertText).length;
+                    contentArea.focus();
+                    contentArea.setSelectionRange(newPos, newPos);
+                    inlineImageStatus.textContent = '✓ inserted';
+                    setTimeout(() => { inlineImageStatus.textContent = ''; }, 2500);
+                } catch (err) {
+                    inlineImageStatus.textContent = 'upload failed: ' + err.message;
+                }
+                e.target.value = '';
+            });
+
             // ── cancel edit ──
             document.getElementById('cancel-edit-btn').addEventListener('click', () => resetForm());
 
@@ -1256,6 +1357,7 @@
                 pendingImageFile = null;
                 uploadStatus.textContent = '';
                 renderImagePreview();
+                loadCategoryOptions();
             }
 
             // ── load posts ──
@@ -1311,7 +1413,7 @@
                         document.getElementById('edit-id').value = post.id;
                         document.getElementById('f-title').value = post.title || '';
                         document.getElementById('f-slug').value = post.slug || '';
-                        document.getElementById('f-tag').value = post.tag || '';
+                        loadCategoryOptions(post.tag || '');
                         document.getElementById('f-emoji').value = post.image_emoji || '';
                         document.getElementById('f-excerpt').value = post.excerpt || '';
                         document.getElementById('f-readtime').value = post.read_time || 5;
@@ -1441,6 +1543,50 @@
             document.getElementById('add-nav-link-btn').addEventListener('click', () => {
                 settings.nav_links.push({ label: '', href: '#' });
                 renderNavLinks();
+            });
+
+            // ── categories ──
+            const categoriesList = document.getElementById('categories-list');
+            const newCategoryInput = document.getElementById('new-category-name');
+
+            async function renderCategories() {
+                const { data: cats, error: catErr } = await supabase.from('categories').select('slug, name')
+                    .order('sort_order', { ascending: true });
+                if (catErr) {
+                    categoriesList.innerHTML = `<div class="upload-status">couldn't load categories: ${escapeHtml(catErr.message)}</div>`;
+                    return;
+                }
+                categoriesList.innerHTML = (cats || []).map(c => `
+                <div class="category-row" data-slug="${escapeHtml(c.slug)}">
+                  <span class="cat-name">${escapeHtml(c.name)}</span>
+                  <span class="cat-slug">/${escapeHtml(c.slug)}</span>
+                  <button type="button" data-remove-cat="${escapeHtml(c.slug)}" title="Delete">✕</button>
+                </div>
+              `).join('') || '<div class="upload-status">no categories yet.</div>';
+
+                categoriesList.querySelectorAll('[data-remove-cat]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        if (!confirm(`Delete category "${btn.dataset.removeCat}"? Posts using it will keep the old value.`)) return;
+                        await supabase.from('categories').delete().eq('slug', btn.dataset.removeCat);
+                        renderCategories();
+                        loadCategoryOptions();
+                    });
+                });
+            }
+            renderCategories();
+
+            document.getElementById('add-category-btn').addEventListener('click', async () => {
+                const name = newCategoryInput.value.trim();
+                if (!name) return;
+                const slug = slugify(name);
+                const { error: addErr } = await supabase.from('categories').insert({ slug, name });
+                if (addErr) {
+                    alert('Could not add category: ' + addErr.message);
+                    return;
+                }
+                newCategoryInput.value = '';
+                renderCategories();
+                loadCategoryOptions();
             });
 
             document.getElementById('settings-form').addEventListener('submit', async (e) => {
