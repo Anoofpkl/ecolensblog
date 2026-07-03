@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ECOLENS</title>
-    <meta name="description" content="Economy, markets, policy, tech and culture — clearly explained." />
+    <title>sign in · ECOLENS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
-        (function() {
+        (function () {
             try {
-                var saved = localStorage.getItem('ecolens-theme');
+                var saved = localStorage.getItem('ecolens-admin-theme');
                 var theme = (saved === 'dark' || saved === 'light') ? saved : 'dark';
                 document.documentElement.setAttribute('data-theme', theme);
             } catch (e) {}
@@ -48,20 +47,6 @@
             --radius-sm: 10px;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            /* brand colors */
-            --whatsapp: #25d366;
-            --whatsapp-glow: rgba(37, 211, 102, 0.25);
-            --x-brand: #ffffff;
-            /* X uses white in dark mode, we'll adjust per theme */
-            --x-glow: rgba(255, 255, 255, 0.15);
-            --facebook: #1877f2;
-            --facebook-glow: rgba(24, 119, 242, 0.25);
-            --linkedin: #0a66c2;
-            --linkedin-glow: rgba(10, 102, 194, 0.25);
-            --email: #ea4335;
-            --email-glow: rgba(234, 67, 53, 0.2);
-            --copy: #6c757d;
-            --copy-glow: rgba(108, 117, 125, 0.2);
         }
 
         :root[data-theme="light"] {
@@ -82,16 +67,14 @@
             --coral-glow: rgba(214, 73, 44, 0.1);
             --cyan: #0077be;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            --whatsapp: #1da15a;
-            --whatsapp-glow: rgba(29, 161, 90, 0.2);
-            --x-brand: #000000;
-            --x-glow: rgba(0, 0, 0, 0.1);
-            --facebook: #1668c9;
-            --facebook-glow: rgba(22, 104, 201, 0.2);
-            --linkedin: #095aad;
-            --linkedin-glow: rgba(9, 90, 173, 0.2);
-            --email: #d43d30;
-            --email-glow: rgba(212, 61, 48, 0.15);
+        }
+
+        body,
+        .panel,
+        .topbar,
+        .login-card,
+        .post-item {
+            transition: background var(--transition), color var(--transition), border-color var(--transition);
         }
 
         html {
@@ -105,17 +88,18 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             line-height: 1.5;
-            transition: background var(--transition), color var(--transition);
         }
 
         a {
             color: inherit;
             text-decoration: none;
         }
+
         ::selection {
             background: var(--accent);
             color: #fff;
         }
+
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -131,10 +115,11 @@
             background: var(--accent);
         }
 
+        /* ── utilities ── */
         .wrap {
-            max-width: 1080px;
+            max-width: 920px;
             margin: 0 auto;
-            padding: 28px 24px 100px;
+            padding: 32px 24px 80px;
         }
 
         /* ── topbar ── */
@@ -142,22 +127,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 22px;
-            margin-bottom: 12px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 36px;
             flex-wrap: wrap;
-            gap: 14px;
+            gap: 12px;
         }
+
         .brand-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
         }
-        .brand-logo {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
+
         .brand {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -168,293 +150,37 @@
             color: var(--lime);
         }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-        .nav-links a {
+        .brand-badge {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            letter-spacing: 0.02em;
-            color: var(--text-secondary);
-            padding: 8px 14px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: var(--accent);
+            color: #fff;
+            padding: 3px 12px;
             border-radius: 999px;
-            transition: background var(--transition), color var(--transition);
-        }
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text);
+            opacity: 0.85;
         }
 
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-        .theme-toggle {
-            width: 36px;
-            height: 36px;
-            border-radius: 999px;
-            border: 1px solid var(--border-strong);
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 15px;
-            flex-shrink: 0;
-            transition: all var(--transition);
-        }
-        .theme-toggle:hover {
-            border-color: var(--accent);
-            background: var(--accent-glow);
+            gap: 16px;
         }
 
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin-bottom: 32px;
-        }
-
-        /* ── hero ── */
-        .hero {
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 32px;
-            align-items: center;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: border-color var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent), var(--lime), var(--accent));
-            opacity: 0.6;
-        }
-        .hero:hover {
-            border-color: var(--border-strong);
-        }
-        .hero-eyebrow {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--lime);
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 34px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            margin-bottom: 14px;
-        }
-        .hero p {
-            color: var(--text-secondary);
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 18px;
-        }
-        .hero-meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            color: var(--text-tertiary);
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .hero-visual {
-            aspect-ratio: 4/3;
-            border-radius: var(--radius-sm);
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 90px;
-            overflow: hidden;
-        }
-        .hero-visual img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        @media (max-width:720px) {
-            .hero {
-                grid-template-columns: 1fr;
-                padding: 26px;
-            }
-            .hero-visual {
-                order: -1;
-                aspect-ratio: 16/9;
-            }
-        }
-
-        /* ── category filter ── */
-        .filter-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 28px;
-        }
-        .filter-pill {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: var(--text-secondary);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-        .filter-pill:hover {
-            border-color: var(--border-strong);
-            color: var(--text);
-        }
-        .filter-pill.active {
-            background: var(--lime);
-            color: #0a0a0e;
-            border-color: var(--lime);
-            font-weight: 500;
-        }
-
-        /* ── posts grid ── */
-        .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        @media (max-width:860px) {
-            .posts-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (max-width:580px) {
-            .posts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .post-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-        .post-card:hover {
-            border-color: var(--border-strong);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-        .post-card .thumb {
-            aspect-ratio: 16/10;
-            background: var(--bg-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 46px;
-            border-bottom: 1px solid var(--border);
-            overflow: hidden;
-        }
-        .post-card .thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .post-card .body {
-            padding: 18px 20px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1;
-        }
-        .post-card .tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--accent);
-            background: var(--accent-glow);
-            padding: 3px 10px;
-            border-radius: 999px;
-            align-self: flex-start;
-        }
-        .post-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 17px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            line-height: 1.3;
-        }
-        .post-card .excerpt {
-            color: var(--text-secondary);
-            font-size: 13.5px;
-            line-height: 1.55;
-            flex: 1;
-        }
-        .post-card .meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-tertiary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 8px;
-            border-top: 1px solid var(--border);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: var(--text-tertiary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-        }
-        .empty-state .big {
-            font-size: 40px;
-            display: block;
-            margin-bottom: 14px;
-        }
-
-        /* ── single post view ── */
         .back-link {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             color: var(--text-secondary);
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 6px;
+            transition: color var(--transition);
             padding: 6px 12px;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid transparent;
-            margin-bottom: 28px;
-            transition: all var(--transition);
-            cursor: pointer;
         }
         .back-link:hover {
             color: var(--text);
@@ -471,551 +197,305 @@
             stroke-linejoin: round;
         }
 
-        article.post {
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            border: 1px solid var(--border-strong);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        /* ── login ── */
+        .login-container {
+            max-width: 400px;
+            margin: 60px auto 0;
+        }
+
+        .login-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 44px;
+            padding: 44px 36px 36px;
             box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
-        @media (max-width:600px) {
-            article.post {
-                padding: 26px;
-            }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--lime), var(--accent));
+            opacity: 0.6;
         }
 
-        .post .tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--accent);
-            background: var(--accent-glow);
-            padding: 4px 12px;
-            border-radius: 999px;
-            display: inline-block;
-            margin-bottom: 18px;
-        }
-        .post h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 36px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            line-height: 1.15;
-            margin-bottom: 18px;
-        }
-        .post-byline {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            padding-bottom: 28px;
-            border-bottom: 1px solid var(--border);
-        }
-        .post-byline .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 999px;
-            background: var(--accent);
-            color: #fff;
+        .login-card .icon-wrap {
+            width: 52px;
+            height: 52px;
+            background: rgba(124, 92, 255, 0.12);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            flex-shrink: 0;
-        }
-        .post-byline .who {
-            font-size: 13.5px;
-            font-weight: 500;
-        }
-        .post-byline .when {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            color: var(--text-tertiary);
-        }
-        .post-cover {
-            width: 100%;
-            border-radius: var(--radius-sm);
-            margin-bottom: 32px;
-            border: 1px solid var(--border);
-        }
-        .post-content {
-            font-size: 16px;
-            line-height: 1.85;
-            color: var(--text);
-        }
-        .post-content p {
-            margin-bottom: 22px;
-        }
-        .post-content p:last-child {
-            margin-bottom: 0;
-        }
-        .post-content img {
-            width: 100%;
-            border-radius: var(--radius-sm);
-            margin: 8px 0 22px;
-            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            font-size: 26px;
         }
 
-        /* ── SHARE ROW — redesigned ── */
-        .share-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 32px;
-            padding-top: 28px;
-            border-top: 1px solid var(--border);
+        .login-card h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
         }
-        .share-label {
+
+        .login-card .sub {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .login-card form label {
+            display: block;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--text-tertiary);
-            margin-right: 6px;
-        }
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 12.5px;
-            font-weight: 500;
             color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            padding: 7px 14px 7px 12px;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: all var(--transition);
-            position: relative;
-            white-space: nowrap;
-        }
-        .share-btn svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            flex-shrink: 0;
-        }
-        .share-btn:hover {
-            border-color: var(--border-strong);
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-1px);
-        }
-        .share-btn:active {
-            transform: translateY(0px);
+            margin-bottom: 6px;
         }
 
-        /* brand-specific hover states */
-        .share-btn[data-share="whatsapp"]:hover {
-            border-color: var(--whatsapp);
-            color: var(--whatsapp);
-            background: var(--whatsapp-glow);
-            box-shadow: 0 0 20px var(--whatsapp-glow);
-        }
-        .share-btn[data-share="twitter"]:hover {
-            border-color: var(--x-brand);
-            color: var(--x-brand);
-            background: var(--x-glow);
-            box-shadow: 0 0 20px var(--x-glow);
-        }
-        .share-btn[data-share="facebook"]:hover {
-            border-color: var(--facebook);
-            color: var(--facebook);
-            background: var(--facebook-glow);
-            box-shadow: 0 0 20px var(--facebook-glow);
-        }
-        .share-btn[data-share="linkedin"]:hover {
-            border-color: var(--linkedin);
-            color: var(--linkedin);
-            background: var(--linkedin-glow);
-            box-shadow: 0 0 20px var(--linkedin-glow);
-        }
-        .share-btn[data-share="email"]:hover {
-            border-color: var(--email);
-            color: var(--email);
-            background: var(--email-glow);
-            box-shadow: 0 0 20px var(--email-glow);
-        }
-        .share-btn[data-share="copy"]:hover {
-            border-color: var(--copy);
-            color: var(--text);
-            background: var(--copy-glow);
-        }
-        .share-btn.copied {
-            border-color: var(--lime) !important;
-            color: var(--lime) !important;
-            background: var(--lime-glow) !important;
-            box-shadow: 0 0 24px var(--lime-glow) !important;
-        }
-
-        /* ── comments ── */
-        .comments-section {
-            margin-top: 40px;
-        }
-        .comments-section h2 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        .comment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-        .comment-form input,
-        .comment-form textarea {
-            background: rgba(0, 0, 0, 0.3);
+        .login-card form input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.35);
             border: 1px solid var(--border);
             color: var(--text);
             font-family: 'Inter', sans-serif;
-            font-size: 14.5px;
-            padding: 12px 15px;
+            font-size: 15px;
+            padding: 13px 16px;
             border-radius: var(--radius-sm);
+            margin-bottom: 18px;
             outline: none;
             transition: border-color var(--transition), box-shadow var(--transition);
-            width: 100%;
         }
-        .comment-form input:focus,
-        .comment-form textarea:focus {
+        .login-card form input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px var(--accent-glow);
         }
-        .comment-form textarea {
-            min-height: 90px;
-            resize: vertical;
+        .login-card form input::placeholder {
+            color: var(--text-tertiary);
         }
-        .comment-form button {
+
+        .error-msg {
+            color: var(--coral);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            min-height: 18px;
+            margin: -4px 0 14px;
+        }
+        .status-msg {
+            color: var(--lime);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            min-height: 18px;
+            margin: -4px 0 14px;
+        }
+
+        /* ── buttons ── */
+        button {
             font-family: 'Inter', sans-serif;
-            font-weight: 600;
+            font-weight: 500;
             border: none;
             border-radius: var(--radius-sm);
             cursor: pointer;
+            transition: all var(--transition);
             font-size: 14px;
             padding: 12px 22px;
-            background: var(--lime);
-            color: #0a0a0e;
-            width: fit-content;
-            box-shadow: 0 4px 20px var(--lime-glow);
-            transition: all var(--transition);
-        }
-        .comment-form button:hover {
-            opacity: 0.92;
-            transform: translateY(-1px);
-        }
-        .comment-form button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .comment-status {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            color: var(--lime);
-            min-height: 16px;
-        }
-        .comment-status.error {
-            color: var(--coral);
-        }
-
-        .comment-list {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-        .comment-item {
-            padding: 16px 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-        }
-        .comment-item .head {
-            display: flex;
-            justify-content: space-between;
+            display: inline-flex;
             align-items: center;
-            margin-bottom: 6px;
+            justify-content: center;
+            gap: 8px;
         }
-        .comment-item .name {
-            font-weight: 600;
-            font-size: 13.5px;
+        button:active {
+            transform: scale(0.97);
         }
-        .comment-item .when {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-tertiary);
-        }
-        .comment-item .body {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
+        button:focus-visible {
+            outline: 2px solid var(--lime);
+            outline-offset: 2px;
         }
 
-        footer {
-            margin-top: 60px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            color: var(--text-tertiary);
-            text-align: center;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-tertiary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-        }
-
-        /* ── secondary nav ── */
-        .site-nav {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-            padding: 10px 4px;
-            margin-bottom: 28px;
-            border-bottom: 1px solid var(--border);
-        }
-        .site-nav a {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            padding: 7px 14px;
-            border-radius: 999px;
-            transition: all var(--transition);
-        }
-        .site-nav a:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text);
-        }
-        .site-nav a.active {
-            background: var(--lime);
-            color: #0a0a0e;
-            font-weight: 500;
-        }
-
-        /* ── marquee ── */
-        .marquee-bar {
+        .oauth-divider {
             display: flex;
             align-items: center;
             gap: 10px;
-            overflow: hidden;
-            background: var(--accent-glow);
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            padding: 9px 0;
-            margin-bottom: 24px;
-        }
-        .marquee-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            margin: 18px 0;
+            color: var(--text-tertiary);
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--bg);
-            background: var(--lime);
-            padding: 4px 12px;
-            border-radius: 999px;
-            flex-shrink: 0;
-            margin-left: 12px;
-            font-weight: 600;
         }
-        .marquee-track {
-            overflow: hidden;
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content: '';
             flex: 1;
-        }
-        .marquee-content {
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-            width: max-content;
-            animation: marquee-scroll 28s linear infinite;
-        }
-        .marquee-bar:hover .marquee-content {
-            animation-play-state: paused;
-        }
-        .marquee-content span,
-        .marquee-content a {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12.5px;
-            color: var(--text);
-            padding: 0 28px;
-            flex-shrink: 0;
-            text-decoration: none;
-        }
-        .marquee-content a:hover {
-            color: var(--lime);
-            text-decoration: underline;
-        }
-        @keyframes marquee-scroll {
-            from {
-                transform: translateX(0);
-            }
-            to {
-                transform: translateX(-50%);
-            }
+            height: 1px;
+            background: var(--border);
         }
 
-        /* ── FOOTER SOCIAL ── */
-        .footer-social {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .footer-social .share-btn {
-            width: 40px;
-            height: 40px;
-            padding: 0;
+        .btn-github {
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            transition: all var(--transition);
-            font-size: 0;
-            /* hide text */;
+            gap: 10px;
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-strong);
+            background: var(--bg-card);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background var(--transition), border-color var(--transition);
         }
-        .footer-social .share-btn svg {
+        .btn-github:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+        }
+        .btn-github:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-github svg {
             width: 18px;
             height: 18px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transition: stroke var(--transition);
+            fill: currentColor;
+            flex-shrink: 0;
         }
-        .footer-social .share-btn:hover {
-            transform: translateY(-2px);
+
+        .btn-primary {
+            background: var(--lime);
+            color: #0a0a0e;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 20px var(--lime-glow);
+        }
+        .btn-primary:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 28px var(--lime-glow);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
             border-color: var(--border-strong);
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.06);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-        .footer-social .share-btn:active {
-            transform: translateY(0px);
         }
 
-        /* brand-specific hover — footer */
-        .footer-social .share-btn[data-share="whatsapp"]:hover {
-            border-color: var(--whatsapp);
-            color: var(--whatsapp);
-            background: var(--whatsapp-glow);
-            box-shadow: 0 0 24px var(--whatsapp-glow);
+        /* ── anims ── */
+        .fade-in {
+            animation: fadeIn 0.3s ease;
         }
-        .footer-social .share-btn[data-share="twitter"]:hover {
-            border-color: var(--x-brand);
-            color: var(--x-brand);
-            background: var(--x-glow);
-            box-shadow: 0 0 24px var(--x-glow);
-        }
-        .footer-social .share-btn[data-share="facebook"]:hover {
-            border-color: var(--facebook);
-            color: var(--facebook);
-            background: var(--facebook-glow);
-            box-shadow: 0 0 24px var(--facebook-glow);
-        }
-        .footer-social .share-btn[data-share="linkedin"]:hover {
-            border-color: var(--linkedin);
-            color: var(--linkedin);
-            background: var(--linkedin-glow);
-            box-shadow: 0 0 24px var(--linkedin-glow);
-        }
-        .footer-social .share-btn[data-share="email"]:hover {
-            border-color: var(--email);
-            color: var(--email);
-            background: var(--email-glow);
-            box-shadow: 0 0 24px var(--email-glow);
-        }
-        .footer-social .share-btn[data-share="copy"]:hover {
-            border-color: var(--copy);
-            color: var(--text);
-            background: var(--copy-glow);
-            box-shadow: 0 0 20px var(--copy-glow);
-        }
-        .footer-social .share-btn.copied {
-            border-color: var(--lime) !important;
-            color: var(--lime) !important;
-            background: var(--lime-glow) !important;
-            box-shadow: 0 0 28px var(--lime-glow) !important;
-        }
-        .footer-social .share-btn.copied svg {
-            stroke: var(--lime);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        footer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        .footer-copy {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
+        .loading-state {
             color: var(--text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .loading-state .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 999px;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .wrap {
+                padding: 20px 16px 60px;
+            }
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .brand-group {
+                justify-content: space-between;
+            }
+            .topbar-actions {
+                justify-content: flex-start;
+            }
+            .login-card {
+                padding: 32px 20px 28px;
+            }
         }
     </style>
 </head>
 <body>
+
     <div class="wrap">
-        <div class="topbar">
-            <a href="index.html" class="brand-group" id="brand-link">
-                <span id="brand-logo-slot"></span>
-                <span class="brand" id="brand-name">ECOLENS<span class="dot">.</span></span>
-            </a>
-            <nav class="nav-links" id="nav-links"></nav>
+        <header class="topbar">
+            <div class="brand-group">
+                <div class="brand">ECOLENS<span class="dot">.</span></div>
+                <span class="brand-badge">admin</span>
+            </div>
             <div class="topbar-actions">
-                <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌙</button>
+                <button class="theme-toggle" id="theme-toggle" type="button" title="Toggle dark / light theme">🌙</button>
+                <a class="back-link" href="../index.html">
+                    <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                    view site
+                </a>
             </div>
-        </div>
-        <nav class="site-nav" id="site-nav"></nav>
-        <div class="marquee-bar" id="marquee-bar" style="display:none;">
-            <span class="marquee-tag">Live</span>
-            <div class="marquee-track">
-                <div class="marquee-content" id="marquee-content"></div>
-            </div>
-        </div>
+        </header>
 
-        <div id="app"><div class="loading">loading…</div></div>
-
-        <footer>
-            <div class="footer-social" id="footer-social">
-                <button class="share-btn" data-share="copy" title="Copy site link">
-                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-                <button class="share-btn" data-share="whatsapp" title="Share on WhatsApp">
-                    <svg viewBox="0 0 24 24"><path d="M12.032 21.965c-1.128 0-2.25-.21-3.283-.625l-3.595 1.174 1.188-3.476c-.763-1.174-1.168-2.514-1.168-3.908 0-4.627 3.768-8.39 8.394-8.39s8.394 3.763 8.394 8.39-3.768 8.39-8.394 8.39zm6.06-5.843c-.125-.312-.5-.744-1.017-.872-.18-.036-.408-.056-.582.133-.188.203-.517.598-.659.755-.124.146-.255.146-.487.08-.49-.164-1.468-.625-2.235-1.045-.264-.144-.4-.267-.563-.383-.279-.196-.308-.454-.126-.704.163-.224.31-.39.434-.571.187-.276.312-.464.468-.743.076-.142.09-.245.032-.364-.148-.332-.554-.563-.92-.667-.43-.12-.746-.014-.93.031-.098.024-.179.059-.25.118-.368.309-.976 1.015-1.207 1.435-.06.109-.106.214-.14.332-.037.127-.027.246.005.354.037.126.084.237.147.345.107.182.23.344.366.493.607.67 1.377 1.244 2.24 1.616.553.238 1.166.367 1.625.372.268-.009.452-.069.624-.165.235-.13.396-.322.502-.561.084-.19.127-.39.136-.568.009-.149-.013-.228-.066-.362-.044-.111-.129-.236-.211-.34-.078-.1-.169-.197-.256-.284l-.557-.556c-.174-.174-.335-.336-.439-.518-.106-.187-.076-.355.018-.475.119-.153.338-.483.584-.818.13-.178.236-.323.303-.423.328-.484.512-.801.512-1.106 0-.252-.102-.462-.285-.627-.329-.296-.822-.494-1.119-.333-.173.094-.314.249-.394.414-.094.195-.157.484-.087.815.054.258.12.465.159.652.1.486-.12.818-.222.988-.079.13-.188.242-.306.332-.17.129-.258.222-.258.338 0 .137.183.356.517.7.357.361.535.573.643.763.183.321.291.74.19 1.117-.109.4-.381.74-.682.947-.26.18-.577.28-.929.28-.158 0-.318-.021-.474-.064-.34-.09-.63-.272-.921-.471-.066-.045-.133-.085-.199-.125-.43-.268-.893-.618-1.278-1.012-.504-.516-.93-1.096-1.24-1.74-.098-.204-.169-.39-.212-.562-.022-.09-.035-.175-.038-.257-.003-.087.02-.16.066-.24.087-.155.218-.336.358-.529.166-.226.35-.476.423-.673.03-.08.056-.163.066-.249.01-.089-.012-.169-.069-.243-.054-.071-.456-.562-.745-.72-.113-.064-.241-.093-.34-.11-.078-.014-.162-.022-.23-.022-.085 0-.166.015-.246.044-.199.074-.51.313-.737.533-.378.367-.631.819-.644 1.353-.007.308.051.611.172.9.11.264.269.52.456.76.285.364.673.763 1.08 1.126.583.522 1.278.952 1.973 1.224.408.16.788.268 1.128.32.192.029.383.042.57.038.478-.009.881-.134 1.204-.377.268-.2.481-.473.603-.786.148-.38.122-.81.008-1.159z"/></svg>
-                </button>
-                <button class="share-btn" data-share="twitter" title="Share on X (Twitter)">
-                    <svg viewBox="0 0 24 24"><path d="M14.258 10.152L23.176 0h-2.113l-7.747 8.813L7.133 0H0l9.352 13.328L0 23.973h2.113l8.176-9.309 6.531 9.309h7.133l-9.695-13.821zm-2.895 3.293l-.949-1.328L2.875 1.56h3.246l6.086 8.523.945 1.328 7.91 11.078h-3.246l-6.453-9.044z"/></svg>
-                </button>
-                <button class="share-btn" data-share="facebook" title="Share on Facebook">
-                    <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                </button>
-                <button class="share-btn" data-share="linkedin" title="Share on LinkedIn">
-                    <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                </button>
-                <button class="share-btn" data-share="email" title="Share by email">
-                    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/></svg>
-                </button>
-            </div>
-            <div class="footer-copy"><span id="footer-name">ECOLENS</span><span id="footer-note"></span> · Developed by Anoof</div>
-        </footer>
+        <div id="app"><div class="loading-state"><span class="spinner"></span> checking session…</div></div>
     </div>
 
     <script type="module">
@@ -1026,488 +506,192 @@
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const app = document.getElementById('app');
-        let activeTag = null;
-        let allPosts = [];
-        let categoriesCache = [];
+        const DASH_URL = 'dash/';
 
-        // ── theme ──
-        const themeToggle = document.getElementById('theme-toggle');
-        function applyThemeIcon() {
-            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
-            themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+        // ─── THEME ──────────────────────────────────────────
+        const ADMIN_THEME_KEY = 'ecolens-admin-theme';
+
+        function getThemeIcon() {
+            return document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️';
         }
-        applyThemeIcon();
-        themeToggle.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme') || 'dark';
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            try { localStorage.setItem('ecolens-theme', next); } catch (e) {}
-            applyThemeIcon();
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(ADMIN_THEME_KEY, theme);
+            document.querySelectorAll('.theme-toggle').forEach(btn => { btn.textContent = getThemeIcon(); });
+        }
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.theme-toggle')) {
+                const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                applyTheme(next);
+            }
         });
+        applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
 
-        function escapeHtml(str) {
-            return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
-                "'": '&#39;' } [c]));
+        // ─── ADMIN CHECK ────────────────────────────────────
+        async function isCurrentUserAdmin(email) {
+            if (!email) return false;
+            const { data, error } = await supabase.from('admins').select('email, role').eq('email', email).maybeSingle();
+            return !error && !!data;
         }
 
-        function formatDate(d) {
-            return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-
-        function formatDateTime(d) {
-            return new Date(d).toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-        }
-
-        // ── settings ──
-        async function loadSettings() {
-            const { data } = await supabase.from('settings').select('value').eq('id', 'site').single();
-            const settings = (data && data.value) || {};
-            const siteName = settings.site_name || 'ECOLENS';
-            document.title = siteName;
-            document.getElementById('footer-name').textContent = siteName;
-
-            const footerNoteEl = document.getElementById('footer-note');
-            footerNoteEl.textContent = settings.footer_text ? ` · ${settings.footer_text}` : '';
-
-            const brandEl = document.getElementById('brand-name');
-            brandEl.innerHTML = escapeHtml(siteName.slice(0, -1) || siteName) +
-                '<span class="dot">' + escapeHtml(siteName.slice(-1) || '.') + '</span>';
-
-            const logoSlot = document.getElementById('brand-logo-slot');
-            if (settings.logo_url) {
-                logoSlot.innerHTML = `<img class="brand-logo" src="${escapeHtml(settings.logo_url)}" alt="" />`;
-            }
-
-            const navEl = document.getElementById('nav-links');
-            const links = Array.isArray(settings.nav_links) ? settings.nav_links : [];
-            navEl.innerHTML = links.map(l =>
-                `<a href="${escapeHtml(l.href || '#')}">${escapeHtml(l.label || '')}</a>`
-            ).join('');
-
-            // marquee
-            const marqueeBar = document.getElementById('marquee-bar');
-            const marqueeContent = document.getElementById('marquee-content');
-            const marqueeItems = Array.isArray(settings.marquee_items) && settings.marquee_items.length ?
-                settings.marquee_items :
-                (settings.marquee_text || '').split('•').map(s => s.trim()).filter(Boolean).map(t => ({ type: 'custom',
-                    label: t, url: '' }));
-
-            if (settings.marquee_enabled && marqueeItems.length) {
-                const html = marqueeItems.map(item => {
-                    if (item.type === 'post' && item.slug) {
-                        return `<a href="?post=${encodeURIComponent(item.slug)}" data-marquee-post="${escapeHtml(item.slug)}">📰 ${escapeHtml(item.label)}</a>`;
-                    }
-                    if (item.url) {
-                        return `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.label)}</a>`;
-                    }
-                    return `<span>${escapeHtml(item.label)}</span>`;
-                }).join('');
-                marqueeContent.innerHTML = html + html;
-                marqueeContent.querySelectorAll('[data-marquee-post]').forEach(a => {
-                    a.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const slug = a.dataset.marqueePost;
-                        history.pushState({}, '', `?post=${encodeURIComponent(slug)}`);
-                        renderPost(slug);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    });
-                });
-                marqueeBar.style.display = 'flex';
-            } else {
-                marqueeBar.style.display = 'none';
-            }
-        }
-
-        // ── categories ──
-        async function loadCategoryFilters() {
-            if (categoriesCache.length) return categoriesCache;
-            const { data: cats } = await supabase.from('categories').select('slug, name').order('sort_order', { ascending: true });
-            categoriesCache = cats || [];
-            return categoriesCache;
-        }
-
-        function renderFilterRow(cats) {
-            const pills = [{ slug: null, name: 'All' }, ...cats];
-            return `<div class="filter-row">${pills.map(c => `
-                <button class="filter-pill ${activeTag === c.slug ? 'active' : ''}" data-tag="${escapeHtml(c.slug || '')}">${escapeHtml(c.name)}</button>
-            `).join('')}</div>`;
-        }
-
-        async function renderSiteNav() {
-            const cats = await loadCategoryFilters();
-            const navEl = document.getElementById('site-nav');
-            const items = [{ slug: null, name: 'Home' }, ...cats];
-            navEl.innerHTML = items.map(c =>
-                `<a href="#" data-nav-tag="${escapeHtml(c.slug || '')}" class="${activeTag === c.slug ? 'active' : ''}">${escapeHtml(c.name)}</a>`
-            ).join('');
-            navEl.querySelectorAll('[data-nav-tag]').forEach(a => {
-                a.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    activeTag = a.dataset.navTag || null;
-                    const url = activeTag ? `?tag=${encodeURIComponent(activeTag)}` : window.location.pathname;
-                    history.pushState({}, '', url);
-                    renderList();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            });
-        }
-
-        function updateActiveNav() {
-            document.querySelectorAll('#site-nav [data-nav-tag]').forEach(a => {
-                a.classList.toggle('active', (a.dataset.navTag || null) === activeTag);
-            });
-        }
-
-        // ── list view ──
-        async function renderList() {
-            updateActiveNav();
-            app.innerHTML = '<div class="loading">loading posts…</div>';
-
-            const [cats, postsRes] = await Promise.all([
-                loadCategoryFilters(),
-                supabase.from('posts').select('id, title, slug, tag, excerpt, image_emoji, image_url, author_name, read_time, views, created_at')
-                .order('created_at', { ascending: false })
-            ]);
-
-            if (postsRes.error) {
-                app.innerHTML =
-                    `<div class="empty-state"><span class="big">⚠️</span>Couldn't load posts: ${escapeHtml(postsRes.error.message)}</div>`;
-                return;
-            }
-
-            allPosts = postsRes.data || [];
-
-            if (allPosts.length === 0) {
-                app.innerHTML =
-                `<div class="empty-state"><span class="big">📭</span>No posts published yet. Check back soon.</div>`;
-                return;
-            }
-
-            const [featured, ...rest] = allPosts;
-            const visible = activeTag ? rest.filter(p => p.tag === activeTag) : rest;
-            const showHero = !activeTag || featured.tag === activeTag;
-
+        // ─── LOGIN ──────────────────────────────────────────
+        function renderLogin(message) {
             app.innerHTML = `
-                ${showHero ? renderHero(featured) : ''}
-                ${renderFilterRow(cats)}
-                <div class="posts-grid">
-                    ${(showHero ? visible : allPosts.filter(p => !activeTag || p.tag === activeTag))
-                        .map(p => renderCard(p)).join('') || '<div class="empty-state" style="grid-column:1/-1"><span class="big">🔍</span>No posts in this category yet.</div>'}
-                </div>
-            `;
+            <div class="login-container fade-in">
+              <div class="login-card">
+                <div class="icon-wrap">🌱</div>
+                <h1>Welcome back</h1>
+                <p class="sub">Sign in to publish and manage your stories.</p>
 
-            wireCardClicks();
-        }
+                <button type="button" class="btn-github" id="github-login-btn">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                    <span id="github-btn-label">Continue with GitHub</span>
+                </button>
 
-        function renderHero(p) {
-            const visual = p.image_url ?
-                `<img src="${escapeHtml(p.image_url)}" alt="" />` :
-                escapeHtml(p.image_emoji || '📰');
-            return `
-                <div class="hero" data-slug="${escapeHtml(p.slug)}">
-                    <div>
-                        <div class="hero-eyebrow">✦ Latest · ${escapeHtml(p.tag || 'econ')}</div>
-                        <h1>${escapeHtml(p.title)}</h1>
-                        <p>${escapeHtml(p.excerpt || '')}</p>
-                        <div class="hero-meta">
-                            <span>${escapeHtml(p.author_name || 'ECOLENS')}</span>
-                            <span>${formatDateTime(p.created_at)}</span>
-                            <span>${p.read_time || 5} min read</span>
-                        </div>
-                    </div>
-                    <div class="hero-visual">${visual}</div>
-                </div>
-            `;
-        }
+                <div class="oauth-divider">or</div>
 
-        function renderCard(p) {
-            const thumb = p.image_url ?
-                `<img src="${escapeHtml(p.image_url)}" alt="" />` :
-                escapeHtml(p.image_emoji || '📰');
-            return `
-                <div class="post-card" data-slug="${escapeHtml(p.slug)}">
-                    <div class="thumb">${thumb}</div>
-                    <div class="body">
-                        <span class="tag">${escapeHtml(p.tag || 'econ')}</span>
-                        <h3>${escapeHtml(p.title)}</h3>
-                        <div class="excerpt">${escapeHtml(p.excerpt || '')}</div>
-                        <div class="meta">
-                            <span>${escapeHtml(p.author_name || 'ECOLENS')}</span>
-                            <span>${formatDateTime(p.created_at)}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+                <form id="login-form">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required />
 
-        function wireCardClicks() {
-            document.querySelectorAll('[data-slug]').forEach(el => {
-                el.addEventListener('click', () => {
-                    const slug = el.dataset.slug;
-                    history.pushState({}, '', `?post=${encodeURIComponent(slug)}`);
-                    renderPost(slug);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            });
-        }
+                  <label for="password">Password</label>
+                  <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
 
-        document.getElementById('brand-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            history.pushState({}, '', window.location.pathname);
-            renderList();
-        });
+                  <div class="error-msg" id="login-error">${escapeHtml(message || '')}</div>
 
-        // ── single post view ──
-        function renderContent(post) {
-            const content = post.content;
-            if (!content) return '';
-            if (post.is_html) {
-                return content;
-            }
-            return content.split(/\n\s*\n/).map(block => {
-                const trimmed = block.trim();
-                const imgMatch = trimmed.match(/^\[image:(.+?)\]$/);
-                if (imgMatch) return `<img src="${escapeHtml(imgMatch[1])}" alt="" />`;
-                if (!trimmed) return '';
-                return `<p>${escapeHtml(trimmed).replace(/\n/g, '<br>')}</p>`;
-            }).join('');
-        }
+                  <button type="submit" class="btn-primary" id="login-btn">
+                    <span>Sign in</span>
+                  </button>
+                </form>
+                <p style="margin-top:16px;font-size:12.5px;color:var(--text-tertiary);">No account yet? <a href="#" id="show-signup" style="color:var(--accent);text-decoration:underline;">Request access</a></p>
+                <form id="signup-form" style="display:none;margin-top:12px;">
+                  <label for="su-name">Your name</label>
+                  <input id="su-name" placeholder="Jane Doe" required />
+                  <label for="su-email">Email</label>
+                  <input id="su-email" type="email" placeholder="you@example.com" required />
+                  <label for="su-password">Password</label>
+                  <input id="su-password" type="password" placeholder="••••••••" required />
+                  <div class="error-msg" id="signup-error"></div>
+                  <div class="status-msg" id="signup-status"></div>
+                  <button type="submit" class="btn-ghost" id="signup-btn" style="width:100%;">Create account</button>
+                  <p style="margin-top:10px;font-size:11.5px;color:var(--text-tertiary);">Creating an account doesn't grant admin access by itself — an existing admin still needs to approve you on the Admins screen.</p>
+                </form>
+              </div>
+            </div>
+          `;
 
-        async function renderPost(slug) {
-            app.innerHTML = '<div class="loading">loading…</div>';
-
-            const { data: post, error } = await supabase.from('posts').select('*').eq('slug', slug).single();
-            if (error || !post) {
-                app.innerHTML = `<div class="empty-state"><span class="big">🔍</span>Post not found.</div>
-                    <div style="text-align:center;margin-top:16px;"><span class="back-link" id="back-to-list">← Back to all posts</span></div>`;
-                document.getElementById('back-to-list').addEventListener('click', () => {
-                    history.pushState({}, '', window.location.pathname);
-                    renderList();
-                });
-                return;
-            }
-
-            supabase.from('posts').update({ views: (post.views || 0) + 1 }).eq('id', post.id).then(() => {});
-
-            const initials = (post.author_name || 'EC').split(' ').map(w => w[0]).slice(0, 2).join('');
-
-            app.innerHTML = `
-                <span class="back-link" id="back-to-list">
-                    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back to all posts
-                </span>
-                <article class="post">
-                    <span class="tag">${escapeHtml(post.tag || 'econ')}</span>
-                    <h1>${escapeHtml(post.title)}</h1>
-                    <div class="post-byline">
-                        <div class="avatar">${escapeHtml(initials)}</div>
-                        <div>
-                            <div class="who">${escapeHtml(post.author_name || 'ECOLENS')}</div>
-                            <div class="when">${formatDateTime(post.created_at)} · ${post.read_time || 5} min read · 👁 ${(post.views || 0) + 1}</div>
-                        </div>
-                    </div>
-                    ${post.image_url ? `<img class="post-cover" src="${escapeHtml(post.image_url)}" alt="" />` : ''}
-                    <div class="post-content">${renderContent(post)}</div>
-
-                    <div class="share-row" id="share-row">
-                        <span class="share-label">Share</span>
-                        <button class="share-btn" data-share="copy">
-                            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                            Copy
-                        </button>
-                        <button class="share-btn" data-share="whatsapp">
-                            <svg viewBox="0 0 24 24"><path d="M12.032 21.965c-1.128 0-2.25-.21-3.283-.625l-3.595 1.174 1.188-3.476c-.763-1.174-1.168-2.514-1.168-3.908 0-4.627 3.768-8.39 8.394-8.39s8.394 3.763 8.394 8.39-3.768 8.39-8.394 8.39zm6.06-5.843c-.125-.312-.5-.744-1.017-.872-.18-.036-.408-.056-.582.133-.188.203-.517.598-.659.755-.124.146-.255.146-.487.08-.49-.164-1.468-.625-2.235-1.045-.264-.144-.4-.267-.563-.383-.279-.196-.308-.454-.126-.704.163-.224.31-.39.434-.571.187-.276.312-.464.468-.743.076-.142.09-.245.032-.364-.148-.332-.554-.563-.92-.667-.43-.12-.746-.014-.93.031-.098.024-.179.059-.25.118-.368.309-.976 1.015-1.207 1.435-.06.109-.106.214-.14.332-.037.127-.027.246.005.354.037.126.084.237.147.345.107.182.23.344.366.493.607.67 1.377 1.244 2.24 1.616.553.238 1.166.367 1.625.372.268-.009.452-.069.624-.165.235-.13.396-.322.502-.561.084-.19.127-.39.136-.568.009-.149-.013-.228-.066-.362-.044-.111-.129-.236-.211-.34-.078-.1-.169-.197-.256-.284l-.557-.556c-.174-.174-.335-.336-.439-.518-.106-.187-.076-.355.018-.475.119-.153.338-.483.584-.818.13-.178.236-.323.303-.423.328-.484.512-.801.512-1.106 0-.252-.102-.462-.285-.627-.329-.296-.822-.494-1.119-.333-.173.094-.314.249-.394.414-.094.195-.157.484-.087.815.054.258.12.465.159.652.1.486-.12.818-.222.988-.079.13-.188.242-.306.332-.17.129-.258.222-.258.338 0 .137.183.356.517.7.357.361.535.573.643.763.183.321.291.74.19 1.117-.109.4-.381.74-.682.947-.26.18-.577.28-.929.28-.158 0-.318-.021-.474-.064-.34-.09-.63-.272-.921-.471-.066-.045-.133-.085-.199-.125-.43-.268-.893-.618-1.278-1.012-.504-.516-.93-1.096-1.24-1.74-.098-.204-.169-.39-.212-.562-.022-.09-.035-.175-.038-.257-.003-.087.02-.16.066-.24.087-.155.218-.336.358-.529.166-.226.35-.476.423-.673.03-.08.056-.163.066-.249.01-.089-.012-.169-.069-.243-.054-.071-.456-.562-.745-.72-.113-.064-.241-.093-.34-.11-.078-.014-.162-.022-.23-.022-.085 0-.166.015-.246.044-.199.074-.51.313-.737.533-.378.367-.631.819-.644 1.353-.007.308.051.611.172.9.11.264.269.52.456.76.285.364.673.763 1.08 1.126.583.522 1.278.952 1.973 1.224.408.16.788.268 1.128.32.192.029.383.042.57.038.478-.009.881-.134 1.204-.377.268-.2.481-.473.603-.786.148-.38.122-.81.008-1.159z"/></svg>
-                            WhatsApp
-                        </button>
-                        <button class="share-btn" data-share="twitter">
-                            <svg viewBox="0 0 24 24"><path d="M14.258 10.152L23.176 0h-2.113l-7.747 8.813L7.133 0H0l9.352 13.328L0 23.973h2.113l8.176-9.309 6.531 9.309h7.133l-9.695-13.821zm-2.895 3.293l-.949-1.328L2.875 1.56h3.246l6.086 8.523.945 1.328 7.91 11.078h-3.246l-6.453-9.044z"/></svg>
-                            X
-                        </button>
-                        <button class="share-btn" data-share="facebook">
-                            <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                            Facebook
-                        </button>
-                    </div>
-                </article>
-
-                <div class="comments-section">
-                    <h2>Comments</h2>
-                    <form class="comment-form" id="comment-form">
-                        <input type="text" id="c-name" placeholder="Your name" required maxlength="80" />
-                        <textarea id="c-body" placeholder="Add to the discussion…" required maxlength="2000"></textarea>
-                        <button type="submit">Post comment</button>
-                        <div class="comment-status" id="comment-status"></div>
-                    </form>
-                    <div class="comment-list" id="comment-list"><div class="loading">loading comments…</div></div>
-                </div>
-            `;
-
-            document.getElementById('back-to-list').addEventListener('click', () => {
-                history.pushState({}, '', window.location.pathname);
-                renderList();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-
-            wireShare(document.getElementById('share-row'), () => ({
-                url: `${window.location.origin}${window.location.pathname}?post=${encodeURIComponent(post.slug)}`,
-                text: post.title
-            }));
-
-            loadComments(post.id);
-
-            document.getElementById('comment-form').addEventListener('submit', async (e) => {
+            document.getElementById('show-signup').addEventListener('click', (e) => {
                 e.preventDefault();
-                const statusEl = document.getElementById('comment-status');
-                const btn = e.target.querySelector('button');
-                const name = document.getElementById('c-name').value.trim();
-                const body = document.getElementById('c-body').value.trim();
-                if (!name || !body) return;
+                document.getElementById('signup-form').style.display = 'block';
+            });
 
+            const githubBtn = document.getElementById('github-login-btn');
+            const githubBtnLabel = document.getElementById('github-btn-label');
+            githubBtn.addEventListener('click', async () => {
+                const errEl = document.getElementById('login-error');
+                errEl.textContent = '';
+                githubBtn.disabled = true;
+                githubBtnLabel.textContent = 'Redirecting to GitHub…';
+
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: { redirectTo: window.location.origin + window.location.pathname.replace(/index\.html$/, '') + DASH_URL }
+                });
+
+                if (error) {
+                    errEl.textContent = error.message;
+                    githubBtn.disabled = false;
+                    githubBtnLabel.textContent = 'Continue with GitHub';
+                }
+                // on success, the browser navigates away to GitHub, so no further action needed here
+            });
+
+            const form = document.getElementById('login-form');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('login-btn');
+                const errEl = document.getElementById('login-error');
+                errEl.textContent = '';
                 btn.disabled = true;
-                statusEl.classList.remove('error');
-                statusEl.textContent = 'posting…';
+                btn.innerHTML = '<span class="spinner" style="width:16px;height:16px;border-width:2px;"></span> signing in…';
 
-                const { error: insertErr } = await supabase.from('comments').insert({
-                    post_id: post.id,
-                    name,
-                    body,
-                    approved: false
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+                if (error) {
+                    errEl.textContent = error.message;
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Sign in</span>';
+                    return;
+                }
+
+                const admin = await isCurrentUserAdmin(email);
+                if (!admin) {
+                    await supabase.auth.signOut();
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Sign in</span>';
+                    errEl.textContent = "Your account exists but hasn't been approved as an admin yet. Ask an existing admin to add your email on the Admins screen.";
+                    return;
+                }
+
+                window.location.href = DASH_URL;
+            });
+
+            document.getElementById('signup-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('signup-btn');
+                const errEl = document.getElementById('signup-error');
+                const statusEl = document.getElementById('signup-status');
+                errEl.textContent = '';
+                statusEl.textContent = '';
+                btn.disabled = true;
+                btn.textContent = 'Creating…';
+
+                const name = document.getElementById('su-name').value.trim();
+                const email = document.getElementById('su-email').value.trim();
+                const password = document.getElementById('su-password').value;
+
+                const { error } = await supabase.auth.signUp({
+                    email, password, options: { data: { name } }
                 });
 
                 btn.disabled = false;
-                if (insertErr) {
-                    statusEl.classList.add('error');
-                    statusEl.textContent = insertErr.message;
+                btn.textContent = 'Create account';
+
+                if (error) {
+                    errEl.textContent = error.message;
                     return;
                 }
-                document.getElementById('comment-form').reset();
-                statusEl.textContent = '✓ Thanks! Your comment is awaiting moderation.';
-                setTimeout(() => { statusEl.textContent = ''; }, 5000);
+                statusEl.textContent = '✓ Account created. Ask an existing admin to approve your email on the Admins screen, then sign in above.';
             });
         }
 
-        // ── share wiring ──
-        function wireShare(container, getData) {
-            if (!container) return;
-            container.querySelectorAll('[data-share]').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const { url, text } = getData();
-                    const type = btn.dataset.share;
-
-                    if (type === 'copy') {
-                        try {
-                            await navigator.clipboard.writeText(url);
-                        } catch (e) {
-                            const tmp = document.createElement('input');
-                            tmp.value = url;
-                            document.body.appendChild(tmp);
-                            tmp.select();
-                            document.execCommand('copy');
-                            tmp.remove();
-                        }
-                        const original = btn.innerHTML;
-                        btn.classList.add('copied');
-                        // keep icon, change label
-                        if (btn.textContent.trim()) {
-                            // if it has text, replace
-                            const icon = btn.querySelector('svg');
-                            if (icon) {
-                                btn.innerHTML = icon.outerHTML + ' Copied';
-                            } else {
-                                btn.textContent = '✓ Copied';
-                            }
-                        }
-                        setTimeout(() => {
-                            btn.classList.remove('copied');
-                            btn.innerHTML = original;
-                        }, 1800);
-                        return;
-                    }
-
-                    if (type === 'email') {
-                        window.location.href =
-                            `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`;
-                        return;
-                    }
-
-                    const urls = {
-                        whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
-                        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-                        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-                        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-                    };
-                    if (urls[type]) window.open(urls[type], '_blank', 'noopener,noreferrer,width=600,height=500');
-                });
-            });
+        function escapeHtml(str) {
+            return String(str ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+                "'": '&#39;' }[m]));
         }
 
-        async function loadComments(postId) {
-            const listEl = document.getElementById('comment-list');
-            const { data, error } = await supabase.from('comments')
-                .select('id, name, body, created_at')
-                .eq('post_id', postId).eq('approved', true)
-                .order('created_at', { ascending: false });
+        // ─── BOOT ──────────────────────────────────────────
+        const params = new URLSearchParams(window.location.search);
+        const msgParam = params.get('msg');
+        const boundaryMessage = msgParam === 'not_approved'
+            ? "Your account hasn't been approved as an admin yet."
+            : '';
 
-            if (error) {
-                listEl.innerHTML =
-                    `<div class="comment-status error">couldn't load comments: ${escapeHtml(error.message)}</div>`;
-                return;
+        (async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                const admin = await isCurrentUserAdmin(session.user.email);
+                if (admin) {
+                    window.location.href = DASH_URL;
+                    return;
+                }
+                await supabase.auth.signOut();
             }
-            if (!data || data.length === 0) {
-                listEl.innerHTML =
-                    `<div class="comment-status" style="color:var(--text-tertiary)">No comments yet — be the first.</div>`;
-                return;
-            }
-            listEl.innerHTML = data.map(c => `
-                <div class="comment-item">
-                    <div class="head">
-                        <span class="name">${escapeHtml(c.name)}</span>
-                        <span class="when">${formatDateTime(c.created_at)}</span>
-                    </div>
-                    <div class="body">${escapeHtml(c.body)}</div>
-                </div>
-            `).join('');
-        }
-
-        // ── filter row clicks ──
-        app.addEventListener('click', (e) => {
-            const pill = e.target.closest('.filter-pill');
-            if (!pill) return;
-            activeTag = pill.dataset.tag || null;
-            const url = activeTag ? `?tag=${encodeURIComponent(activeTag)}` : window.location.pathname;
-            history.pushState({}, '', url);
-            renderList();
-        });
-
-        // ── footer share ──
-        wireShare(document.getElementById('footer-social'), () => ({
-            url: `${window.location.origin}${window.location.pathname}`,
-            text: document.getElementById('footer-name').textContent || 'ECOLENS'
-        }));
-
-        window.addEventListener('popstate', boot);
-
-        function boot() {
-            const params = new URLSearchParams(window.location.search);
-            const postSlug = params.get('post');
-            const tag = params.get('tag');
-            activeTag = tag || null;
-            if (postSlug) {
-                renderPost(postSlug);
-            } else {
-                renderList();
-            }
-        }
-
-        loadSettings();
-        renderSiteNav();
-        boot();
+            renderLogin(boundaryMessage);
+        })();
     </script>
 </body>
 </html>
