@@ -309,6 +309,32 @@
         .site-nav a:hover { background: rgba(255,255,255,0.05); color: var(--text); }
         .site-nav a.active { background: var(--lime); color: #0a0a0e; font-weight: 500; }
 
+        /* ── marquee ticker ── */
+        .marquee-bar {
+            display: flex; align-items: center; gap: 10px; overflow: hidden;
+            background: var(--accent-glow); border: 1px solid var(--border); border-radius: 999px;
+            padding: 9px 0; margin-bottom: 24px;
+        }
+        .marquee-tag {
+            font-family: 'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--bg); background: var(--lime); padding: 4px 12px;
+            border-radius: 999px; flex-shrink: 0; margin-left: 12px; font-weight: 600;
+        }
+        .marquee-track { overflow: hidden; flex: 1; }
+        .marquee-content {
+            display: flex; align-items: center; white-space: nowrap; width: max-content;
+            animation: marquee-scroll 28s linear infinite;
+        }
+        .marquee-bar:hover .marquee-content { animation-play-state: paused; }
+        .marquee-content span {
+            font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text);
+            padding: 0 28px; flex-shrink: 0;
+        }
+        @keyframes marquee-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
         /* ── footer ── */
         footer { display: flex; flex-direction: column; align-items: center; gap: 16px; }
         .footer-social { display: flex; align-items: center; gap: 10px; }
@@ -335,6 +361,12 @@
             </div>
         </div>
         <nav class="site-nav" id="site-nav"></nav>
+        <div class="marquee-bar" id="marquee-bar" style="display:none;">
+            <span class="marquee-tag">Live</span>
+            <div class="marquee-track">
+                <div class="marquee-content" id="marquee-content"></div>
+            </div>
+        </div>
 
         <div id="app"><div class="loading">loading…</div></div>
 
@@ -431,6 +463,19 @@
             navEl.innerHTML = links.map(l =>
                 `<a href="${escapeHtml(l.href || '#')}">${escapeHtml(l.label || '')}</a>`
             ).join('');
+
+            // ── marquee ticker ──
+            const marqueeBar = document.getElementById('marquee-bar');
+            const marqueeContent = document.getElementById('marquee-content');
+            const items = (settings.marquee_text || '').split('•').map(s => s.trim()).filter(Boolean);
+            if (settings.marquee_enabled && items.length) {
+                // duplicate items so the scroll loop is seamless
+                const html = items.map(i => `<span>${escapeHtml(i)}</span>`).join('');
+                marqueeContent.innerHTML = html + html;
+                marqueeBar.style.display = 'flex';
+            } else {
+                marqueeBar.style.display = 'none';
+            }
         }
 
         // ── categories for filter row + site nav ──
@@ -570,8 +615,13 @@
         });
 
         // ── single post view ──
-        function renderContent(content) {
+        function renderContent(post) {
+            const content = post.content;
             if (!content) return '';
+            if (post.is_html) {
+                // trusted admin-authored HTML — inserted as-is, no paragraph/escaping transform
+                return content;
+            }
             return content.split(/\n\s*\n/).map(block => {
                 const trimmed = block.trim();
                 const imgMatch = trimmed.match(/^\[image:(.+?)\]$/);
@@ -616,7 +666,7 @@
                         </div>
                     </div>
                     ${post.image_url ? `<img class="post-cover" src="${escapeHtml(post.image_url)}" alt="" />` : ''}
-                    <div class="post-content">${renderContent(post.content)}</div>
+                    <div class="post-content">${renderContent(post)}</div>
 
                     <div class="share-row" id="share-row">
                         <span class="share-label">Share</span>
