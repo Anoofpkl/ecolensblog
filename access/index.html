@@ -338,6 +338,56 @@
             outline-offset: 2px;
         }
 
+        .oauth-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0;
+            color: var(--text-tertiary);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .btn-github {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-strong);
+            background: var(--bg-card);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .btn-github:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+        }
+        .btn-github:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-github svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
         .btn-primary {
             background: var(--lime);
             color: #0a0a0e;
@@ -1336,11 +1386,14 @@
         }
 
         // ─── ADMIN CHECK ────────────────────────────────────
+        let currentUserRole = null; // 'admin' | 'author' | null
+
         async function isCurrentUserAdmin(email) {
             if (!email) return false;
-            const { data, error } = await supabase.from('admins').select('email').eq('email', email).maybeSingle();
-            if (error) return false;
-            return !!data;
+            const { data, error } = await supabase.from('admins').select('email, role').eq('email', email).maybeSingle();
+            if (error || !data) { currentUserRole = null; return false; }
+            currentUserRole = data.role || 'admin';
+            return true;
         }
 
         // ─── LOGIN ──────────────────────────────────────────
@@ -1352,6 +1405,14 @@
                 <div class="icon-wrap">🌱</div>
                 <h1>Welcome back</h1>
                 <p class="sub">Sign in to publish and manage your stories.</p>
+
+                <button type="button" class="btn-github" id="github-login-btn">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                    <span>Continue with GitHub</span>
+                </button>
+
+                <div class="oauth-divider">or</div>
+
                 <form id="login-form">
                   <label for="email">Email</label>
                   <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required />
@@ -1473,8 +1534,8 @@
                   <button class="wp-nav-item active" data-screen="posts" type="button">📝 <span class="label">Posts</span></button>
                   <button class="wp-nav-item" data-screen="comments" type="button">💬 <span class="label">Comments</span></button>
                   <button class="wp-nav-item" data-screen="categories" type="button">🏷️ <span class="label">Categories</span></button>
-                  <button class="wp-nav-item" data-screen="admins" type="button">👤 <span class="label">Admins</span></button>
-                  <button class="wp-nav-item" data-screen="settings" type="button">⚙️ <span class="label">Settings</span></button>
+                  ${currentUserRole === 'admin' ? `<button class="wp-nav-item" data-screen="admins" type="button">👤 <span class="label">Admins</span></button>` : ''}
+                  ${currentUserRole === 'admin' ? `<button class="wp-nav-item" data-screen="settings" type="button">⚙️ <span class="label">Settings</span></button>` : ''}
                 </nav>
                 <div class="wp-sidebar-footer">
                   <a class="wp-nav-item" href="index.html" target="_blank" rel="noopener">↗ <span class="label">View site</span></a>
@@ -1488,6 +1549,7 @@
                   <h1 id="wp-screen-title">Posts</h1>
                   <div class="user-badge">
                     ${escapeHtml(session.user.email)}
+                    <span class="pill ${currentUserRole === 'admin' ? 'published' : 'draft'}" style="margin-left:2px;">${currentUserRole === 'admin' ? 'Admin' : 'Author'}</span>
                     <span class="avatar">${escapeHtml(initials)}</span>
                   </div>
                 </header>
@@ -1496,8 +1558,8 @@
                   <div class="wp-screen active" id="screen-posts"></div>
                   <div class="wp-screen" id="screen-comments"></div>
                   <div class="wp-screen" id="screen-categories"></div>
-                  <div class="wp-screen" id="screen-admins"></div>
-                  <div class="wp-screen" id="screen-settings"></div>
+                  ${currentUserRole === 'admin' ? '<div class="wp-screen" id="screen-admins"></div>' : ''}
+                  ${currentUserRole === 'admin' ? '<div class="wp-screen" id="screen-settings"></div>' : ''}
                 </div>
               </div>
             </div>
@@ -1648,12 +1710,13 @@
             </div>
           `;
 
+            if (currentUserRole === 'admin') {
             document.getElementById('screen-admins').innerHTML = `
             <div class="fade-in panel">
               <div class="panel-header">
-                <h2>Admins</h2>
+                <h2>Admins &amp; authors</h2>
               </div>
-              <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Anyone listed here can sign in to this dashboard, as long as they've also created an account on the login screen with the same email. Removing someone here revokes their admin access immediately.</p>
+              <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Anyone listed here can sign in to this dashboard, as long as they've also created an account on the login screen with the same email. <strong>Admins</strong> have full access (posts, comments, categories, settings, other admins). <strong>Authors</strong> can only create and edit posts. Removing someone here revokes their access immediately.</p>
               <div id="admins-list"></div>
               <div class="form-grid" style="margin-top:14px;">
                 <div class="field">
@@ -1664,10 +1727,17 @@
                   <label for="new-admin-email">Email</label>
                   <input id="new-admin-email" type="email" placeholder="jane@example.com" />
                 </div>
+                <div class="field">
+                  <label for="new-admin-role">Role</label>
+                  <select id="new-admin-role">
+                    <option value="admin">Admin — full access</option>
+                    <option value="author">Author — can write posts only</option>
+                  </select>
+                </div>
               </div>
               <div class="error-msg" id="admin-error"></div>
               <div class="status-msg" id="admin-status"></div>
-              <button type="button" class="add-nav-link-btn" id="add-admin-btn" style="margin-top:6px;">+ Add admin</button>
+              <button type="button" class="add-nav-link-btn" id="add-admin-btn" style="margin-top:6px;">+ Add</button>
             </div>
           `;
 
@@ -1703,6 +1773,12 @@
                     <div id="nav-links-list"></div>
                     <button type="button" class="add-nav-link-btn" id="add-nav-link-btn">+ Add link</button>
                   </div>
+
+                  <div class="field full">
+                    <label for="s-footer-text">Footer note <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(optional, shown next to the site name in the footer)</span></label>
+                    <input id="s-footer-text" placeholder="e.g. Est. 2026 · Kerala" />
+                    <p style="font-size:11.5px;color:var(--text-tertiary);margin-top:6px;">The footer always credits "Developed by Anoof" — this field just adds extra text before it.</p>
+                  </div>
                 </div>
 
                 <div class="error-msg" id="settings-error"></div>
@@ -1714,6 +1790,7 @@
               </form>
             </div>
           `;
+            }
 
             const slugInput = document.getElementById('f-slug');
             const titleInput = document.getElementById('f-title');
@@ -2004,7 +2081,7 @@
             }
 
             loadPostList();
-            initSettingsPanel();
+            if (currentUserRole === 'admin') initSettingsPanel();
         }
 
         // ─── COMMENTS ───────────────────────────────────────
@@ -2073,7 +2150,7 @@
             const listEl = document.getElementById('admins-list');
             if (!listEl) return;
 
-            const { data, error } = await supabase.from('admins').select('email, name, added_at').order('added_at',
+            const { data, error } = await supabase.from('admins').select('email, name, role, added_at').order('added_at',
                 { ascending: true });
 
             if (error) {
@@ -2092,14 +2169,30 @@
                   <div class="a-email">${escapeHtml(a.email)}</div>
                 </div>
                 ${a.email === currentEmail
-                    ? `<span class="upload-status">you</span>`
-                    : `<button type="button" class="btn-danger btn-small" data-remove-admin="${escapeHtml(a.email)}">Remove</button>`}
+                    ? `<span class="pill published">${a.role === 'admin' ? 'Admin' : 'Author'} · you</span>`
+                    : `<select class="role-select" data-role-email="${escapeHtml(a.email)}" style="margin-right:8px;">
+                         <option value="admin" ${a.role === 'admin' ? 'selected' : ''}>Admin</option>
+                         <option value="author" ${a.role !== 'admin' ? 'selected' : ''}>Author</option>
+                       </select>
+                       <button type="button" class="btn-danger btn-small" data-remove-admin="${escapeHtml(a.email)}">Remove</button>`}
               </div>
             `).join('') || '<div class="empty-state">No admins yet.</div>';
 
+            listEl.querySelectorAll('[data-role-email]').forEach(sel => {
+                sel.addEventListener('change', async () => {
+                    const email = sel.dataset.roleEmail;
+                    const { error: roleErr } = await supabase.from('admins').update({ role: sel.value }).eq('email', email);
+                    if (roleErr) {
+                        alert('Could not update role: ' + roleErr.message);
+                        loadAdmins();
+                        return;
+                    }
+                });
+            });
+
             listEl.querySelectorAll('[data-remove-admin]').forEach(btn => {
                 btn.addEventListener('click', async () => {
-                    if (!confirm(`Remove admin access for ${btn.dataset.removeAdmin}?`)) return;
+                    if (!confirm(`Remove access for ${btn.dataset.removeAdmin}?`)) return;
                     await supabase.from('admins').delete().eq('email', btn.dataset.removeAdmin);
                     loadAdmins();
                 });
@@ -2111,6 +2204,7 @@
                 addBtn.addEventListener('click', async () => {
                     const nameInput = document.getElementById('new-admin-name');
                     const emailInput = document.getElementById('new-admin-email');
+                    const roleInput = document.getElementById('new-admin-role');
                     const errEl = document.getElementById('admin-error');
                     const statusEl = document.getElementById('admin-status');
                     errEl.textContent = '';
@@ -2118,23 +2212,25 @@
 
                     const name = nameInput.value.trim();
                     const email = emailInput.value.trim().toLowerCase();
+                    const role = roleInput.value === 'author' ? 'author' : 'admin';
                     if (!name || !email) {
                         errEl.textContent = 'Name and email are required.';
                         return;
                     }
 
-                    const { error } = await supabase.from('admins').insert({ email, name });
+                    const { error } = await supabase.from('admins').insert({ email, name, role });
                     if (error) {
                         errEl.textContent = error.code === '23505'
-                            ? 'That email is already an admin.'
+                            ? 'That email already has access.'
                             : error.message;
                         return;
                     }
 
-                    statusEl.textContent = `✓ Added. They can sign in once they've created an account with ${email} on the login screen.`;
+                    statusEl.textContent = `✓ Added as ${role === 'admin' ? 'admin' : 'author'}. They can sign in once they've created an account with ${email} on the login screen.`;
                     setTimeout(() => { statusEl.textContent = ''; }, 5000);
                     nameInput.value = '';
                     emailInput.value = '';
+                    roleInput.value = 'admin';
                     loadAdmins();
                 });
             }
@@ -2144,6 +2240,7 @@
         const DEFAULT_SETTINGS = {
             site_name: 'ECOLENS',
             logo_url: '',
+            footer_text: '',
             nav_links: [
                 { label: 'Markets', href: '#' },
                 { label: 'Policy', href: '#' },
@@ -2170,12 +2267,14 @@
                 settings = {
                     site_name: data.value.site_name || DEFAULT_SETTINGS.site_name,
                     logo_url: data.value.logo_url || '',
+                    footer_text: data.value.footer_text || '',
                     nav_links: Array.isArray(data.value.nav_links) && data.value.nav_links.length
                         ? data.value.nav_links : DEFAULT_SETTINGS.nav_links,
                 };
             }
 
             nameInput.value = settings.site_name;
+            document.getElementById('s-footer-text').value = settings.footer_text;
 
             function renderLogoPreview() {
                 if (pendingLogoFile) {
@@ -2306,6 +2405,7 @@
                 }
 
                 settings.site_name = nameInput.value.trim() || DEFAULT_SETTINGS.site_name;
+                settings.footer_text = document.getElementById('s-footer-text').value.trim();
                 settings.nav_links = settings.nav_links.filter(l => (l.label || '').trim());
 
                 const { error: saveError } = await supabase.from('settings')
