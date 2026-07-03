@@ -359,7 +359,7 @@
                     <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/></svg>
                 </button>
             </div>
-            <div><span id="footer-name">ECOLENS</span> · built with Supabase</div>
+            <div><span id="footer-name">ECOLENS</span><span id="footer-note"></span> · Developed by Anoof</div>
         </footer>
     </div>
 
@@ -400,13 +400,22 @@
             return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
-        // ── settings (brand, logo, nav) ──
+        function formatDateTime(d) {
+            return new Date(d).toLocaleString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+            });
+        }
+
+        // ── settings (brand, logo, nav, footer) ──
         async function loadSettings() {
             const { data } = await supabase.from('settings').select('value').eq('id', 'site').single();
             const settings = (data && data.value) || {};
             const siteName = settings.site_name || 'ECOLENS';
             document.title = siteName;
             document.getElementById('footer-name').textContent = siteName;
+
+            const footerNoteEl = document.getElementById('footer-note');
+            footerNoteEl.textContent = settings.footer_text ? ` · ${settings.footer_text}` : '';
 
             const brandEl = document.getElementById('brand-name');
             brandEl.innerHTML = escapeHtml(siteName.slice(0, -1) || siteName) +
@@ -514,7 +523,7 @@
                         <p>${escapeHtml(p.excerpt || '')}</p>
                         <div class="hero-meta">
                             <span>${escapeHtml(p.author_name || 'ECOLENS')}</span>
-                            <span>${formatDate(p.created_at)}</span>
+                            <span>${formatDateTime(p.created_at)}</span>
                             <span>${p.read_time || 5} min read</span>
                         </div>
                     </div>
@@ -536,7 +545,7 @@
                         <div class="excerpt">${escapeHtml(p.excerpt || '')}</div>
                         <div class="meta">
                             <span>${escapeHtml(p.author_name || 'ECOLENS')}</span>
-                            <span>${formatDate(p.created_at)}</span>
+                            <span>${formatDateTime(p.created_at)}</span>
                         </div>
                     </div>
                 </div>
@@ -603,7 +612,7 @@
                         <div class="avatar">${escapeHtml(initials)}</div>
                         <div>
                             <div class="who">${escapeHtml(post.author_name || 'ECOLENS')}</div>
-                            <div class="when">${formatDate(post.created_at)} · ${post.read_time || 5} min read · 👁 ${(post.views || 0) + 1}</div>
+                            <div class="when">${formatDateTime(post.created_at)} · ${post.read_time || 5} min read · 👁 ${(post.views || 0) + 1}</div>
                         </div>
                     </div>
                     ${post.image_url ? `<img class="post-cover" src="${escapeHtml(post.image_url)}" alt="" />` : ''}
@@ -743,7 +752,7 @@
                 <div class="comment-item">
                     <div class="head">
                         <span class="name">${escapeHtml(c.name)}</span>
-                        <span class="when">${formatDate(c.created_at)}</span>
+                        <span class="when">${formatDateTime(c.created_at)}</span>
                     </div>
                     <div class="body">${escapeHtml(c.body)}</div>
                 </div>
