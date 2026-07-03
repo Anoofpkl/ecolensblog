@@ -1812,12 +1812,39 @@
                   </div>
 
                   <div class="field full">
-                    <label for="s-marquee-text">Scrolling ticker / marquee <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown as a scrolling strip at the top of the site)</span></label>
-                    <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;font-size:13px;margin-bottom:8px;">
+                    <label>Scrolling ticker / marquee <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown as a scrolling strip at the top of the site)</span></label>
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;font-size:13px;margin-bottom:10px;">
                       <input type="checkbox" id="s-marquee-enabled" style="width:auto;" /> Show ticker on the site
                     </label>
-                    <textarea id="s-marquee-text" rows="3" placeholder="🔥 Breaking: markets rally after rate decision • 📰 New post: our take on Kerala's food economy • Anything you want to announce" style="width:100%;background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;resize:vertical;"></textarea>
-                    <p style="font-size:11.5px;color:var(--text-tertiary);margin-top:6px;">Separate items with " • " — could be your latest post, breaking news, an announcement, anything.</p>
+
+                    <div id="marquee-items-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:12px;">
+                      <div class="field" style="margin:0;">
+                        <label style="font-size:11px;">Item type</label>
+                        <select id="marquee-new-type" style="min-width:170px;">
+                          <option value="post">Link to a post</option>
+                          <option value="custom">Custom announcement</option>
+                        </select>
+                      </div>
+
+                      <div class="field" id="marquee-post-field" style="margin:0;flex:1;min-width:180px;">
+                        <label style="font-size:11px;">Post</label>
+                        <select id="marquee-new-post"></select>
+                      </div>
+
+                      <div class="field" id="marquee-custom-label-field" style="margin:0;flex:1;min-width:180px;display:none;">
+                        <label style="font-size:11px;">Text</label>
+                        <input id="marquee-new-label" placeholder="🔥 Breaking: markets rally after rate decision" />
+                      </div>
+                      <div class="field" id="marquee-custom-url-field" style="margin:0;flex:1;min-width:160px;display:none;">
+                        <label style="font-size:11px;">Link (optional)</label>
+                        <input id="marquee-new-url" placeholder="https://…" />
+                      </div>
+
+                      <button type="button" class="add-nav-link-btn" id="marquee-add-btn" style="margin-bottom:1px;">+ Add to ticker</button>
+                    </div>
+                    <div class="error-msg" id="marquee-error"></div>
                   </div>
                 </div>
 
@@ -2308,7 +2335,7 @@
             logo_url: '',
             footer_text: '',
             marquee_enabled: false,
-            marquee_text: '',
+            marquee_items: [],
             nav_links: [
                 { label: 'Markets', href: '#' },
                 { label: 'Policy', href: '#' },
@@ -2337,7 +2364,11 @@
                     logo_url: data.value.logo_url || '',
                     footer_text: data.value.footer_text || '',
                     marquee_enabled: !!data.value.marquee_enabled,
-                    marquee_text: data.value.marquee_text || '',
+                    marquee_items: Array.isArray(data.value.marquee_items)
+                        ? data.value.marquee_items
+                        : (data.value.marquee_text
+                            ? data.value.marquee_text.split('•').map(s => s.trim()).filter(Boolean).map(t => ({ type: 'custom', label: t, url: '' }))
+                            : []),
                     nav_links: Array.isArray(data.value.nav_links) && data.value.nav_links.length
                         ? data.value.nav_links : DEFAULT_SETTINGS.nav_links,
                 };
@@ -2346,7 +2377,80 @@
             nameInput.value = settings.site_name;
             document.getElementById('s-footer-text').value = settings.footer_text;
             document.getElementById('s-marquee-enabled').checked = settings.marquee_enabled;
-            document.getElementById('s-marquee-text').value = settings.marquee_text;
+            let marqueeItems = settings.marquee_items.slice();
+
+            // ── marquee items builder ──
+            const marqueeListEl = document.getElementById('marquee-items-list');
+            const marqueeTypeSelect = document.getElementById('marquee-new-type');
+            const marqueePostField = document.getElementById('marquee-post-field');
+            const marqueePostSelect = document.getElementById('marquee-new-post');
+            const marqueeLabelField = document.getElementById('marquee-custom-label-field');
+            const marqueeUrlField = document.getElementById('marquee-custom-url-field');
+            const marqueeLabelInput = document.getElementById('marquee-new-label');
+            const marqueeUrlInput = document.getElementById('marquee-new-url');
+            const marqueeErrEl = document.getElementById('marquee-error');
+
+            async function loadMarqueePostOptions() {
+                const { data: posts } = await supabase.from('posts').select('slug, title').order('created_at', { ascending: false }).limit(100);
+                marqueePostSelect.innerHTML = (posts || []).map(p =>
+                    `<option value="${escapeHtml(p.slug)}" data-title="${escapeHtml(p.title)}">${escapeHtml(p.title)}</option>`
+                ).join('') || '<option value="">No posts yet</option>';
+            }
+            loadMarqueePostOptions();
+
+            function toggleMarqueeTypeFields() {
+                const isPost = marqueeTypeSelect.value === 'post';
+                marqueePostField.style.display = isPost ? '' : 'none';
+                marqueeLabelField.style.display = isPost ? 'none' : '';
+                marqueeUrlField.style.display = isPost ? 'none' : '';
+            }
+            marqueeTypeSelect.addEventListener('change', toggleMarqueeTypeFields);
+            toggleMarqueeTypeFields();
+
+            function renderMarqueeItems() {
+                marqueeListEl.innerHTML = marqueeItems.map((item, i) => {
+                    const icon = item.type === 'post' ? '📰' : (item.url ? '🔗' : '📢');
+                    const desc = item.type === 'post' ? `Post: ${escapeHtml(item.label)}` : escapeHtml(item.label);
+                    const urlNote = item.url ? ` <span style="color:var(--text-tertiary);">→ ${escapeHtml(item.url)}</span>` : '';
+                    return `
+                    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:8px 12px;">
+                        <span>${icon}</span>
+                        <span style="flex:1;font-size:13px;">${desc}${urlNote}</span>
+                        <button type="button" data-remove-marquee="${i}" title="Remove" style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:15px;">✕</button>
+                    </div>`;
+                }).join('') || '<div class="upload-status">No ticker items yet — add one below.</div>';
+
+                marqueeListEl.querySelectorAll('[data-remove-marquee]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        marqueeItems.splice(parseInt(btn.dataset.removeMarquee, 10), 1);
+                        renderMarqueeItems();
+                    });
+                });
+            }
+            renderMarqueeItems();
+
+            document.getElementById('marquee-add-btn').addEventListener('click', () => {
+                marqueeErrEl.textContent = '';
+                if (marqueeTypeSelect.value === 'post') {
+                    const opt = marqueePostSelect.selectedOptions[0];
+                    if (!opt || !opt.value) {
+                        marqueeErrEl.textContent = 'Pick a post first (or write one, then come back here).';
+                        return;
+                    }
+                    marqueeItems.push({ type: 'post', slug: opt.value, label: opt.dataset.title || opt.value });
+                } else {
+                    const label = marqueeLabelInput.value.trim();
+                    const url = marqueeUrlInput.value.trim();
+                    if (!label) {
+                        marqueeErrEl.textContent = 'Add some text for the announcement.';
+                        return;
+                    }
+                    marqueeItems.push({ type: 'custom', label, url });
+                    marqueeLabelInput.value = '';
+                    marqueeUrlInput.value = '';
+                }
+                renderMarqueeItems();
+            });
 
             function renderLogoPreview() {
                 if (pendingLogoFile) {
@@ -2479,7 +2583,8 @@
                 settings.site_name = nameInput.value.trim() || DEFAULT_SETTINGS.site_name;
                 settings.footer_text = document.getElementById('s-footer-text').value.trim();
                 settings.marquee_enabled = document.getElementById('s-marquee-enabled').checked;
-                settings.marquee_text = document.getElementById('s-marquee-text').value.trim();
+                settings.marquee_items = marqueeItems;
+                delete settings.marquee_text;
                 settings.nav_links = settings.nav_links.filter(l => (l.label || '').trim());
 
                 const { error: saveError } = await supabase.from('settings')
