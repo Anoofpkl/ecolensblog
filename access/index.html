@@ -1779,6 +1779,15 @@
                     <input id="s-footer-text" placeholder="e.g. Est. 2026 · Kerala" />
                     <p style="font-size:11.5px;color:var(--text-tertiary);margin-top:6px;">The footer always credits "Developed by Anoof" — this field just adds extra text before it.</p>
                   </div>
+
+                  <div class="field full">
+                    <label for="s-marquee-text">Scrolling ticker / marquee <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(shown as a scrolling strip at the top of the site)</span></label>
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;font-size:13px;margin-bottom:8px;">
+                      <input type="checkbox" id="s-marquee-enabled" style="width:auto;" /> Show ticker on the site
+                    </label>
+                    <textarea id="s-marquee-text" rows="3" placeholder="🔥 Breaking: markets rally after rate decision • 📰 New post: our take on Kerala's food economy • Anything you want to announce" style="width:100%;background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12.5px;resize:vertical;"></textarea>
+                    <p style="font-size:11.5px;color:var(--text-tertiary);margin-top:6px;">Separate items with " • " — could be your latest post, breaking news, an announcement, anything.</p>
+                  </div>
                 </div>
 
                 <div class="error-msg" id="settings-error"></div>
@@ -2241,6 +2250,8 @@
             site_name: 'ECOLENS',
             logo_url: '',
             footer_text: '',
+            marquee_enabled: false,
+            marquee_text: '',
             nav_links: [
                 { label: 'Markets', href: '#' },
                 { label: 'Policy', href: '#' },
@@ -2268,6 +2279,8 @@
                     site_name: data.value.site_name || DEFAULT_SETTINGS.site_name,
                     logo_url: data.value.logo_url || '',
                     footer_text: data.value.footer_text || '',
+                    marquee_enabled: !!data.value.marquee_enabled,
+                    marquee_text: data.value.marquee_text || '',
                     nav_links: Array.isArray(data.value.nav_links) && data.value.nav_links.length
                         ? data.value.nav_links : DEFAULT_SETTINGS.nav_links,
                 };
@@ -2275,6 +2288,8 @@
 
             nameInput.value = settings.site_name;
             document.getElementById('s-footer-text').value = settings.footer_text;
+            document.getElementById('s-marquee-enabled').checked = settings.marquee_enabled;
+            document.getElementById('s-marquee-text').value = settings.marquee_text;
 
             function renderLogoPreview() {
                 if (pendingLogoFile) {
@@ -2406,6 +2421,8 @@
 
                 settings.site_name = nameInput.value.trim() || DEFAULT_SETTINGS.site_name;
                 settings.footer_text = document.getElementById('s-footer-text').value.trim();
+                settings.marquee_enabled = document.getElementById('s-marquee-enabled').checked;
+                settings.marquee_text = document.getElementById('s-marquee-text').value.trim();
                 settings.nav_links = settings.nav_links.filter(l => (l.label || '').trim());
 
                 const { error: saveError } = await supabase.from('settings')
