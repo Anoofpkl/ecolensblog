@@ -802,6 +802,32 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .body-mode-toggle {
+            display: inline-flex;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            padding: 3px;
+            gap: 2px;
+        }
+        .body-mode-toggle .mode-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .body-mode-toggle .mode-btn:hover { color: var(--text); }
+        .body-mode-toggle .mode-btn.active { background: var(--accent); color: #fff; }
+        #f-content.html-mode {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
         }
 
         /* ── image upload ── */
@@ -1652,14 +1678,19 @@
                     </div>
 
                     <div class="field full">
-                      <label for="f-content">Body <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(separate paragraphs with a blank line)</span></label>
+                      <label for="f-content">Body <span id="body-mode-hint" style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(separate paragraphs with a blank line)</span></label>
                       <div class="body-toolbar">
+                        <div class="body-mode-toggle" id="body-mode-toggle">
+                          <button type="button" class="mode-btn active" data-mode="compose">📝 Compose</button>
+                          <button type="button" class="mode-btn" data-mode="html">&lt;/&gt; HTML</button>
+                        </div>
                         <label class="file-btn">
                           🖼 <span id="inline-image-btn-label">Insert image into post</span>
                           <input type="file" id="f-inline-image" accept="image/*" />
                         </label>
                         <span class="upload-status" id="inline-image-status"></span>
                       </div>
+                      <input type="hidden" id="f-is-html" value="false" />
                       <textarea id="f-content" placeholder="Write like you're explaining it to a smart friend. Separate paragraphs with a blank line."></textarea>
                     </div>
                   </div>
@@ -1863,6 +1894,23 @@
             // ── category select ──
             loadCategoryOptions();
 
+            // ── compose / html mode toggle (Blogger-style) ──
+            const bodyModeHint = document.getElementById('body-mode-hint');
+            const isHtmlInput = document.getElementById('f-is-html');
+            function setBodyMode(mode) {
+                isHtmlInput.value = mode === 'html' ? 'true' : 'false';
+                document.querySelectorAll('.body-mode-toggle .mode-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.mode === mode);
+                });
+                contentArea.classList.toggle('html-mode', mode === 'html');
+                bodyModeHint.textContent = mode === 'html'
+                    ? '(raw HTML — inserted directly into the page, no escaping)'
+                    : '(separate paragraphs with a blank line)';
+            }
+            document.querySelectorAll('.body-mode-toggle .mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => setBodyMode(btn.dataset.mode));
+            });
+
             // ── insert image into post body ──
             const contentArea = document.getElementById('f-content');
             const inlineImageStatus = document.getElementById('inline-image-status');
@@ -1876,9 +1924,15 @@
                     const cursorPos = contentArea.selectionStart ?? contentArea.value.length;
                     const before = contentArea.value.slice(0, cursorPos);
                     const after = contentArea.value.slice(cursorPos);
-                    const needsLeadingBreak = before && !before.endsWith('\n\n') ? (before.endsWith('\n') ? '\n' :
-                        '\n\n') : '';
-                    const insertText = `${needsLeadingBreak}[image:${url}]\n\n`;
+                    const isHtml = isHtmlInput.value === 'true';
+                    let insertText;
+                    if (isHtml) {
+                        insertText = `\n<img src="${url}" alt="" style="width:100%;border-radius:10px;" />\n`;
+                    } else {
+                        const needsLeadingBreak = before && !before.endsWith('\n\n') ? (before.endsWith('\n') ? '\n' :
+                            '\n\n') : '';
+                        insertText = `${needsLeadingBreak}[image:${url}]\n\n`;
+                    }
                     contentArea.value = before + insertText + after;
                     const newPos = (before + insertText).length;
                     contentArea.focus();
@@ -1942,6 +1996,7 @@
                     excerpt: document.getElementById('f-excerpt').value.trim(),
                     read_time: parseInt(document.getElementById('f-readtime').value, 10) || 5,
                     content: document.getElementById('f-content').value.trim(),
+                    is_html: document.getElementById('f-is-html').value === 'true',
                 };
 
                 let result;
@@ -1985,6 +2040,7 @@
                 uploadStatus.textContent = '';
                 renderImagePreview();
                 loadCategoryOptions();
+                setBodyMode('compose');
             }
 
             // ── load posts ──
@@ -2064,6 +2120,7 @@
                         document.getElementById('f-excerpt').value = post.excerpt || '';
                         document.getElementById('f-readtime').value = post.read_time || 5;
                         document.getElementById('f-content').value = post.content || '';
+                        setBodyMode(post.is_html ? 'html' : 'compose');
                         currentImageUrl = post.image_url || '';
                         pendingImageFile = null;
                         document.getElementById('f-image').value = '';
