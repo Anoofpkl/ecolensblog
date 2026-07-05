@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form · ECOLENS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0e;
+            --bg-card: #16161f;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.12);
+            --text: #f0ede8;
+            --text-secondary: rgba(240, 237, 232, 0.65);
+            --text-tertiary: rgba(240, 237, 232, 0.35);
+            --accent: #7c5cff;
+            --accent-glow: rgba(124, 92, 255, 0.25);
+            --lime: #c9ff3d;
+            --lime-glow: rgba(201, 255, 61, 0.15);
+            --coral: #ff6b4a;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 8vh 20px;
+        }
+
+        a { color: var(--accent); }
+
+        .wrap { width: 100%; max-width: 560px; }
+
+        .brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.02em;
+            color: var(--text-tertiary);
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .brand .dot { color: var(--lime); }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 34px 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .panel .desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 26px;
+            line-height: 1.6;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+        .field label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+        }
+        .field .req { color: var(--coral); margin-left: 3px; }
+
+        .field input[type="text"],
+        .field input[type="email"],
+        .field input[type="number"],
+        .field textarea,
+        .field select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14.5px;
+            padding: 12px 15px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            width: 100%;
+        }
+        .field input:focus, .field textarea:focus, .field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .field textarea { min-height: 110px; resize: vertical; }
+
+        .radio-group, .checkbox-single {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .radio-group label, .checkbox-single label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        .radio-group input, .checkbox-single input {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--lime);
+            flex-shrink: 0;
+        }
+
+        button.submit-btn {
+            width: 100%;
+            background: var(--lime);
+            color: #0a0a0e;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14.5px;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--lime-glow);
+            transition: all var(--transition);
+            margin-top: 6px;
+        }
+        button.submit-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+        button.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .error-msg {
+            color: var(--coral);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            margin: -6px 0 14px;
+            min-height: 16px;
+        }
+
+        .loading-state, .empty-state {
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            text-align: center;
+            padding: 30px 10px;
+        }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 999px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .success-state {
+            text-align: center;
+            padding: 20px 10px 4px;
+        }
+        .success-state .big { font-size: 42px; display: block; margin-bottom: 14px; }
+        .success-state h2 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; margin-bottom: 8px; }
+        .success-state p { color: var(--text-secondary); font-size: 14px; }
+
+        .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-tertiary); text-decoration: none; }
+        .back-link:hover { color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="brand">ECOLENS<span class="dot">.</span></div>
+        <div class="panel" id="panel">
+            <div class="loading-state"><span class="spinner"></span>loading form…</div>
+        </div>
+        <a class="back-link" href="index.html">← back to ECOLENS</a>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+        const SUPABASE_URL = 'https://ojlmwlqrkbctlpexrufs.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_2aMsITRDeO8MfFHiWIkNzQ_JENBP08R';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const panel = document.getElementById('panel');
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        function fieldInputHtml(field, i) {
+            const id = 'f-' + i;
+            const req = field.required ? ' required' : '';
+            const reqMark = field.required ? '<span class="req">*</span>' : '';
+            const label = `<label for="${id}">${escapeHtml(field.label)}${reqMark}</label>`;
+
+            switch (field.type) {
+                case 'textarea':
+                    return `<div class="field">${label}<textarea id="${id}"${req}></textarea></div>`;
+                case 'email':
+                    return `<div class="field">${label}<input type="email" id="${id}"${req} /></div>`;
+                case 'number':
+                    return `<div class="field">${label}<input type="number" id="${id}"${req} /></div>`;
+                case 'select':
+                    return `<div class="field">${label}<select id="${id}"${req}>
+                        <option value="">Select…</option>
+                        ${(field.options || []).map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('')}
+                      </select></div>`;
+                case 'radio':
+                    return `<div class="field">${label}<div class="radio-group">
+                        ${(field.options || []).map((o, oi) => `
+                          <label><input type="radio" name="${id}" value="${escapeHtml(o)}" data-radio-group="${id}" ${oi === 0 && field.required ? '' : ''} />${escapeHtml(o)}</label>
+                        `).join('')}
+                      </div></div>`;
+                case 'checkbox':
+                    return `<div class="field">${label}<div class="checkbox-single">
+                        <label><input type="checkbox" id="${id}" />Yes</label>
+                      </div></div>`;
+                default:
+                    return `<div class="field">${label}<input type="text" id="${id}"${req} /></div>`;
+            }
+        }
+
+        function collectValue(field, i) {
+            const id = 'f-' + i;
+            switch (field.type) {
+                case 'radio': {
+                    const checked = document.querySelector(`input[data-radio-group="${id}"]:checked`);
+                    return checked ? checked.value : '';
+                }
+                case 'checkbox':
+                    return document.getElementById(id).checked ? 'Yes' : 'No';
+                default:
+                    return document.getElementById(id).value.trim();
+            }
+        }
+
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+
+            if (!slug) {
+                panel.innerHTML = `<div class="empty-state"><span style="font-size:32px;display:block;margin-bottom:10px;">🧾</span>No form specified. Add <code>?slug=your-form-slug</code> to the URL.</div>`;
+                return;
+            }
+
+            const { data: form, error } = await supabase
+                .from('forms')
+                .select('id, title, slug, description, fields')
+                .eq('slug', slug)
+                .maybeSingle();
+
+            if (error) {
+                panel.innerHTML = `<div class="empty-state">couldn't load this form: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+            if (!form) {
+                panel.innerHTML = `<div class="empty-state"><span style="font-size:32px;display:block;margin-bottom:10px;">🔍</span>No form found for "<strong>${escapeHtml(slug)}</strong>".</div>`;
+                return;
+            }
+
+            document.title = form.title + ' · ECOLENS';
+
+            const fields = form.fields || [];
+            panel.innerHTML = `
+              <h1>${escapeHtml(form.title)}</h1>
+              ${form.description ? `<div class="desc">${escapeHtml(form.description)}</div>` : ''}
+              <form id="public-form">
+                ${fields.map((f, i) => fieldInputHtml(f, i)).join('')}
+                <div class="error-msg" id="form-err"></div>
+                <button type="submit" class="submit-btn" id="submit-btn">Submit</button>
+              </form>
+            `;
+
+            document.getElementById('public-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errEl = document.getElementById('form-err');
+                errEl.textContent = '';
+
+                const data = {};
+                for (let i = 0; i < fields.length; i++) {
+                    const f = fields[i];
+                    const val = collectValue(f, i);
+                    if (f.required && !val) {
+                        errEl.textContent = `Please fill in "${f.label}".`;
+                        return;
+                    }
+                    data[f.label] = val;
+                }
+
+                const btn = document.getElementById('submit-btn');
+                btn.disabled = true;
+                btn.textContent = 'Submitting…';
+
+                const { error: submitErr } = await supabase.from('form_submissions').insert({
+                    form_id: form.id,
+                    data,
+                });
+
+                if (submitErr) {
+                    btn.disabled = false;
+                    btn.textContent = 'Submit';
+                    errEl.textContent = submitErr.message;
+                    return;
+                }
+
+                panel.innerHTML = `
+                  <div class="success-state">
+                    <span class="big">✓</span>
+                    <h2>Thanks — got it!</h2>
+                    <p>Your response to "${escapeHtml(form.title)}" has been recorded.</p>
+                  </div>
+                `;
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
