@@ -2568,7 +2568,7 @@
             <div class="wp-table-wrap">
               <table class="wp-table">
                 <thead>
-                  <tr><th>Title</th><th>Fields</th><th>Submissions</th><th>Embed</th><th>Date</th></tr>
+                  <tr><th>Title</th><th>Fields</th><th>Submissions</th><th>Embed</th><th>Link</th><th>Date</th></tr>
                 </thead>
                 <tbody>
                   ${data.map(f => `
@@ -2586,6 +2586,7 @@
                         <span class="cat-pill" style="cursor:pointer;" data-action="view-submissions" data-id="${f.id}" data-title="${escapeHtml(f.title)}">${counts[f.id]} view →</span>
                       </td>
                       <td><span class="embed-code" data-copy="[form:${escapeHtml(f.slug)}]" title="Click to copy">[form:${escapeHtml(f.slug)}]</span></td>
+                      <td><a href="../../form.html?slug=${encodeURIComponent(f.slug)}" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);">Open link ↗</a></td>
                       <td class="date-cell">${new Date(f.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                     </tr>
                   `).join('')}
