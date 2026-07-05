@@ -888,6 +888,166 @@
             margin-bottom: 18px;
         }
 
+        /* ── form / quiz builders ── */
+        .builder-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+        .builder-item-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .builder-item-head .idx {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            flex-shrink: 0;
+        }
+        .builder-item-head input[type="text"],
+        .builder-item-head input:not([type]) {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+        }
+        .builder-item-head select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 9px 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 12.5px;
+            flex-shrink: 0;
+        }
+        .builder-item-head .remove-item-btn {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-strong);
+            background: rgba(255, 107, 74, 0.08);
+            color: var(--coral);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .builder-item-head .remove-item-btn:hover {
+            background: rgba(255, 107, 74, 0.16);
+        }
+        .builder-item-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .builder-item-body input,
+        .builder-item-body textarea {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+        }
+        .builder-item-body .field-required {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .quiz-option-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .quiz-option-row input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            accent-color: var(--lime);
+        }
+        .quiz-option-row input[type="text"],
+        .quiz-option-row input:not([type]) {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 8px 11px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+        }
+        .quiz-option-row .remove-opt-btn {
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .quiz-option-row .remove-opt-btn:hover {
+            color: var(--coral);
+        }
+        .add-item-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            background: rgba(124, 92, 255, 0.08);
+            border: 1px solid rgba(124, 92, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+        }
+        .add-item-btn:hover {
+            background: rgba(124, 92, 255, 0.16);
+        }
+        .embed-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: var(--lime);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3px 8px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .submissions-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 6vh 20px;
+            z-index: 999;
+            overflow-y: auto;
+        }
+        .submissions-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            padding: 28px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+
         .comment-row {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border);
@@ -1092,6 +1252,8 @@
                   <button class="wp-nav-item active" data-screen="posts" type="button">📝 <span class="label">Posts</span></button>
                   <button class="wp-nav-item" data-screen="comments" type="button">💬 <span class="label">Comments</span></button>
                   <button class="wp-nav-item" data-screen="categories" type="button">🏷️ <span class="label">Categories</span></button>
+                  <button class="wp-nav-item" data-screen="forms" type="button">🧾 <span class="label">Forms</span></button>
+                  <button class="wp-nav-item" data-screen="quizzes" type="button">❓ <span class="label">Quizzes</span></button>
                   ${currentUserRole === 'admin' ? `<button class="wp-nav-item" data-screen="admins" type="button">👤 <span class="label">Admins</span></button>` : ''}
                   ${currentUserRole === 'admin' ? `<button class="wp-nav-item" data-screen="settings" type="button">⚙️ <span class="label">Settings</span></button>` : ''}
                 </nav>
@@ -1116,6 +1278,8 @@
                   <div class="wp-screen active" id="screen-posts"></div>
                   <div class="wp-screen" id="screen-comments"></div>
                   <div class="wp-screen" id="screen-categories"></div>
+                  <div class="wp-screen" id="screen-forms"></div>
+                  <div class="wp-screen" id="screen-quizzes"></div>
                   ${currentUserRole === 'admin' ? '<div class="wp-screen" id="screen-admins"></div>' : ''}
                   ${currentUserRole === 'admin' ? '<div class="wp-screen" id="screen-settings"></div>' : ''}
                 </div>
@@ -1124,7 +1288,7 @@
           `;
 
             // ── sidebar navigation ──
-            const screenTitles = { posts: 'Posts', comments: 'Comments', categories: 'Categories', admins: 'Admins', settings: 'Settings' };
+            const screenTitles = { posts: 'Posts', comments: 'Comments', categories: 'Categories', forms: 'Forms', quizzes: 'Quizzes', admins: 'Admins', settings: 'Settings' };
             document.querySelectorAll('.wp-nav-item[data-screen]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.wp-nav-item[data-screen]').forEach(b => b.classList.remove('active'));
@@ -1134,6 +1298,8 @@
                     document.getElementById('wp-screen-title').textContent = screenTitles[btn.dataset.screen];
                     if (btn.dataset.screen === 'comments') loadComments();
                     if (btn.dataset.screen === 'admins') loadAdmins();
+                    if (btn.dataset.screen === 'forms') loadFormsList();
+                    if (btn.dataset.screen === 'quizzes') loadQuizzesList();
                 });
             });
 
@@ -1269,6 +1435,104 @@
               <div style="display:flex;gap:8px;margin-top:10px;">
                 <input id="new-category-name" placeholder="New category name" style="flex:1;background:var(--bg-secondary);border:1px solid var(--border-strong);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;" />
                 <button type="button" class="add-nav-link-btn" id="add-category-btn">+ Add</button>
+              </div>
+            </div>
+          `;
+
+            document.getElementById('screen-forms').innerHTML = `
+            <div class="fade-in">
+              <div class="panel" id="form-editor-panel">
+                <div class="panel-header">
+                  <h2 id="form-editor-heading">New form</h2>
+                </div>
+                <form id="form-builder-form">
+                  <input type="hidden" id="fm-edit-id" value="" />
+                  <div class="form-grid">
+                    <div class="field full">
+                      <label for="fm-title">Form title</label>
+                      <input id="fm-title" placeholder="e.g. Newsletter signup" required />
+                    </div>
+                    <div class="field full">
+                      <label for="fm-slug">Slug <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(used to embed: [form:slug])</span></label>
+                      <input id="fm-slug" placeholder="auto-generated from title" />
+                    </div>
+                    <div class="field full">
+                      <label for="fm-description">Description <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(optional, shown above the form)</span></label>
+                      <input id="fm-description" placeholder="Short intro line for readers" />
+                    </div>
+                  </div>
+
+                  <div style="margin-top:18px;">
+                    <label style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-secondary);">Fields</label>
+                    <div id="fm-fields-list" style="margin-top:10px;"></div>
+                    <button type="button" class="add-item-btn" id="fm-add-field-btn">+ Add field</button>
+                  </div>
+
+                  <div class="error-msg" id="form-builder-error"></div>
+                  <div class="status-msg" id="form-builder-status"></div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="form-builder-save-btn">Save form</button>
+                    <button type="button" class="btn-ghost" id="form-builder-cancel-btn" style="display:none;">Cancel edit</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel">
+                <div class="panel-header">
+                  <h2>Your forms</h2>
+                </div>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Drop the embed code anywhere in a post's body to show the form to readers. Submissions are collected automatically.</p>
+                <div id="forms-list"><div class="loading-state"><span class="spinner"></span> loading…</div></div>
+              </div>
+            </div>
+          `;
+
+            document.getElementById('screen-quizzes').innerHTML = `
+            <div class="fade-in">
+              <div class="panel" id="quiz-editor-panel">
+                <div class="panel-header">
+                  <h2 id="quiz-editor-heading">New quiz</h2>
+                </div>
+                <form id="quiz-builder-form">
+                  <input type="hidden" id="qz-edit-id" value="" />
+                  <div class="form-grid">
+                    <div class="field full">
+                      <label for="qz-title">Quiz title</label>
+                      <input id="qz-title" placeholder="e.g. How much do you know about carbon offsets?" required />
+                    </div>
+                    <div class="field full">
+                      <label for="qz-slug">Slug <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(used to embed: [quiz:slug])</span></label>
+                      <input id="qz-slug" placeholder="auto-generated from title" />
+                    </div>
+                    <div class="field full">
+                      <label for="qz-description">Description <span style="font-weight:400;text-transform:none;color:var(--text-tertiary);">(optional, shown above the quiz)</span></label>
+                      <input id="qz-description" placeholder="Short intro line for readers" />
+                    </div>
+                  </div>
+
+                  <div style="margin-top:18px;">
+                    <label style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-secondary);">Questions</label>
+                    <div id="qz-questions-list" style="margin-top:10px;"></div>
+                    <button type="button" class="add-item-btn" id="qz-add-question-btn">+ Add question</button>
+                  </div>
+
+                  <div class="error-msg" id="quiz-builder-error"></div>
+                  <div class="status-msg" id="quiz-builder-status"></div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="quiz-builder-save-btn">Save quiz</button>
+                    <button type="button" class="btn-ghost" id="quiz-builder-cancel-btn" style="display:none;">Cancel edit</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel">
+                <div class="panel-header">
+                  <h2>Your quizzes</h2>
+                </div>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Drop the embed code anywhere in a post's body. Readers pick an answer per question and see their score at the end.</p>
+                <div id="quizzes-list"><div class="loading-state"><span class="spinner"></span> loading…</div></div>
               </div>
             </div>
           `;
@@ -1706,6 +1970,8 @@
             }
 
             loadPostList();
+            initFormsPanel();
+            initQuizPanel();
             if (currentUserRole === 'admin') initSettingsPanel();
         }
 
@@ -2134,6 +2400,524 @@
                 renderNavLinks();
                 statusEl.textContent = '✓ Saved. Changes will show on the live site.';
                 setTimeout(() => { statusEl.textContent = ''; }, 4000);
+            });
+        }
+
+        // ─── FORMS ──────────────────────────────────────────
+        const FIELD_TYPES = [
+            { value: 'text', label: 'Short text' },
+            { value: 'email', label: 'Email' },
+            { value: 'textarea', label: 'Long text' },
+            { value: 'number', label: 'Number' },
+            { value: 'select', label: 'Dropdown' },
+            { value: 'radio', label: 'Radio buttons' },
+            { value: 'checkbox', label: 'Checkbox' },
+        ];
+        let formFields = [];
+        let formSlugManuallyEdited = false;
+
+        function fieldTypeNeedsOptions(type) {
+            return type === 'select' || type === 'radio';
+        }
+
+        function renderFormFields() {
+            const listEl = document.getElementById('fm-fields-list');
+            if (!listEl) return;
+            listEl.innerHTML = formFields.map((f, i) => `
+              <div class="builder-item" data-index="${i}">
+                <div class="builder-item-head">
+                  <span class="idx">#${i + 1}</span>
+                  <input type="text" class="fld-label" placeholder="Field label (e.g. Your email)" value="${escapeHtml(f.label || '')}" />
+                  <select class="fld-type">
+                    ${FIELD_TYPES.map(t => `<option value="${t.value}" ${f.type === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}
+                  </select>
+                  <button type="button" class="remove-item-btn" data-remove-field="${i}" title="Remove">✕</button>
+                </div>
+                <div class="builder-item-body">
+                  ${fieldTypeNeedsOptions(f.type) ? `<input type="text" class="fld-options" placeholder="Options, comma separated (e.g. Yes, No, Maybe)" value="${escapeHtml((f.options || []).join(', '))}" />` : ''}
+                  <label class="field-required">
+                    <input type="checkbox" class="fld-required" ${f.required ? 'checked' : ''} /> Required
+                  </label>
+                </div>
+              </div>
+            `).join('') || '<div class="upload-status">No fields yet — add one below.</div>';
+
+            listEl.querySelectorAll('.builder-item').forEach(row => {
+                const i = parseInt(row.dataset.index, 10);
+                row.querySelector('.fld-label').addEventListener('input', (e) => { formFields[i].label = e.target.value; });
+                row.querySelector('.fld-type').addEventListener('change', (e) => {
+                    formFields[i].type = e.target.value;
+                    renderFormFields();
+                });
+                const optsInput = row.querySelector('.fld-options');
+                if (optsInput) {
+                    optsInput.addEventListener('input', (e) => {
+                        formFields[i].options = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                    });
+                }
+                row.querySelector('.fld-required').addEventListener('change', (e) => { formFields[i].required = e.target.checked; });
+            });
+
+            listEl.querySelectorAll('[data-remove-field]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    formFields.splice(parseInt(btn.dataset.removeField, 10), 1);
+                    renderFormFields();
+                });
+            });
+        }
+
+        function resetFormBuilder() {
+            formFields = [];
+            formSlugManuallyEdited = false;
+            document.getElementById('fm-edit-id').value = '';
+            document.getElementById('fm-title').value = '';
+            document.getElementById('fm-slug').value = '';
+            document.getElementById('fm-description').value = '';
+            document.getElementById('form-editor-heading').innerHTML = 'New form';
+            document.getElementById('form-builder-cancel-btn').style.display = 'none';
+            document.getElementById('form-builder-error').textContent = '';
+            document.getElementById('form-builder-status').textContent = '';
+            renderFormFields();
+        }
+
+        function initFormsPanel() {
+            const titleInput = document.getElementById('fm-title');
+            const slugInput = document.getElementById('fm-slug');
+            if (!titleInput) return;
+
+            titleInput.addEventListener('input', () => {
+                if (!formSlugManuallyEdited) slugInput.value = slugify(titleInput.value);
+            });
+            slugInput.addEventListener('input', () => { formSlugManuallyEdited = true; });
+
+            document.getElementById('fm-add-field-btn').addEventListener('click', () => {
+                formFields.push({ label: '', type: 'text', required: false, options: [] });
+                renderFormFields();
+            });
+
+            document.getElementById('form-builder-cancel-btn').addEventListener('click', resetFormBuilder);
+
+            document.getElementById('form-builder-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errEl = document.getElementById('form-builder-error');
+                const statusEl = document.getElementById('form-builder-status');
+                errEl.textContent = '';
+                statusEl.textContent = '';
+
+                const title = titleInput.value.trim();
+                if (!title) { errEl.textContent = 'Give the form a title.'; return; }
+                const cleanFields = formFields
+                    .map(f => ({ ...f, label: (f.label || '').trim() }))
+                    .filter(f => f.label);
+                if (cleanFields.length === 0) { errEl.textContent = 'Add at least one field.'; return; }
+
+                const slug = slugify(slugInput.value.trim() || title);
+                const editId = document.getElementById('fm-edit-id').value;
+                const payload = {
+                    title,
+                    slug,
+                    description: document.getElementById('fm-description').value.trim(),
+                    fields: cleanFields,
+                };
+
+                const saveBtn = document.getElementById('form-builder-save-btn');
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving…';
+
+                const result = editId
+                    ? await supabase.from('forms').update(payload).eq('id', editId).select()
+                    : await supabase.from('forms').insert(payload).select();
+
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save form';
+
+                if (result.error) { errEl.textContent = result.error.message; return; }
+
+                statusEl.textContent = '✓ Saved.';
+                setTimeout(() => { statusEl.textContent = ''; }, 3000);
+                resetFormBuilder();
+                loadFormsList();
+            });
+
+            renderFormFields();
+        }
+
+        async function loadFormsList() {
+            const listEl = document.getElementById('forms-list');
+            if (!listEl) return;
+            const { data, error } = await supabase.from('forms')
+                .select('id, title, slug, fields, created_at')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<div class="empty-state">couldn't load forms: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+            if (!data || data.length === 0) {
+                listEl.innerHTML = `<div class="empty-state"><span class="big">🧾</span>No forms yet. Build your first one above.</div>`;
+                return;
+            }
+
+            const counts = {};
+            for (const f of data) {
+                const { count } = await supabase.from('form_submissions').select('id', { count: 'exact', head: true }).eq('form_id', f.id);
+                counts[f.id] = count || 0;
+            }
+
+            listEl.innerHTML = `
+            <div class="wp-table-wrap">
+              <table class="wp-table">
+                <thead>
+                  <tr><th>Title</th><th>Fields</th><th>Submissions</th><th>Embed</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                  ${data.map(f => `
+                    <tr data-id="${f.id}">
+                      <td>
+                        <div class="post-title-cell">${escapeHtml(f.title)}</div>
+                        <div class="row-actions">
+                          <button data-action="edit-form" data-id="${f.id}">Edit</button>
+                          <span class="sep">|</span>
+                          <button class="danger" data-action="delete-form" data-id="${f.id}" data-title="${escapeHtml(f.title)}">Delete</button>
+                        </div>
+                      </td>
+                      <td class="date-cell">${(f.fields || []).length}</td>
+                      <td>
+                        <span class="cat-pill" style="cursor:pointer;" data-action="view-submissions" data-id="${f.id}" data-title="${escapeHtml(f.title)}">${counts[f.id]} view →</span>
+                      </td>
+                      <td><span class="embed-code" data-copy="[form:${escapeHtml(f.slug)}]" title="Click to copy">[form:${escapeHtml(f.slug)}]</span></td>
+                      <td class="date-cell">${new Date(f.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+
+            listEl.querySelectorAll('[data-action="edit-form"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const form = data.find(f => f.id === btn.dataset.id);
+                    if (!form) return;
+                    document.getElementById('fm-edit-id').value = form.id;
+                    document.getElementById('fm-title').value = form.title || '';
+                    document.getElementById('fm-slug').value = form.slug || '';
+                    document.getElementById('fm-description').value = form.description || '';
+                    formFields = JSON.parse(JSON.stringify(form.fields || []));
+                    formSlugManuallyEdited = true;
+                    renderFormFields();
+                    document.getElementById('form-editor-heading').innerHTML =
+                        'Editing <span class="pill editing">' + escapeHtml(form.slug) + '</span>';
+                    document.getElementById('form-builder-cancel-btn').style.display = 'inline-block';
+                    document.getElementById('form-editor-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+
+            listEl.querySelectorAll('[data-action="delete-form"]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm(`Delete "${btn.dataset.title}"? Its submissions will be deleted too.`)) return;
+                    await supabase.from('form_submissions').delete().eq('form_id', btn.dataset.id);
+                    const { error } = await supabase.from('forms').delete().eq('id', btn.dataset.id);
+                    if (error) { alert('Delete failed: ' + error.message); return; }
+                    loadFormsList();
+                });
+            });
+
+            listEl.querySelectorAll('[data-action="view-submissions"]').forEach(btn => {
+                btn.addEventListener('click', () => showSubmissionsModal(btn.dataset.id, btn.dataset.title));
+            });
+
+            listEl.querySelectorAll('.embed-code').forEach(el => {
+                el.addEventListener('click', () => {
+                    navigator.clipboard.writeText(el.dataset.copy).then(() => {
+                        const orig = el.textContent;
+                        el.textContent = 'copied!';
+                        setTimeout(() => { el.textContent = orig; }, 1200);
+                    });
+                });
+            });
+        }
+
+        async function showSubmissionsModal(formId, formTitle) {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'submissions-modal-backdrop';
+            backdrop.innerHTML = `
+            <div class="submissions-modal">
+              <div class="panel-header">
+                <h2>Submissions — ${escapeHtml(formTitle)}</h2>
+                <button type="button" class="btn-ghost btn-small" id="close-submissions-modal">Close</button>
+              </div>
+              <div id="submissions-modal-body"><div class="loading-state"><span class="spinner"></span> loading…</div></div>
+            </div>
+          `;
+            document.body.appendChild(backdrop);
+            backdrop.addEventListener('click', (e) => { if (e.target === backdrop) backdrop.remove(); });
+            document.getElementById('close-submissions-modal').addEventListener('click', () => backdrop.remove());
+
+            const { data, error } = await supabase.from('form_submissions')
+                .select('id, data, created_at')
+                .eq('form_id', formId)
+                .order('created_at', { ascending: false });
+
+            const bodyEl = document.getElementById('submissions-modal-body');
+            if (error) {
+                bodyEl.innerHTML = `<div class="empty-state">couldn't load submissions: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+            if (!data || data.length === 0) {
+                bodyEl.innerHTML = `<div class="empty-state"><span class="big">📭</span>No submissions yet.</div>`;
+                return;
+            }
+
+            const columns = [...new Set(data.flatMap(s => Object.keys(s.data || {})))];
+            bodyEl.innerHTML = `
+            <div class="wp-table-wrap">
+              <table class="wp-table">
+                <thead><tr>${columns.map(c => `<th>${escapeHtml(c)}</th>`).join('')}<th>Date</th></tr></thead>
+                <tbody>
+                  ${data.map(s => `
+                    <tr>
+                      ${columns.map(c => `<td>${escapeHtml(String((s.data || {})[c] ?? '—'))}</td>`).join('')}
+                      <td class="date-cell">${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        // ─── QUIZZES ────────────────────────────────────────
+        let quizQuestions = [];
+        let quizSlugManuallyEdited = false;
+
+        function renderQuizQuestions() {
+            const listEl = document.getElementById('qz-questions-list');
+            if (!listEl) return;
+            listEl.innerHTML = quizQuestions.map((q, qi) => `
+              <div class="builder-item" data-qindex="${qi}">
+                <div class="builder-item-head">
+                  <span class="idx">Q${qi + 1}</span>
+                  <input type="text" class="qz-question-text" placeholder="Question text" value="${escapeHtml(q.question || '')}" />
+                  <button type="button" class="remove-item-btn" data-remove-question="${qi}" title="Remove question">✕</button>
+                </div>
+                <div class="builder-item-body">
+                  <div class="qz-options-list" data-qindex="${qi}">
+                    ${(q.options || []).map((opt, oi) => `
+                      <div class="quiz-option-row" data-oindex="${oi}">
+                        <input type="radio" name="qz-correct-${qi}" ${q.correct === oi ? 'checked' : ''} title="Mark correct answer" />
+                        <input type="text" class="qz-opt-text" placeholder="Option ${oi + 1}" value="${escapeHtml(opt || '')}" />
+                        <button type="button" class="remove-opt-btn" data-remove-opt="${oi}" title="Remove option">✕</button>
+                      </div>
+                    `).join('')}
+                  </div>
+                  <button type="button" class="add-item-btn add-opt-btn" data-qindex="${qi}" style="width:fit-content;">+ Add option</button>
+                  <input type="text" class="qz-explanation" placeholder="Explanation shown after answering (optional)" value="${escapeHtml(q.explanation || '')}" />
+                </div>
+              </div>
+            `).join('') || '<div class="upload-status">No questions yet — add one below.</div>';
+
+            listEl.querySelectorAll('.builder-item').forEach(block => {
+                const qi = parseInt(block.dataset.qindex, 10);
+                block.querySelector('.qz-question-text').addEventListener('input', (e) => {
+                    quizQuestions[qi].question = e.target.value;
+                });
+                block.querySelector('.qz-explanation').addEventListener('input', (e) => {
+                    quizQuestions[qi].explanation = e.target.value;
+                });
+                block.querySelectorAll('.quiz-option-row').forEach(row => {
+                    const oi = parseInt(row.dataset.oindex, 10);
+                    row.querySelector('.qz-opt-text').addEventListener('input', (e) => {
+                        quizQuestions[qi].options[oi] = e.target.value;
+                    });
+                    row.querySelector('input[type="radio"]').addEventListener('change', () => {
+                        quizQuestions[qi].correct = oi;
+                    });
+                    row.querySelector('[data-remove-opt]').addEventListener('click', () => {
+                        quizQuestions[qi].options.splice(oi, 1);
+                        if (quizQuestions[qi].correct === oi) delete quizQuestions[qi].correct;
+                        else if (quizQuestions[qi].correct > oi) quizQuestions[qi].correct -= 1;
+                        renderQuizQuestions();
+                    });
+                });
+                block.querySelector('.add-opt-btn').addEventListener('click', () => {
+                    quizQuestions[qi].options.push('');
+                    renderQuizQuestions();
+                });
+                block.querySelector('[data-remove-question]').addEventListener('click', () => {
+                    quizQuestions.splice(qi, 1);
+                    renderQuizQuestions();
+                });
+            });
+        }
+
+        function resetQuizBuilder() {
+            quizQuestions = [];
+            quizSlugManuallyEdited = false;
+            document.getElementById('qz-edit-id').value = '';
+            document.getElementById('qz-title').value = '';
+            document.getElementById('qz-slug').value = '';
+            document.getElementById('qz-description').value = '';
+            document.getElementById('quiz-editor-heading').innerHTML = 'New quiz';
+            document.getElementById('quiz-builder-cancel-btn').style.display = 'none';
+            document.getElementById('quiz-builder-error').textContent = '';
+            document.getElementById('quiz-builder-status').textContent = '';
+            renderQuizQuestions();
+        }
+
+        function initQuizPanel() {
+            const titleInput = document.getElementById('qz-title');
+            const slugInput = document.getElementById('qz-slug');
+            if (!titleInput) return;
+
+            titleInput.addEventListener('input', () => {
+                if (!quizSlugManuallyEdited) slugInput.value = slugify(titleInput.value);
+            });
+            slugInput.addEventListener('input', () => { quizSlugManuallyEdited = true; });
+
+            document.getElementById('qz-add-question-btn').addEventListener('click', () => {
+                quizQuestions.push({ question: '', options: ['', ''], correct: 0, explanation: '' });
+                renderQuizQuestions();
+            });
+
+            document.getElementById('quiz-builder-cancel-btn').addEventListener('click', resetQuizBuilder);
+
+            document.getElementById('quiz-builder-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const errEl = document.getElementById('quiz-builder-error');
+                const statusEl = document.getElementById('quiz-builder-status');
+                errEl.textContent = '';
+                statusEl.textContent = '';
+
+                const title = titleInput.value.trim();
+                if (!title) { errEl.textContent = 'Give the quiz a title.'; return; }
+
+                const cleanQuestions = quizQuestions
+                    .map(q => ({
+                        question: (q.question || '').trim(),
+                        options: (q.options || []).map(o => (o || '').trim()).filter(Boolean),
+                        correct: q.correct,
+                        explanation: (q.explanation || '').trim(),
+                    }))
+                    .filter(q => q.question && q.options.length >= 2);
+
+                if (cleanQuestions.length === 0) {
+                    errEl.textContent = 'Add at least one question with 2+ options.';
+                    return;
+                }
+                for (const q of cleanQuestions) {
+                    if (typeof q.correct !== 'number' || q.correct < 0 || q.correct >= q.options.length) {
+                        errEl.textContent = `Mark a correct answer for "${q.question}".`;
+                        return;
+                    }
+                }
+
+                const slug = slugify(slugInput.value.trim() || title);
+                const editId = document.getElementById('qz-edit-id').value;
+                const payload = {
+                    title,
+                    slug,
+                    description: document.getElementById('qz-description').value.trim(),
+                    questions: cleanQuestions,
+                };
+
+                const saveBtn = document.getElementById('quiz-builder-save-btn');
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving…';
+
+                const result = editId
+                    ? await supabase.from('quizzes').update(payload).eq('id', editId).select()
+                    : await supabase.from('quizzes').insert(payload).select();
+
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save quiz';
+
+                if (result.error) { errEl.textContent = result.error.message; return; }
+
+                statusEl.textContent = '✓ Saved.';
+                setTimeout(() => { statusEl.textContent = ''; }, 3000);
+                resetQuizBuilder();
+                loadQuizzesList();
+            });
+
+            renderQuizQuestions();
+        }
+
+        async function loadQuizzesList() {
+            const listEl = document.getElementById('quizzes-list');
+            if (!listEl) return;
+            const { data, error } = await supabase.from('quizzes')
+                .select('id, title, slug, questions, created_at')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<div class="empty-state">couldn't load quizzes: ${escapeHtml(error.message)}</div>`;
+                return;
+            }
+            if (!data || data.length === 0) {
+                listEl.innerHTML = `<div class="empty-state"><span class="big">❓</span>No quizzes yet. Build your first one above.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = `
+            <div class="wp-table-wrap">
+              <table class="wp-table">
+                <thead><tr><th>Title</th><th>Questions</th><th>Embed</th><th>Date</th></tr></thead>
+                <tbody>
+                  ${data.map(q => `
+                    <tr data-id="${q.id}">
+                      <td>
+                        <div class="post-title-cell">${escapeHtml(q.title)}</div>
+                        <div class="row-actions">
+                          <button data-action="edit-quiz" data-id="${q.id}">Edit</button>
+                          <span class="sep">|</span>
+                          <button class="danger" data-action="delete-quiz" data-id="${q.id}" data-title="${escapeHtml(q.title)}">Delete</button>
+                        </div>
+                      </td>
+                      <td class="date-cell">${(q.questions || []).length}</td>
+                      <td><span class="embed-code" data-copy="[quiz:${escapeHtml(q.slug)}]" title="Click to copy">[quiz:${escapeHtml(q.slug)}]</span></td>
+                      <td class="date-cell">${new Date(q.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+
+            listEl.querySelectorAll('[data-action="edit-quiz"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const quiz = data.find(q => q.id === btn.dataset.id);
+                    if (!quiz) return;
+                    document.getElementById('qz-edit-id').value = quiz.id;
+                    document.getElementById('qz-title').value = quiz.title || '';
+                    document.getElementById('qz-slug').value = quiz.slug || '';
+                    document.getElementById('qz-description').value = quiz.description || '';
+                    quizQuestions = JSON.parse(JSON.stringify(quiz.questions || []));
+                    quizSlugManuallyEdited = true;
+                    renderQuizQuestions();
+                    document.getElementById('quiz-editor-heading').innerHTML =
+                        'Editing <span class="pill editing">' + escapeHtml(quiz.slug) + '</span>';
+                    document.getElementById('quiz-builder-cancel-btn').style.display = 'inline-block';
+                    document.getElementById('quiz-editor-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+
+            listEl.querySelectorAll('[data-action="delete-quiz"]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm(`Delete "${btn.dataset.title}"?`)) return;
+                    const { error } = await supabase.from('quizzes').delete().eq('id', btn.dataset.id);
+                    if (error) { alert('Delete failed: ' + error.message); return; }
+                    loadQuizzesList();
+                });
+            });
+
+            listEl.querySelectorAll('.embed-code').forEach(el => {
+                el.addEventListener('click', () => {
+                    navigator.clipboard.writeText(el.dataset.copy).then(() => {
+                        const orig = el.textContent;
+                        el.textContent = 'copied!';
+                        setTimeout(() => { el.textContent = orig; }, 1200);
+                    });
+                });
             });
         }
 
