@@ -182,54 +182,6 @@
             flex-wrap: wrap;
         }
 
-        .lang-selector-wrap {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            padding: 2px 8px 2px 10px;
-            transition: border-color var(--transition);
-        }
-        .lang-selector-wrap:hover {
-            border-color: var(--border-strong);
-        }
-        .lang-selector-wrap .lang-icon {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-        }
-        .lang-selector-wrap .lang-icon svg {
-            width: 100%;
-            height: 100%;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        .lang-selector-wrap select {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 12.5px;
-            padding: 6px 2px 6px 0;
-            outline: none;
-            cursor: pointer;
-            min-width: 80px;
-            max-width: 120px;
-        }
-        .lang-selector-wrap select option {
-            background: var(--bg-card);
-            color: var(--text);
-        }
-
         .theme-toggle {
             width: 36px;
             height: 36px;
@@ -633,15 +585,25 @@
             stroke-linejoin: round;
             flex-shrink: 0;
         }
-        /* real brand-logo icons use solid fill instead of the default outline style */
         .share-btn.brand-icon svg {
             fill: currentColor;
             stroke: none;
         }
-        .share-btn[data-share="whatsapp"] { color: var(--brand-whatsapp); border-color: color-mix(in srgb, var(--brand-whatsapp) 40%, var(--border)); }
-        .share-btn[data-share="facebook"] { color: var(--brand-facebook); border-color: color-mix(in srgb, var(--brand-facebook) 40%, var(--border)); }
-        .share-btn[data-share="linkedin"] { color: var(--brand-linkedin); border-color: color-mix(in srgb, var(--brand-linkedin) 40%, var(--border)); }
-        .share-btn[data-share="twitter"] { color: var(--text); }
+        .share-btn[data-share="whatsapp"] {
+            color: var(--brand-whatsapp);
+            border-color: color-mix(in srgb, var(--brand-whatsapp) 40%, var(--border));
+        }
+        .share-btn[data-share="facebook"] {
+            color: var(--brand-facebook);
+            border-color: color-mix(in srgb, var(--brand-facebook) 40%, var(--border));
+        }
+        .share-btn[data-share="linkedin"] {
+            color: var(--brand-linkedin);
+            border-color: color-mix(in srgb, var(--brand-linkedin) 40%, var(--border));
+        }
+        .share-btn[data-share="twitter"] {
+            color: var(--text);
+        }
         .share-btn:hover {
             border-color: var(--accent);
             background: var(--accent-glow);
@@ -1051,27 +1013,6 @@
             transform: translateX(18px);
         }
 
-        .a11y-select {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid var(--a11y-border);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--a11y-text);
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.15s;
-        }
-        .a11y-select:focus {
-            border-color: var(--accent);
-        }
-        .a11y-select option {
-            background: var(--a11y-bg);
-            color: var(--a11y-text);
-        }
-
         body.a11y-high-contrast {
             background: #000 !important;
             color: #fff !important;
@@ -1132,21 +1073,6 @@
                 height: 48px;
                 font-size: 20px;
             }
-            .lang-selector-wrap select {
-                min-width: 60px;
-                max-width: 80px;
-                font-size: 11px;
-            }
-            .lang-selector-wrap {
-                padding: 2px 6px 2px 8px;
-            }
-            .lang-selector-wrap .lang-icon {
-                width: 15px;
-                height: 15px;
-            }
-            .topbar-actions {
-                gap: 6px;
-            }
             .footer-social .social-icon-link {
                 width: 36px;
                 height: 36px;
@@ -1162,11 +1088,6 @@
             .a11y-btn-group button {
                 font-size: 12px;
                 padding: 5px 8px;
-            }
-            .lang-selector-wrap select {
-                min-width: 50px;
-                max-width: 70px;
-                font-size: 10px;
             }
             .footer-social .social-icon-link {
                 width: 32px;
@@ -1188,29 +1109,6 @@
             </a>
             <nav class="nav-links" id="nav-links"></nav>
             <div class="topbar-actions">
-                <div class="lang-selector-wrap" id="lang-selector-wrap">
-                    <span class="lang-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M2 12h20"/>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                        </svg>
-                    </span>
-                    <select id="a11y-lang-top" aria-label="Translate page">
-                        <option value="">Language</option>
-                        <option value="es">Español</option>
-                        <option value="fr">Français</option>
-                        <option value="de">Deutsch</option>
-                        <option value="pt">Português</option>
-                        <option value="hi">हिन्दी</option>
-                        <option value="zh">中文</option>
-                        <option value="ar">العربية</option>
-                        <option value="ja">日本語</option>
-                        <option value="ml">മലയാളം</option>
-                        <option value="ur">اردو</option>
-                        <option value="ta">தமிழ்</option>
-                    </select>
-                </div>
                 <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌙</button>
             </div>
         </div>
@@ -1295,24 +1193,6 @@
                     <button id="a11y-speak">▶ Play</button>
                     <button id="a11y-stop">⏹ Stop</button>
                 </div>
-            </div>
-
-            <div class="a11y-group">
-                <label for="a11y-lang-panel">Translate page</label>
-                <select id="a11y-lang-panel" class="a11y-select">
-                    <option value="">Language</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="pt">Português</option>
-                    <option value="hi">हिन्दी</option>
-                    <option value="zh">中文</option>
-                    <option value="ar">العربية</option>
-                    <option value="ja">日本語</option>
-                    <option value="ml">മലയാളം</option>
-                    <option value="ur">اردو</option>
-                    <option value="ta">தமிழ்</option>
-                </select>
             </div>
         </div>
     </div>
@@ -1826,10 +1706,6 @@
         (function a11y() {
             const BASE_FONT_SIZE = 100;
             let currentStep = 0;
-            const translationCache = {};
-            let originalTextNodes = [];
-            let currentLang = '';
-            let isTranslating = false;
 
             function q(id) { return document.getElementById(id); }
 
@@ -1848,9 +1724,12 @@
             function applyFontSize() {
                 document.documentElement.style.fontSize = (BASE_FONT_SIZE + currentStep * 10) + '%';
             }
-            q('a11y-font-inc').addEventListener('click', () => { currentStep = Math.min(currentStep + 1, 5); applyFontSize(); });
-            q('a11y-font-dec').addEventListener('click', () => { currentStep = Math.max(currentStep - 1, -2); applyFontSize(); });
-            q('a11y-font-reset').addEventListener('click', () => { currentStep = 0; applyFontSize(); });
+            q('a11y-font-inc').addEventListener('click', () => { currentStep = Math.min(currentStep + 1, 5);
+                applyFontSize(); });
+            q('a11y-font-dec').addEventListener('click', () => { currentStep = Math.max(currentStep - 1, -2);
+                applyFontSize(); });
+            q('a11y-font-reset').addEventListener('click', () => { currentStep = 0;
+                applyFontSize(); });
 
             q('a11y-contrast').addEventListener('change', (e) => {
                 document.body.classList.toggle('a11y-high-contrast', e.target.checked);
@@ -1864,20 +1743,6 @@
                 const main = document.querySelector('#app') || document.body;
                 return main.innerText.trim().slice(0, 4000);
             }
-            const LANG_CODES = {
-                '': 'en-US',
-                es: 'es-ES',
-                fr: 'fr-FR',
-                de: 'de-DE',
-                pt: 'pt-PT',
-                hi: 'hi-IN',
-                zh: 'zh-CN',
-                ar: 'ar-SA',
-                ja: 'ja-JP',
-                ml: 'ml-IN',
-                ur: 'ur-PK',
-                ta: 'ta-IN'
-            };
 
             function pickVoice(langCode) {
                 const voices = window.speechSynthesis.getVoices();
@@ -1895,134 +1760,16 @@
                     return;
                 }
                 window.speechSynthesis.cancel();
-                const selectedLang = q('a11y-lang-panel').value || q('a11y-lang-top').value || '';
-                const langCode = LANG_CODES[selectedLang] || 'en-US';
                 utterance = new SpeechSynthesisUtterance(getMainText());
-                utterance.lang = langCode;
+                utterance.lang = 'en-US';
                 utterance.rate = 1;
-                const voice = pickVoice(langCode);
+                const voice = pickVoice('en-US');
                 if (voice) utterance.voice = voice;
                 window.speechSynthesis.speak(utterance);
             });
             q('a11y-stop').addEventListener('click', () => {
                 if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             });
-
-            const langTop = q('a11y-lang-top');
-            const langPanel = q('a11y-lang-panel');
-
-            function syncLangSelects(value) {
-                langTop.value = value;
-                langPanel.value = value;
-            }
-
-            langTop.addEventListener('change', () => {
-                currentLang = langTop.value;
-                syncLangSelects(currentLang);
-                originalTextNodes = [];
-                translatePage(currentLang);
-            });
-            langPanel.addEventListener('change', () => {
-                currentLang = langPanel.value;
-                syncLangSelects(currentLang);
-                originalTextNodes = [];
-                translatePage(currentLang);
-            });
-
-            function collectTextNodes(root) {
-                const nodes = [];
-                const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-                    acceptNode: function(node) {
-                        if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-                        const tag = node.parentElement ? node.parentElement.tagName : '';
-                        if (tag === 'SCRIPT' || tag === 'STYLE' ||
-                            (node.parentElement.closest && node.parentElement.closest('#a11y-widget')) ||
-                            (node.parentElement.closest && node.parentElement.closest('.lang-selector-wrap')) ||
-                            (node.parentElement.closest && node.parentElement.closest('#a11y-panel'))) {
-                            return NodeFilter.FILTER_REJECT;
-                        }
-                        return NodeFilter.FILTER_ACCEPT;
-                    }
-                });
-                let n;
-                while ((n = walker.nextNode())) nodes.push(n);
-                return nodes;
-            }
-
-            function translateText(text, targetLang) {
-                const cacheKey = targetLang + '::' + text;
-                if (translationCache[cacheKey]) return Promise.resolve(translationCache[cacheKey]);
-                const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) +
-                    '&langpair=en|' + targetLang;
-                return fetch(url)
-                    .then(r => r.json())
-                    .then(data => {
-                        const translated = (data && data.responseData && data.responseData.translatedText) || text;
-                        translationCache[cacheKey] = translated;
-                        return translated;
-                    })
-                    .catch(() => text);
-            }
-
-            function translatePage(lang) {
-                if (isTranslating) return;
-                const main = document.querySelector('#app') || document.body;
-
-                if (!lang) {
-                    originalTextNodes.forEach(item => {
-                        try { item.node.nodeValue = item.original; } catch (e) {}
-                    });
-                    originalTextNodes = [];
-                    return;
-                }
-
-                if (originalTextNodes.length === 0) {
-                    collectTextNodes(main).forEach(node => {
-                        originalTextNodes.push({ node: node, original: node.nodeValue });
-                    });
-                }
-                if (originalTextNodes.length === 0) return;
-
-                isTranslating = true;
-                const indicator = document.createElement('div');
-                indicator.id = 'a11y-translating';
-                indicator.style.cssText =
-                    'position:fixed;bottom:90px;right:24px;z-index:99998;background:var(--bg-card);border:1px solid var(--border);border-radius:999px;padding:8px 18px;font-size:12px;color:var(--text-secondary);font-family:JetBrains Mono,monospace;box-shadow:var(--shadow);pointer-events:none;transition:opacity 0.3s;';
-                indicator.textContent = 'Translating…';
-                document.body.appendChild(indicator);
-
-                let chain = Promise.resolve();
-                originalTextNodes.forEach(item => {
-                    chain = chain.then(() => {
-                        return translateText(item.original, lang).then(translated => {
-                            try { item.node.nodeValue = translated; } catch (e) {}
-                        });
-                    });
-                });
-                chain.then(() => {
-                    isTranslating = false;
-                    const el = document.getElementById('a11y-translating');
-                    if (el) el.remove();
-                }).catch(() => {
-                    isTranslating = false;
-                    const el = document.getElementById('a11y-translating');
-                    if (el) el.remove();
-                });
-            }
-
-            /* re-apply translation to freshly rendered #app content after navigation
-               (list <-> post, category filters, etc.) — without this, switching pages
-               while a language is selected silently reverted to English because the
-               previously-translated text nodes get thrown away by innerHTML rewrites */
-            const appEl = document.getElementById('app');
-            if (appEl) {
-                const appObserver = new MutationObserver(() => {
-                    if (!currentLang) return;
-                    originalTextNodes = [];
-                    translatePage(currentLang);
-                });
-                appObserver.observe(appEl, { childList: true });
-            }
 
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.getVoices();
